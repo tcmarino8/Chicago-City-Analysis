@@ -1,0 +1,6 @@
+.vercel
+/data
+/cache
+.vercelignore
+/SensorsNetwork_Venv
+%AppData%

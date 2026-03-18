@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2>Network Analysis</h2>
+  <p>This view aggregates the entire sensor fleet into a weighted graph where every station is connected to every other via edges weighted by inverse geographic distance.</p>
+  {% if message %}
+    <div class="message">{{ message }}</div>
+  {% endif %}
+  {% if plot_html %}
+    <div class="plot">{{ plot_html|safe }}</div>
+  {% endif %}
+  {% if summary_list %}
+    <h3>Graph Summary</h3>
+    <ul>
+      {% for item in summary_list %}
+        <li>{{ item }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+  {% if metrics %}
+    <h3>Top Sensors by Observation Count</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Sensor</th>
+          <th>Latitude</th>
+          <th>Longitude</th>
+          <th>Observations</th>
+          <th>Avg PM2.5</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in metrics %}
+          <tr>
+            <td>{{ row.sensor_name }}</td>
+            <td>{{ "%.4f" | format(row.latitude) }}</td>
+            <td>{{ "%.4f" | format(row.longitude) }}</td>
+            <td>{{ row.observations }}</td>
+            <td>{{ "%.2f" | format(row.avg_aqi) }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+{% endblock %}

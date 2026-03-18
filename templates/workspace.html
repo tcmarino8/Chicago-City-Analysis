@@ -1,0 +1,540 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="workspace-shell">
+  <form method="get" class="workspace-controls" id="workspace-form">
+    <div class="control-group">
+      <label>Mode</label>
+      <div class="mode-switch">
+        <button type="button" id="prev-mode" class="arrow-btn" aria-label="Previous mode">◀</button>
+        <button type="button" class="mode-btn" data-mode="explorer">Explorer</button>
+        <button type="button" class="mode-btn" data-mode="network">Network</button>
+        <button type="button" class="mode-btn" data-mode="interpolation">Interpolation</button>
+        <button type="button" class="mode-btn" data-mode="weather">Weather</button>
+        <button type="button" class="mode-btn" data-mode="streetmaps">Streetmaps</button>
+        <button type="button" id="next-mode" class="arrow-btn" aria-label="Next mode">▶</button>
+      </div>
+      <input type="hidden" name="mode" id="mode-input" value="explorer" />
+    </div>
+
+    <div class="control-group">
+      <label>Time Bin <span class="info-icon" data-help="bin-help">i</span></label>
+      <select name="bin">
+        {% for option in bin_options %}
+          <option value="{{ option }}" {% if option == bin_code %}selected{% endif %}>{{ option }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="control-group">
+      <label>Timestamp <span class="info-icon" data-help="time-help">i</span></label>
+      <select name="time">
+        {% for opt in time_options %}
+          <option value="{{ opt.value }}" {% if opt.value == selected_time %}selected{% endif %}>{{ opt.label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="control-group">
+      <label>Coverage <span class="info-icon" data-help="coverage-help">i</span></label>
+      <select name="coverage">
+        {% for option in coverage_options %}
+          <option value="{{ option }}" {% if option == coverage_threshold %}selected{% endif %}>{{ (option * 100) | round(0) | int }}%+</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="control-group">
+      <label>Interpolation <span class="info-icon" data-help="interp-help">i</span></label>
+      <select name="method">
+        {% for label, value in method_options %}
+          <option value="{{ value }}" {% if value == method %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="control-group compact">
+      <label>Grid</label>
+      <input type="number" name="grid" value="{{ grid_resolution }}" min="30" max="200" step="10" />
+    </div>
+
+    <div class="control-group compact">
+      <label>Link dist (km) <span class="info-icon" data-help="distance-help">i</span></label>
+      <select name="distance_km">
+        {% for opt in distance_options_km %}
+          <option value="{{ opt }}" {% if opt == selected_distance_km %}selected{% endif %}>{{ "%.2f"|format(opt) }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="control-group compact">
+      <label>Points <span class="info-icon" data-help="points-help">i</span></label>
+      <label style="display:flex; align-items:center; gap:6px; margin-top: 6px;">
+        <input type="checkbox" name="show_all" value="1" {% if show_all_points %}checked{% endif %} />
+        <span style="font-size:0.8rem; color:#dce3f2;">Show all</span>
+      </label>
+    </div>
+  </form>
+
+  <div class="map-stage">
+    <div id="workspace-map" class="workspace-map"></div>
+
+    <div class="overlay-panel" id="overlay-panel">
+      <h3 id="overlay-title">Explorer</h3>
+      <p class="overlay-time" id="overlay-time"></p>
+      <ul id="overlay-stats"></ul>
+    </div>
+
+    <div class="help-popover" id="help-popover" hidden></div>
+
+    {% if message %}
+      <div class="message floating-message">{{ message }}</div>
+    {% endif %}
+  </div>
+
+  <section class="workspace-weather-section" id="weather-section" style="padding: 1rem 1.5rem 1.5rem; background: rgba(10,14,22,0.92); color: #eef3ff; border-top: 1px solid rgba(255,255,255,0.08);">
+    <h3 style="margin: 0 0 0.75rem;">Weather Stations</h3>
+    <p id="weather-table-message" style="margin: 0 0 0.75rem; color: #c0c9dc;">Switch to Weather mode to load live NOAA station observations.</p>
+    <div style="overflow-x: auto;">
+      <table id="weather-table" style="width: 100%; border-collapse: collapse; display: none;">
+        <thead>
+          <tr>
+            <th>Station</th>
+            <th>Lat</th>
+            <th>Lon</th>
+            <th>Timestamp</th>
+            <th>Temp (°F)</th>
+            <th>Wind</th>
+            <th>Clouds</th>
+            <th>Pressure (hPa)</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody id="weather-table-body"></tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script>
+  (function() {
+    const payload = {{ workspace_payload|tojson }};
+    if (!payload || !payload.map_center) {
+      return;
+    }
+
+    const modeOrder = ['explorer', 'network', 'interpolation', 'weather', 'streetmaps'];
+    const modeInput = document.getElementById('mode-input');
+    let activeMode = modeOrder.includes(payload.active_mode) ? payload.active_mode : 'explorer';
+    modeInput.value = activeMode;
+
+    const uptime = payload.uptime_points || [];
+    const networkNodes = (payload.network_overlay && payload.network_overlay.nodes) || [];
+    const networkEdges = (payload.network_overlay && payload.network_overlay.edges) || [];
+    const interpolation = payload.interpolation_points || [];
+    const streetOverlay = payload.street_overlay || { available: false, lat: [], lon: [], loaded: false };
+    let streetSummary = payload.street_summary || ['Street network loads on demand. Click Streetmaps to fetch it.'];
+    let streetLoaded = Boolean(streetOverlay.loaded && streetOverlay.lat && streetOverlay.lat.length);
+    let streetLoading = false;
+    const weatherOverlay = payload.weather_overlay || { available: false, points: [], loaded: false };
+    let weatherSummary = payload.weather_summary || ['Live NOAA weather loads on demand. Click Weather to fetch it.'];
+    let weatherPoints = Array.isArray(weatherOverlay.points) ? weatherOverlay.points : [];
+    let weatherLoaded = Boolean(weatherOverlay.loaded && weatherPoints.length);
+    let weatherLoading = false;
+    const maxAqiRange = payload.max_aqi_range || { min: 0, max: 100 };
+    const maxAqiMin = Number.isFinite(maxAqiRange.min) ? maxAqiRange.min : 0;
+    const maxAqiMax = Number.isFinite(maxAqiRange.max) ? maxAqiRange.max : 100;
+    const maxAqiCmax = maxAqiMax > maxAqiMin ? maxAqiMax : (maxAqiMin + 1);
+
+    const explorerTrace = {
+      type: 'scattermapbox',
+      mode: 'markers',
+      lat: uptime.map(p => p.latitude),
+      lon: uptime.map(p => p.longitude),
+      text: uptime.map(p => `${p.sensor_name}<br>Status: ${p.is_observing ? 'Observing' : 'No observations'}<br>Obs count: ${p.observation_count ?? 0}<br>Max AQI (binned): ${p.max_aqi ?? 'n/a'}`),
+      hoverinfo: 'text',
+      marker: {
+        size: uptime.map(p => p.is_observing ? 11 : 8),
+        color: uptime.map(p => p.max_aqi ?? maxAqiMin),
+        colorscale: 'RdYlGn',
+        reversescale: false,
+        cmin: maxAqiMin,
+        cmax: maxAqiCmax,
+        showscale: true,
+        colorbar: { title: 'Max AQI', bgcolor: 'rgba(18,18,18,0.65)', tickfont: { color: '#e7e7e7' }, titlefont: { color: '#e7e7e7' } },
+        line: { width: 1, color: '#202020' },
+        opacity: uptime.map(p => p.opacity ?? (p.is_observing ? 0.95 : 0.22))
+      },
+      visible: true,
+      name: 'Explorer Sensors'
+    };
+
+    const edgeLat = [];
+    const edgeLon = [];
+    networkEdges.forEach(e => {
+      edgeLat.push(e.from.lat, e.to.lat, null);
+      edgeLon.push(e.from.lon, e.to.lon, null);
+    });
+
+    const networkEdgeTrace = {
+      type: 'scattermapbox',
+      mode: 'lines',
+      lat: edgeLat,
+      lon: edgeLon,
+      line: { width: 1.2, color: 'rgba(82,157,255,0.55)' },
+      hoverinfo: 'none',
+      visible: false,
+      name: 'Network Links'
+    };
+
+    const networkNodeTrace = {
+      type: 'scattermapbox',
+      mode: 'markers',
+      lat: networkNodes.map(p => p.latitude),
+      lon: networkNodes.map(p => p.longitude),
+      text: networkNodes.map(p => `${p.sensor_name}<br>Status: ${p.is_observing ? 'Observing' : 'No observations'}<br>AQI: ${p.aqi_value ?? 'n/a'}`),
+      hoverinfo: 'text',
+      marker: {
+        size: 9,
+        color: networkNodes.map(p => p.aqi_value ?? 0),
+        colorscale: 'Turbo',
+        cmin: 0,
+        cmax: 100,
+        showscale: true,
+        colorbar: { title: 'AQI', bgcolor: 'rgba(18,18,18,0.65)', tickfont: { color: '#e7e7e7' }, titlefont: { color: '#e7e7e7' } },
+        line: { width: 1, color: '#111' },
+        opacity: networkNodes.map(p => p.opacity ?? (p.is_observing ? 0.9 : 0.28))
+      },
+      visible: false,
+      name: 'Network Nodes'
+    };
+
+    const interpolationTrace = {
+      type: 'scattermapbox',
+      mode: 'markers',
+      lat: interpolation.map(p => p.latitude),
+      lon: interpolation.map(p => p.longitude),
+      text: interpolation.map(p => `Interpolated AQI: ${p.value.toFixed(2)}`),
+      hoverinfo: 'text',
+      marker: {
+        size: 8,
+        color: interpolation.map(p => p.value),
+        colorscale: 'RdYlGn',
+        reversescale: false,
+        showscale: true,
+        opacity: 0.45,
+        colorbar: { title: 'Interpolated AQI', bgcolor: 'rgba(18,18,18,0.65)', tickfont: { color: '#e7e7e7' }, titlefont: { color: '#e7e7e7' } }
+      },
+      visible: false,
+      name: 'Linear Interpolation Grid'
+    };
+
+    const streetTrace = {
+      type: 'scattermapbox',
+      mode: 'lines',
+      lat: streetOverlay.lat || [],
+      lon: streetOverlay.lon || [],
+      line: { width: 1.1, color: 'rgba(245, 245, 245, 0.65)' },
+      hoverinfo: 'none',
+      visible: false,
+      name: 'OSMnx Streets'
+    };
+
+    const weatherTrace = {
+      type: 'scattermapbox',
+      mode: 'markers',
+      lat: weatherPoints.map(p => p.latitude),
+      lon: weatherPoints.map(p => p.longitude),
+      text: weatherPoints.map(p => {
+        const wind = p.wind_speed_mph == null ? 'n/a' : `${p.wind_speed_mph.toFixed(1)} mph`;
+        const direction = p.wind_direction_cardinal || 'n/a';
+        const temp = p.temperature_f == null ? 'n/a' : `${p.temperature_f.toFixed(1)} °F`;
+        const pressure = p.pressure_hpa == null ? 'n/a' : `${p.pressure_hpa.toFixed(1)} hPa`;
+        const clouds = p.has_clouds ? 'Yes' : 'No';
+        return `${p.name}<br>Temp: ${temp}<br>Wind: ${wind} ${direction}<br>Clouds: ${clouds}<br>Pressure: ${pressure}<br>${p.text_description || ''}`;
+      }),
+      hoverinfo: 'text',
+      marker: {
+        size: 13,
+        color: weatherPoints.map(p => p.temperature_f ?? 0),
+        colorscale: 'Bluered',
+        showscale: true,
+        colorbar: { title: 'Temp °F', bgcolor: 'rgba(18,18,18,0.65)', tickfont: { color: '#e7e7e7' }, titlefont: { color: '#e7e7e7' } },
+        line: { width: 1, color: '#111' },
+        opacity: 0.9,
+      },
+      visible: false,
+      name: 'NOAA Weather'
+    };
+
+    const layout = {
+      mapbox: {
+        style: 'carto-darkmatter',
+        center: payload.map_center,
+        zoom: 9
+      },
+      paper_bgcolor: 'rgba(0,0,0,0)',
+      plot_bgcolor: 'rgba(0,0,0,0)',
+      margin: {l: 0, r: 0, t: 0, b: 0},
+      showlegend: false,
+      uirevision: 'persistent-map'
+    };
+
+    Plotly.newPlot('workspace-map', [explorerTrace, networkEdgeTrace, networkNodeTrace, interpolationTrace, weatherTrace, streetTrace], layout, {
+      displayModeBar: true,
+      responsive: true
+    });
+
+    const statsEl = document.getElementById('overlay-stats');
+    const titleEl = document.getElementById('overlay-title');
+    const timeEl = document.getElementById('overlay-time');
+
+    const statsByMode = {
+      explorer: payload.uptime_stats || [],
+      network: payload.network_summary || [],
+      interpolation: payload.interpolation_stats || ['Need at least three observing stations to interpolate.'],
+      weather: weatherSummary,
+      streetmaps: streetSummary
+    };
+
+    const titles = {
+      explorer: 'Explorer Overlay',
+      network: 'Network Overlay',
+      interpolation: 'Interpolation Overlay',
+      weather: 'Weather Overlay',
+      streetmaps: 'Streetmaps Overlay'
+    };
+
+    const weatherTable = document.getElementById('weather-table');
+    const weatherTableBody = document.getElementById('weather-table-body');
+    const weatherTableMessage = document.getElementById('weather-table-message');
+
+    function renderWeatherTable(points, message) {
+      weatherTableBody.innerHTML = '';
+      if (!points.length) {
+        weatherTable.style.display = 'none';
+        weatherTableMessage.textContent = message || 'No weather stations loaded.';
+        return;
+      }
+      weatherTable.style.display = 'table';
+      weatherTableMessage.textContent = message || `Loaded ${points.length} live NOAA stations.`;
+      points.forEach((point) => {
+        const row = document.createElement('tr');
+        const cells = [
+          point.name || point.station_id || 'Unknown',
+          point.latitude != null ? point.latitude.toFixed(4) : 'n/a',
+          point.longitude != null ? point.longitude.toFixed(4) : 'n/a',
+          point.timestamp || 'n/a',
+          point.temperature_f != null ? point.temperature_f.toFixed(1) : 'n/a',
+          point.wind_speed_mph != null ? `${point.wind_speed_mph.toFixed(1)} mph ${point.wind_direction_cardinal || ''}`.trim() : 'n/a',
+          point.has_clouds ? (point.cloud_amounts && point.cloud_amounts.length ? point.cloud_amounts.join(', ') : 'Yes') : 'No',
+          point.pressure_hpa != null ? point.pressure_hpa.toFixed(1) : 'n/a',
+          point.text_description || 'n/a'
+        ];
+        cells.forEach((value) => {
+          const cell = document.createElement('td');
+          cell.textContent = value;
+          row.appendChild(cell);
+        });
+        weatherTableBody.appendChild(row);
+      });
+    }
+    renderWeatherTable(weatherPoints, weatherLoaded ? undefined : 'Switch to Weather mode to load live NOAA station observations.');
+
+    function applyMode(mode) {
+      activeMode = mode;
+      modeInput.value = mode;
+
+      const modeVisibility = {
+        explorer: [true, false, false, false, false, false],
+        network: [false, true, true, false, false, false],
+        interpolation: [false, false, false, true, false, false],
+        weather: [true, false, false, false, true, false],
+        streetmaps: [true, false, false, false, false, true]
+      };
+      Plotly.restyle('workspace-map', { visible: modeVisibility[mode] });
+
+      document.querySelectorAll('.mode-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.mode === mode);
+      });
+
+      titleEl.textContent = titles[mode] || 'Overlay';
+      timeEl.textContent = `Time slice: ${payload.time}`;
+      statsEl.innerHTML = '';
+      (statsByMode[mode] || []).forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = item;
+        statsEl.appendChild(li);
+      });
+
+      if (mode === 'streetmaps' && !streetLoaded && !streetLoading) {
+        loadStreetOverlay();
+      }
+      if (mode === 'weather' && !weatherLoaded && !weatherLoading) {
+        loadWeatherOverlay();
+      }
+    }
+
+    function renderStreetStats(items) {
+      statsByMode.streetmaps = items;
+      if (activeMode !== 'streetmaps') {
+        return;
+      }
+      statsEl.innerHTML = '';
+      items.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = item;
+        statsEl.appendChild(li);
+      });
+    }
+
+    async function loadStreetOverlay() {
+      streetLoading = true;
+      renderStreetStats(['Loading Chicago street network…']);
+
+      try {
+        const response = await fetch('/workspace/street-overlay', { method: 'GET' });
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+        const lat = Array.isArray(data.lat) ? data.lat : [];
+        const lon = Array.isArray(data.lon) ? data.lon : [];
+
+        await Plotly.restyle('workspace-map', { lat: [lat], lon: [lon] }, [4]);
+
+        streetLoaded = Boolean(lat.length && lon.length && data.available);
+        streetSummary = Array.isArray(data.summary) && data.summary.length
+          ? data.summary
+          : [streetLoaded ? 'Street network loaded.' : 'Street map unavailable for current environment.'];
+
+        if (!streetLoaded && lat.length === 0 && lon.length === 0 && data.available) {
+          streetSummary = ['Street map returned no segments for the current place.'];
+        }
+
+        renderStreetStats(streetSummary);
+      } catch (err) {
+        renderStreetStats([`Street map failed to load: ${err.message}`]);
+      } finally {
+        streetLoading = false;
+      }
+    }
+
+    function renderWeatherStats(items) {
+      statsByMode.weather = items;
+      if (activeMode !== 'weather') {
+        return;
+      }
+      statsEl.innerHTML = '';
+      items.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = item;
+        statsEl.appendChild(li);
+      });
+    }
+
+    async function loadWeatherOverlay() {
+      weatherLoading = true;
+      renderWeatherStats(['Loading live NOAA weather…']);
+      renderWeatherTable([], 'Loading live NOAA station observations…');
+
+      try {
+        const response = await fetch('/workspace/weather-overlay', { method: 'GET' });
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+        weatherPoints = Array.isArray(data.points) ? data.points : [];
+        weatherLoaded = Boolean(data.available && weatherPoints.length);
+        weatherSummary = Array.isArray(data.summary) && data.summary.length
+          ? data.summary
+          : [weatherLoaded ? 'Weather overlay loaded.' : 'Weather overlay unavailable.'];
+
+        const traceText = weatherPoints.map(p => {
+          const wind = p.wind_speed_mph == null ? 'n/a' : `${p.wind_speed_mph.toFixed(1)} mph`;
+          const direction = p.wind_direction_cardinal || 'n/a';
+          const temp = p.temperature_f == null ? 'n/a' : `${p.temperature_f.toFixed(1)} °F`;
+          const pressure = p.pressure_hpa == null ? 'n/a' : `${p.pressure_hpa.toFixed(1)} hPa`;
+          const clouds = p.has_clouds ? 'Yes' : 'No';
+          return `${p.name}<br>Temp: ${temp}<br>Wind: ${wind} ${direction}<br>Clouds: ${clouds}<br>Pressure: ${pressure}<br>${p.text_description || ''}`;
+        });
+
+        await Plotly.restyle('workspace-map', {
+          lat: [weatherPoints.map(p => p.latitude)],
+          lon: [weatherPoints.map(p => p.longitude)],
+          text: [traceText],
+          'marker.color': [weatherPoints.map(p => p.temperature_f ?? 0)]
+        }, [4]);
+
+        renderWeatherStats(weatherSummary);
+        renderWeatherTable(weatherPoints);
+      } catch (err) {
+        const message = `Weather overlay failed to load: ${err.message}`;
+        renderWeatherStats([message]);
+        renderWeatherTable([], message);
+      } finally {
+        weatherLoading = false;
+      }
+    }
+
+    document.querySelectorAll('.mode-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyMode(btn.dataset.mode));
+    });
+
+    document.getElementById('prev-mode').addEventListener('click', () => {
+      const i = modeOrder.indexOf(activeMode);
+      applyMode(modeOrder[(i - 1 + modeOrder.length) % modeOrder.length]);
+    });
+
+    document.getElementById('next-mode').addEventListener('click', () => {
+      const i = modeOrder.indexOf(activeMode);
+      applyMode(modeOrder[(i + 1) % modeOrder.length]);
+    });
+
+    applyMode(activeMode);
+
+    const form = document.getElementById('workspace-form');
+    form.querySelectorAll('select,input[type="number"]').forEach(el => {
+      if (el.id !== 'mode-input') {
+        el.addEventListener('change', () => form.submit());
+      }
+    });
+    const showAllInput = form.querySelector('input[name="show_all"]');
+    if (showAllInput) {
+      showAllInput.addEventListener('change', () => form.submit());
+    }
+
+    const helpText = {
+      'bin-help': 'Aggregation interval for sensor observations before overlays are computed.',
+      'time-help': 'Select a valid time slice that passes the current coverage threshold.',
+      'coverage-help': 'Minimum share of sensors that must be observing for a time slice to appear.',
+      'interp-help': 'Linear keeps a fixed sample resolution across zoom; IDW/Kriging are available for comparison.',
+      'points-help': 'Default hides sensors with zero observations at this time. Turn on Show all to include them with transparency.',
+      'distance-help': 'Network links are shown only when station-to-station distance is less than or equal to this threshold.'
+    };
+
+    const popover = document.getElementById('help-popover');
+    document.querySelectorAll('.info-icon').forEach(icon => {
+      icon.addEventListener('click', (e) => {
+        const key = icon.dataset.help;
+        popover.textContent = helpText[key] || 'No details available.';
+        const rect = icon.getBoundingClientRect();
+        const parentRect = document.querySelector('.map-stage').getBoundingClientRect();
+        popover.style.left = `${rect.left - parentRect.left - 10}px`;
+        popover.style.top = `${rect.bottom - parentRect.top + 8}px`;
+        popover.hidden = false;
+        e.stopPropagation();
+      });
+    });
+
+    document.addEventListener('click', () => { popover.hidden = true; });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        popover.hidden = true;
+      }
+    });
+  })();
+</script>
+{% endblock %}

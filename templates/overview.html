@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2>Overview</h2>
+  <p>This site consolidates data ingestion, exploratory analysis, and modeling prototypes for Chicago's air-quality sensor network.</p>
+  <h3>Project Goals</h3>
+  <ul>
+    {% for goal in goals %}
+      <li>{{ goal }}</li>
+    {% endfor %}
+  </ul>
+  <h3>Workflow Highlights</h3>
+  <ul>
+    {% for item in highlights %}
+      <li>{{ item }}</li>
+    {% endfor %}
+  </ul>
+  <p>Use the navigation above to dive into exploratory stats, network views, and interpolation experiments. Future iterations will add STGNN forecasting and socio-economic overlays.</p>
+{% endblock %}

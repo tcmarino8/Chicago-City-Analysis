@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2>Data Explorer</h2>
+  <form method="get" class="control-row" id="data-explorer-form">
+    <label>Time Bin
+      <select name="bin">
+        {% for option in bin_options %}
+          <option value="{{ option }}" {% if option == bin_code %}selected{% endif %}>{{ option }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>Timestamp
+      <select name="time">
+        {% for opt in time_options %}
+          <option value="{{ opt.value }}" {% if opt.value == selected_time %}selected{% endif %}>{{ opt.label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>Min Coverage
+      <select name="coverage">
+        {% for option in coverage_options %}
+          <option value="{{ option }}" {% if option == coverage_threshold %}selected{% endif %}>>= {{ (option * 100) | round(0) }}%</option>
+        {% endfor %}
+      </select>
+    </label>
+    <button type="submit" style="display:none">Apply</button>
+    <input type="hidden" name="center_lat" id="center-lat" value="{{ map_center.lat }}" />
+    <input type="hidden" name="center_lon" id="center-lon" value="{{ map_center.lon }}" />
+    <input type="hidden" name="zoom" id="map-zoom" value="{{ zoom }}" />
+  </form>
+  {% if message %}
+    <div class="message">{{ message }}</div>
+  {% endif %}
+  {% if plot_html %}
+    <div class="plot">{{ plot_html|safe }}</div>
+  {% endif %}
+  {% if stats_list %}
+    <h3>Snapshot Stats</h3>
+    <ul>
+      {% for item in stats_list %}
+        <li>{{ item }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+  <script>
+    (function() {
+      const form = document.getElementById('data-explorer-form');
+      const inputs = form.querySelectorAll('select');
+      inputs.forEach((el) => {
+        el.addEventListener('change', () => form.submit());
+      });
+      const updateHidden = (lat, lon, zoom) => {
+        const latInput = document.getElementById('center-lat');
+        const lonInput = document.getElementById('center-lon');
+        const zoomInput = document.getElementById('map-zoom');
+        if (latInput && !Number.isNaN(lat)) latInput.value = lat;
+        if (lonInput && !Number.isNaN(lon)) lonInput.value = lon;
+        if (zoomInput && !Number.isNaN(zoom)) zoomInput.value = zoom;
+      };
+      const attachGraphListeners = () => {
+        const graph = document.querySelector('.plotly-graph-div');
+        if (!graph || !graph.on) {
+          return;
+        }
+        graph.on('plotly_relayout', (eventData) => {
+          let centerLat = null;
+          let centerLon = null;
+          if (eventData['mapbox.center']) {
+            centerLat = eventData['mapbox.center'].lat;
+            centerLon = eventData['mapbox.center'].lon;
+          } else if (eventData['mapbox.center.lat']) {
+            centerLat = eventData['mapbox.center.lat'];
+            centerLon = eventData['mapbox.center.lon'];
+          }
+          if (centerLat !== null && centerLon !== null) {
+            updateHidden(centerLat, centerLon, eventData['mapbox.zoom'] ?? graph.layout.mapbox.zoom);
+          }
+          if (eventData['mapbox.zoom']) {
+            const layoutCenter = graph.layout && graph.layout.mapbox ? graph.layout.mapbox.center : null;
+            const lat = layoutCenter ? layoutCenter.lat : centerLat;
+            const lon = layoutCenter ? layoutCenter.lon : centerLon;
+            updateHidden(lat, lon, eventData['mapbox.zoom']);
+          }
+        });
+      };
+      attachGraphListeners();
+    })();
+  </script>
+{% endblock %}
