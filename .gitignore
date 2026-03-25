@@ -4,3 +4,4 @@
 .vercelignore
 /SensorsNetwork_Venv
 %AppData%
+/.env

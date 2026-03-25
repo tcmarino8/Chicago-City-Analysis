@@ -15,7 +15,7 @@ try:
 except Exception:  # pragma: no cover - optional dependency
     ox = None
 
-from core import config, geo_utils, weather_fetcher
+from core import config, geo_utils, open_data_fetcher, weather_fetcher
 import data_intake
 import interpolation_models
 import network_analysis
@@ -35,6 +35,21 @@ WORKSPACE_BBOX = geo_utils.BoundingBox.from_points(
 METHOD_OPTIONS = [("IDW", "idw"), ("Kriging", "kriging")]
 WORKSPACE_METHOD_OPTIONS = [("Linear", "linear"), ("IDW", "idw"), ("Kriging", "kriging")]
 STREET_MAP_PLACE_NAME = "Chicago, Illinois, USA"
+ENERGY_METRIC_OPTIONS = [
+    ("Energy Star Score", "energy_star_score"),
+    ("Chicago Energy Rating", "chicago_energy_rating"),
+]
+SCHOOL_METRIC_OPTIONS = [
+    ("School Type", "school_type"),
+    ("Graduation Rate Mean", "graduation_rate_mean"),
+]
+CENSUS_METRIC_OPTIONS = [
+    ("Median Household Income", "median_household_income"),
+    ("White Population", "white_population"),
+    ("Percent Black Pop", "black_share"),
+    ("Percent Asian Pop", "asian_share"),
+]
+CENSUS_YEAR_OPTIONS = [2020, 2021, 2022, 2023]
 
 
 def _safe_float(value: str | None, default: float) -> float:
@@ -417,6 +432,31 @@ def map_workspace():
     valid_methods = {value for _, value in WORKSPACE_METHOD_OPTIONS}
     if method not in valid_methods:
         method = "linear"
+    energy_metric = request.args.get("energy_metric", "energy_star_score")
+    valid_energy_metrics = {value for _, value in ENERGY_METRIC_OPTIONS}
+    if energy_metric not in valid_energy_metrics:
+        energy_metric = "energy_star_score"
+
+    school_metric = request.args.get("school_metric", "school_type")
+    valid_school_metrics = {value for _, value in SCHOOL_METRIC_OPTIONS}
+    if school_metric not in valid_school_metrics:
+        school_metric = "school_type"
+
+    school_type = request.args.get("school_type", "all")
+    school_year = request.args.get("school_year", "all")
+
+    census_metric = request.args.get("census_metric", "black_share")
+    valid_census_metrics = {value for _, value in CENSUS_METRIC_OPTIONS}
+    if census_metric not in valid_census_metrics:
+        census_metric = "black_share"
+    census_heatmap = request.args.get("census_heatmap", "0") in {"1", "true", "True", "on"}
+
+    try:
+        census_year = int(request.args.get("census_year", str(open_data_fetcher.DEFAULT_CENSUS_YEAR)))
+    except ValueError:
+        census_year = int(open_data_fetcher.DEFAULT_CENSUS_YEAR)
+    if census_year not in CENSUS_YEAR_OPTIONS:
+        census_year = int(open_data_fetcher.DEFAULT_CENSUS_YEAR)
     show_all_points = request.args.get("show_all", "0") in {"1", "true", "True", "on"}
     distance_limit_km = _safe_float(request.args.get("distance_km"), np.nan)
 
@@ -571,6 +611,29 @@ def map_workspace():
             "loaded": False,
         },
         "weather_summary": ["Live NOAA weather loads on demand. Click Weather to fetch it."],
+        "energy_overlay": {
+            "available": False,
+            "points": [],
+            "loaded": False,
+            "metric": energy_metric,
+        },
+        "energy_summary": ["Chicago energy metrics load on demand. Click Energy to fetch it."],
+        "schools_overlay": {
+            "available": False,
+            "points": [],
+            "loaded": False,
+            "metric": school_metric,
+        },
+        "schools_summary": ["Chicago school profile data loads on demand. Click Schools to fetch it."],
+        "census_overlay": {
+            "available": False,
+            "points": [],
+            "loaded": False,
+            "metric": census_metric,
+            "census_year": census_year,
+        },
+        "census_heatmap_enabled": census_heatmap,
+        "census_summary": ["Census tract map loads on demand. Toggle heatmap for density view."],
         "max_aqi_range": {
             "min": float(np.nanmin(sensor_max_aqi.values)) if len(sensor_max_aqi) else 0.0,
             "max": float(np.nanmax(sensor_max_aqi.values)) if len(sensor_max_aqi) else 1.0,
@@ -586,6 +649,17 @@ def map_workspace():
         coverage_options=config.COVERAGE_THRESHOLDS,
         method=method,
         method_options=WORKSPACE_METHOD_OPTIONS,
+        energy_metric=energy_metric,
+        energy_metric_options=ENERGY_METRIC_OPTIONS,
+        school_metric=school_metric,
+        school_metric_options=SCHOOL_METRIC_OPTIONS,
+        school_type=school_type,
+        school_year=school_year,
+        census_metric=census_metric,
+        census_metric_options=CENSUS_METRIC_OPTIONS,
+        census_year=census_year,
+        census_year_options=CENSUS_YEAR_OPTIONS,
+        census_heatmap=census_heatmap,
         show_all_points=show_all_points,
         distance_options_km=distance_options_km,
         selected_distance_km=selected_distance_km,
@@ -614,6 +688,37 @@ def workspace_street_overlay():
 @app.route("/workspace/weather-overlay")
 def workspace_weather_overlay():
     overlay = weather_fetcher.fetch_workspace_weather(WORKSPACE_BBOX, MAP_CENTER)
+    return jsonify(overlay)
+
+
+@app.route("/workspace/energy-overlay")
+def workspace_energy_overlay():
+    metric = request.args.get("metric", "energy_star_score")
+    overlay = open_data_fetcher.fetch_energy_overlay(metric=metric)
+    return jsonify(overlay)
+
+
+@app.route("/workspace/schools-overlay")
+def workspace_schools_overlay():
+    metric = request.args.get("metric", "school_type")
+    school_type = request.args.get("school_type", "all")
+    school_year = request.args.get("school_year", "all")
+    overlay = open_data_fetcher.fetch_schools_overlay(
+        metric=metric,
+        school_type=school_type,
+        school_year=school_year,
+    )
+    return jsonify(overlay)
+
+
+@app.route("/workspace/census-overlay")
+def workspace_census_overlay():
+    metric = request.args.get("metric", "black_share")
+    try:
+        census_year = int(request.args.get("year", str(open_data_fetcher.DEFAULT_CENSUS_YEAR)))
+    except ValueError:
+        census_year = int(open_data_fetcher.DEFAULT_CENSUS_YEAR)
+    overlay = open_data_fetcher.fetch_census_overlay(metric=metric, census_year=census_year)
     return jsonify(overlay)
 
 
