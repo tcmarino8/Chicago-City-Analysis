@@ -2,24 +2,23 @@
 {% block content %}
 <div class="workspace-shell">
   <form method="get" class="workspace-controls" id="workspace-form">
-    <div class="control-group" data-modes="all">
+    <div class="control-group">
       <label>Mode</label>
       <div class="mode-switch">
         <button type="button" id="prev-mode" class="arrow-btn" aria-label="Previous mode">◀</button>
-        <button type="button" class="mode-btn" data-mode="explorer">AQI</button>
+        <button type="button" class="mode-btn" data-mode="explorer">Explorer</button>
+        <button type="button" class="mode-btn" data-mode="network">Network</button>
         <button type="button" class="mode-btn" data-mode="interpolation">Interpolation</button>
-        <button type="button" class="mode-btn" data-mode="streetmaps">Street Network</button>
-        <button type="button" class="mode-btn" data-mode="network">Network Studies</button>
         <button type="button" class="mode-btn" data-mode="weather">Weather</button>
+        <button type="button" class="mode-btn" data-mode="streetmaps">Streetmaps</button>
         <button type="button" class="mode-btn" data-mode="energy">Energy</button>
-        <button type="button" class="mode-btn" data-mode="schools">Schools</button>
         <button type="button" class="mode-btn" data-mode="census">Census</button>
         <button type="button" id="next-mode" class="arrow-btn" aria-label="Next mode">▶</button>
       </div>
       <input type="hidden" name="mode" id="mode-input" value="explorer" />
     </div>
 
-    <div class="control-group" data-modes="explorer,network,interpolation,weather,streetmaps">
+    <div class="control-group">
       <label>Time Bin <span class="info-icon" data-help="bin-help">i</span></label>
       <select name="bin">
         {% for option in bin_options %}
@@ -28,7 +27,7 @@
       </select>
     </div>
 
-    <div class="control-group" data-modes="explorer,network,interpolation,weather,streetmaps">
+    <div class="control-group">
       <label>Timestamp <span class="info-icon" data-help="time-help">i</span></label>
       <select name="time">
         {% for opt in time_options %}
@@ -37,7 +36,7 @@
       </select>
     </div>
 
-    <div class="control-group" data-modes="explorer,network,interpolation,weather,streetmaps">
+    <div class="control-group">
       <label>Coverage <span class="info-icon" data-help="coverage-help">i</span></label>
       <select name="coverage">
         {% for option in coverage_options %}
@@ -46,7 +45,7 @@
       </select>
     </div>
 
-    <div class="control-group" data-modes="interpolation">
+    <div class="control-group">
       <label>Interpolation <span class="info-icon" data-help="interp-help">i</span></label>
       <select name="method">
         {% for label, value in method_options %}
@@ -55,12 +54,12 @@
       </select>
     </div>
 
-    <div class="control-group compact" data-modes="interpolation">
+    <div class="control-group compact">
       <label>Grid</label>
       <input type="number" name="grid" value="{{ grid_resolution }}" min="30" max="200" step="10" />
     </div>
 
-    <div class="control-group compact" data-modes="network">
+    <div class="control-group compact">
       <label>Link dist (km) <span class="info-icon" data-help="distance-help">i</span></label>
       <select name="distance_km">
         {% for opt in distance_options_km %}
@@ -69,71 +68,35 @@
       </select>
     </div>
 
-    <div class="control-group compact" data-modes="explorer,network,weather,streetmaps">
+    <div class="control-group compact">
       <label>Points <span class="info-icon" data-help="points-help">i</span></label>
       <label style="display:flex; align-items:center; gap:6px; margin-top: 6px;">
         <input type="checkbox" name="show_all" value="1" {% if show_all_points %}checked{% endif %} />
         <span style="font-size:0.8rem; color:#dce3f2;">Show all</span>
       </label>
     </div>
-
-    <div class="control-group" data-modes="energy">
-      <label>Energy Metrics <span class="info-icon" data-help="energy-help">i</span></label>
-      <select name="energy_metric">
-        {% for label, value in energy_metric_options %}
-          <option value="{{ value }}" {% if value == energy_metric %}selected{% endif %}>{{ label }}</option>
-        {% endfor %}
-      </select>
-    </div>
-
-    <div class="control-group" data-modes="schools">
-      <label>School Metric <span class="info-icon" data-help="schools-help">i</span></label>
-      <select name="school_metric">
-        {% for label, value in school_metric_options %}
-          <option value="{{ value }}" {% if value == school_metric %}selected{% endif %}>{{ label }}</option>
-        {% endfor %}
-      </select>
-    </div>
-
-    <div class="control-group" data-modes="schools">
-      <label>School Type</label>
-      <input type="text" name="school_type" value="{{ school_type }}" placeholder="all" />
-    </div>
-
-    <div class="control-group" data-modes="schools">
-      <label>School Year</label>
-      <input type="text" name="school_year" value="{{ school_year }}" placeholder="all" />
-    </div>
-
-    <div class="control-group" data-modes="census">
-      <label>Census Metric <span class="info-icon" data-help="census-help">i</span></label>
-      <select name="census_metric">
-        {% for label, value in census_metric_options %}
-          <option value="{{ value }}" {% if value == census_metric %}selected{% endif %}>{{ label }}</option>
-        {% endfor %}
-      </select>
-    </div>
-
-    <div class="control-group compact" data-modes="census">
-      <label>Census Year</label>
-      <select name="census_year">
-        {% for option in census_year_options %}
-          <option value="{{ option }}" {% if option == census_year %}selected{% endif %}>{{ option }}</option>
-        {% endfor %}
-      </select>
-    </div>
-
-    <div class="control-group compact" data-modes="census">
-      <label>Heatmap View</label>
-      <label style="display:flex; align-items:center; gap:6px; margin-top: 6px;">
-        <input type="checkbox" name="census_heatmap" value="1" {% if census_heatmap %}checked{% endif %} />
-        <span style="font-size:0.8rem; color:#dce3f2;">Overlay density heatmap</span>
-      </label>
-    </div>
   </form>
 
   <div class="map-stage">
     <div id="workspace-map" class="workspace-map"></div>
+
+    <div class="mode-side-panel" id="mode-side-panel" hidden>
+      <div class="mode-side-panel__section" id="energy-controls" hidden>
+        <h4>Energy Controls</h4>
+        <label for="energy-dataset-select">Dataset</label>
+        <select id="energy-dataset-select"></select>
+        <label for="energy-metric-select">Metric</label>
+        <select id="energy-metric-select"></select>
+        <button type="button" id="energy-load-btn">Load Energy Layer</button>
+      </div>
+
+      <div class="mode-side-panel__section" id="census-controls" hidden>
+        <h4>Census Controls</h4>
+        <label for="census-metric-select">Metric</label>
+        <select id="census-metric-select"></select>
+        <button type="button" id="census-load-btn">Load Census Layer</button>
+      </div>
+    </div>
 
     <div class="overlay-panel" id="overlay-panel">
       <h3 id="overlay-title">Explorer</h3>
@@ -180,7 +143,7 @@
       return;
     }
 
-    const modeOrder = ['explorer', 'interpolation', 'streetmaps', 'network', 'weather', 'energy', 'schools', 'census'];
+    const modeOrder = ['explorer', 'network', 'interpolation', 'weather', 'streetmaps', 'energy', 'census'];
     const modeInput = document.getElementById('mode-input');
     let activeMode = modeOrder.includes(payload.active_mode) ? payload.active_mode : 'explorer';
     modeInput.value = activeMode;
@@ -198,22 +161,21 @@
     let weatherPoints = Array.isArray(weatherOverlay.points) ? weatherOverlay.points : [];
     let weatherLoaded = Boolean(weatherOverlay.loaded && weatherPoints.length);
     let weatherLoading = false;
-    const energyOverlay = payload.energy_overlay || { available: false, points: [], loaded: false, metric: 'energy_star_score' };
-    let energySummary = payload.energy_summary || ['Chicago energy metrics load on demand. Click Energy to fetch it.'];
+    const energyOverlay = payload.energy_overlay || { available: false, points: [], loaded: false };
+    let energySummary = payload.energy_summary || ['Energy benchmarking points load on demand. Click Energy to fetch it.'];
     let energyPoints = Array.isArray(energyOverlay.points) ? energyOverlay.points : [];
     let energyLoaded = Boolean(energyOverlay.loaded && energyPoints.length);
     let energyLoading = false;
-    const schoolsOverlay = payload.schools_overlay || { available: false, points: [], loaded: false, metric: 'school_type' };
-    let schoolsSummary = payload.schools_summary || ['Chicago school profile data loads on demand. Click Schools to fetch it.'];
-    let schoolsPoints = Array.isArray(schoolsOverlay.points) ? schoolsOverlay.points : [];
-    let schoolsLoaded = Boolean(schoolsOverlay.loaded && schoolsPoints.length);
-    let schoolsLoading = false;
-    const censusOverlay = payload.census_overlay || { available: false, points: [], loaded: false, metric: 'black_share', census_year: 2022 };
-    let censusSummary = payload.census_summary || ['Census tract map loads on demand. Toggle heatmap for density view.'];
-    let censusPoints = Array.isArray(censusOverlay.points) ? censusOverlay.points : [];
-    let censusLoaded = Boolean(censusOverlay.loaded && censusPoints.length);
+    const energyConfig = payload.energy_config || { dataset_options: [], metric_options: [], selected_dataset_id: '', selected_metric: '' };
+    let selectedEnergyDataset = energyConfig.selected_dataset_id || '';
+    let selectedEnergyMetric = energyConfig.selected_metric || '';
+
+    const censusOverlay = payload.census_overlay || { available: false, geojson: { type: 'FeatureCollection', features: [] }, locations: [], z: [], hover: [], loaded: false };
+    let censusSummary = payload.census_summary || ['Census tract choropleth loads on demand. Click Census to fetch it.'];
+    let censusLoaded = Boolean(censusOverlay.loaded && Array.isArray(censusOverlay.locations) && censusOverlay.locations.length);
     let censusLoading = false;
-    let censusHeatmapEnabled = Boolean(payload.census_heatmap_enabled);
+    const censusConfig = payload.census_config || { metric_options: [], selected_metric: 'median_income' };
+    let selectedCensusMetric = censusConfig.selected_metric || 'median_income';
     const maxAqiRange = payload.max_aqi_range || { min: 0, max: 100 };
     const maxAqiMin = Number.isFinite(maxAqiRange.min) ? maxAqiRange.min : 0;
     const maxAqiMax = Number.isFinite(maxAqiRange.max) ? maxAqiRange.max : 100;
@@ -313,6 +275,43 @@
       name: 'OSMnx Streets'
     };
 
+    const energyTrace = {
+      type: 'scattermapbox',
+      mode: 'markers',
+      lat: energyPoints.map(p => p.latitude),
+      lon: energyPoints.map(p => p.longitude),
+      text: energyPoints.map(p => `Property type: ${p.property_type || 'n/a'}<br>Community area: ${p.community_area || 'n/a'}<br>Value: ${p.value != null ? Number(p.value).toFixed(2) : 'n/a'}`),
+      hoverinfo: 'text',
+      marker: {
+        size: 8,
+        color: energyPoints.map(p => p.value ?? 0),
+        colorscale: 'Turbo',
+        showscale: true,
+        colorbar: { title: 'Energy Metric', bgcolor: 'rgba(18,18,18,0.65)', tickfont: { color: '#e7e7e7' }, titlefont: { color: '#e7e7e7' } },
+        line: { width: 1, color: '#111' },
+        opacity: 0.68,
+      },
+      visible: false,
+      name: 'Energy Benchmarking'
+    };
+
+    const censusTrace = {
+      type: 'choroplethmapbox',
+      geojson: censusOverlay.geojson || { type: 'FeatureCollection', features: [] },
+      locations: censusOverlay.locations || [],
+      z: censusOverlay.z || [],
+      featureidkey: 'properties.GEOID',
+      colorscale: 'YlOrRd',
+      marker: { line: { width: 0.2, color: 'rgba(20,20,20,0.35)' } },
+      text: censusOverlay.hover || [],
+      hovertemplate: '%{text}<extra></extra>',
+      showscale: true,
+      colorbar: { title: 'Census Metric', bgcolor: 'rgba(18,18,18,0.65)', tickfont: { color: '#e7e7e7' }, titlefont: { color: '#e7e7e7' } },
+      visible: false,
+      name: 'Census Tracts',
+      zmin: 0
+    };
+
     const weatherTrace = {
       type: 'scattermapbox',
       mode: 'markers',
@@ -340,76 +339,6 @@
       name: 'NOAA Weather'
     };
 
-    const energyTrace = {
-      type: 'scattermapbox',
-      mode: 'markers',
-      lat: energyPoints.map(p => p.latitude),
-      lon: energyPoints.map(p => p.longitude),
-      text: energyPoints.map(p => `${p.name}<br>${p.metric}: ${p.value.toFixed(2)}<br>${p.address || ''}`),
-      hoverinfo: 'text',
-      marker: {
-        size: 10,
-        color: energyPoints.map(p => p.value),
-        colorscale: 'YlOrRd',
-        showscale: true,
-        colorbar: { title: 'Energy Metric', bgcolor: 'rgba(18,18,18,0.65)', tickfont: { color: '#e7e7e7' }, titlefont: { color: '#e7e7e7' } },
-        opacity: 0.9,
-      },
-      visible: false,
-      name: 'Energy Data'
-    };
-
-    const schoolsTrace = {
-      type: 'scattermapbox',
-      mode: 'markers',
-      lat: schoolsPoints.map(p => p.latitude),
-      lon: schoolsPoints.map(p => p.longitude),
-      text: schoolsPoints.map(p => `${p.name}<br>Type: ${p.school_type || 'n/a'}<br>Year: ${p.school_year || 'n/a'}<br>${p.metric}: ${p.value.toFixed(2)}`),
-      hoverinfo: 'text',
-      marker: {
-        size: 9,
-        color: schoolsPoints.map(p => p.value),
-        colorscale: 'Viridis',
-        showscale: true,
-        colorbar: { title: 'School Metric', bgcolor: 'rgba(18,18,18,0.65)', tickfont: { color: '#e7e7e7' }, titlefont: { color: '#e7e7e7' } },
-        opacity: 0.88,
-      },
-      visible: false,
-      name: 'Schools Data'
-    };
-
-    const censusPointsTrace = {
-      type: 'scattermapbox',
-      mode: 'markers',
-      lat: censusPoints.map(p => p.latitude),
-      lon: censusPoints.map(p => p.longitude),
-      text: censusPoints.map(p => `Tract ${p.tract}<br>${p.metric}: ${Number(p.value).toFixed(2)}<br>Population: ${p.population ?? 'n/a'}`),
-      hoverinfo: 'text',
-      marker: {
-        size: 8,
-        color: censusPoints.map(p => p.value),
-        colorscale: 'YlOrBr',
-        showscale: true,
-        colorbar: { title: 'Census Metric', bgcolor: 'rgba(18,18,18,0.65)', tickfont: { color: '#e7e7e7' }, titlefont: { color: '#e7e7e7' } },
-        opacity: 0.85,
-      },
-      visible: false,
-      name: 'Census Tracts'
-    };
-
-    const censusHeatmapTrace = {
-      type: 'densitymapbox',
-      lat: censusPoints.map(p => p.latitude),
-      lon: censusPoints.map(p => p.longitude),
-      z: censusPoints.map(p => p.value),
-      radius: 16,
-      colorscale: 'YlOrBr',
-      showscale: true,
-      colorbar: { title: 'Census %', bgcolor: 'rgba(18,18,18,0.65)', tickfont: { color: '#e7e7e7' }, titlefont: { color: '#e7e7e7' } },
-      visible: false,
-      name: 'Census Heatmap'
-    };
-
     const layout = {
       mapbox: {
         style: 'carto-darkmatter',
@@ -423,33 +352,7 @@
       uirevision: 'persistent-map'
     };
 
-    const traces = [
-      explorerTrace,
-      networkEdgeTrace,
-      networkNodeTrace,
-      interpolationTrace,
-      weatherTrace,
-      streetTrace,
-      energyTrace,
-      schoolsTrace,
-      censusPointsTrace,
-      censusHeatmapTrace,
-    ];
-
-    const TRACE_INDEX = {
-      explorer: 0,
-      networkEdges: 1,
-      networkNodes: 2,
-      interpolation: 3,
-      weather: 4,
-      street: 5,
-      energy: 6,
-      schools: 7,
-      censusPoints: 8,
-      censusHeatmap: 9,
-    };
-
-    Plotly.newPlot('workspace-map', traces, layout, {
+    Plotly.newPlot('workspace-map', [explorerTrace, networkEdgeTrace, networkNodeTrace, interpolationTrace, weatherTrace, streetTrace, energyTrace, censusTrace], layout, {
       displayModeBar: true,
       responsive: true
     });
@@ -457,6 +360,7 @@
     const statsEl = document.getElementById('overlay-stats');
     const titleEl = document.getElementById('overlay-title');
     const timeEl = document.getElementById('overlay-time');
+    const overlayPanel = document.getElementById('overlay-panel');
 
     const statsByMode = {
       explorer: payload.uptime_stats || [],
@@ -465,7 +369,6 @@
       weather: weatherSummary,
       streetmaps: streetSummary,
       energy: energySummary,
-      schools: schoolsSummary,
       census: censusSummary,
     };
 
@@ -476,17 +379,41 @@
       weather: 'Weather Overlay',
       streetmaps: 'Streetmaps Overlay',
       energy: 'Energy Overlay',
-      schools: 'Schools Overlay',
-      census: 'Census Overlay',
+      census: 'Census Overlay'
     };
 
-    function updateControlVisibility(mode) {
-      document.querySelectorAll('.workspace-controls .control-group').forEach(group => {
-        const modes = (group.dataset.modes || 'all').split(',').map(s => s.trim());
-        const show = modes.includes('all') || modes.includes(mode);
-        group.style.display = show ? '' : 'none';
+    const modeSidePanel = document.getElementById('mode-side-panel');
+    const energyControls = document.getElementById('energy-controls');
+    const censusControls = document.getElementById('census-controls');
+    const energyDatasetSelect = document.getElementById('energy-dataset-select');
+    const energyMetricSelect = document.getElementById('energy-metric-select');
+    const censusMetricSelect = document.getElementById('census-metric-select');
+    const energyLoadButton = document.getElementById('energy-load-btn');
+    const censusLoadButton = document.getElementById('census-load-btn');
+
+    function fillSelect(selectEl, options, selectedValue) {
+      selectEl.innerHTML = '';
+      (options || []).forEach((opt) => {
+        const option = document.createElement('option');
+        option.value = opt.value;
+        option.textContent = opt.label;
+        if (String(opt.value) === String(selectedValue)) {
+          option.selected = true;
+        }
+        selectEl.appendChild(option);
       });
+      if (!selectEl.value && selectEl.options.length) {
+        selectEl.value = selectEl.options[0].value;
+      }
     }
+
+    fillSelect(energyDatasetSelect, energyConfig.dataset_options || [], selectedEnergyDataset);
+    fillSelect(energyMetricSelect, energyConfig.metric_options || [], selectedEnergyMetric);
+    fillSelect(censusMetricSelect, censusConfig.metric_options || [], selectedCensusMetric);
+
+    selectedEnergyDataset = energyDatasetSelect.value || selectedEnergyDataset;
+    selectedEnergyMetric = energyMetricSelect.value || selectedEnergyMetric;
+    selectedCensusMetric = censusMetricSelect.value || selectedCensusMetric;
 
     const weatherTable = document.getElementById('weather-table');
     const weatherTableBody = document.getElementById('weather-table-body');
@@ -529,20 +456,15 @@
       modeInput.value = mode;
 
       const modeVisibility = {
-        explorer: [true, false, false, false, false, false, false, false, false, false],
-        network: [false, true, true, false, false, false, false, false, false, false],
-        interpolation: [false, false, false, true, false, false, false, false, false, false],
-        weather: [true, false, false, false, true, false, false, false, false, false],
-        streetmaps: [true, false, false, false, false, true, false, false, false, false],
-        energy: [false, false, false, false, false, false, true, false, false, false],
-        schools: [false, false, false, false, false, false, false, true, false, false],
-        census: [false, false, false, false, false, false, false, false, true, false],
+        explorer: [true, false, false, false, false, false, false, false],
+        network: [false, true, true, false, false, false, false, false],
+        interpolation: [false, false, false, true, false, false, false, false],
+        weather: [true, false, false, false, true, false, false, false],
+        streetmaps: [true, false, false, false, false, true, false, false],
+        energy: [false, false, false, false, false, false, true, false],
+        census: [false, false, false, false, false, false, false, true],
       };
       Plotly.restyle('workspace-map', { visible: modeVisibility[mode] });
-      if (mode === 'census') {
-        updateCensusVisibility();
-      }
-      updateControlVisibility(mode);
 
       document.querySelectorAll('.mode-btn').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.mode === mode);
@@ -566,22 +488,15 @@
       if (mode === 'energy' && !energyLoaded && !energyLoading) {
         loadEnergyOverlay();
       }
-      if (mode === 'schools' && !schoolsLoaded && !schoolsLoading) {
-        loadSchoolsOverlay();
-      }
       if (mode === 'census' && !censusLoaded && !censusLoading) {
         loadCensusOverlay();
       }
-    }
 
-    function updateCensusVisibility() {
-      const censusHeatmapInput = document.querySelector('input[name="census_heatmap"]');
-      censusHeatmapEnabled = Boolean(censusHeatmapInput && censusHeatmapInput.checked);
-      if (activeMode !== 'census') {
-        return;
-      }
-      Plotly.restyle('workspace-map', { visible: [true] }, [TRACE_INDEX.censusPoints]);
-      Plotly.restyle('workspace-map', { visible: [censusHeatmapEnabled] }, [TRACE_INDEX.censusHeatmap]);
+      const shouldShowSidePanel = mode === 'energy' || mode === 'census';
+      modeSidePanel.hidden = !shouldShowSidePanel;
+      energyControls.hidden = mode !== 'energy';
+      censusControls.hidden = mode !== 'census';
+      overlayPanel.style.top = shouldShowSidePanel ? '236px' : '86px';
     }
 
     function renderStreetStats(items) {
@@ -611,7 +526,7 @@
         const lat = Array.isArray(data.lat) ? data.lat : [];
         const lon = Array.isArray(data.lon) ? data.lon : [];
 
-        await Plotly.restyle('workspace-map', { lat: [lat], lon: [lon] }, [TRACE_INDEX.street]);
+        await Plotly.restyle('workspace-map', { lat: [lat], lon: [lon] }, [5]);
 
         streetLoaded = Boolean(lat.length && lon.length && data.available);
         streetSummary = Array.isArray(data.summary) && data.summary.length
@@ -675,7 +590,7 @@
           lon: [weatherPoints.map(p => p.longitude)],
           text: [traceText],
           'marker.color': [weatherPoints.map(p => p.temperature_f ?? 0)]
-        }, [TRACE_INDEX.weather]);
+        }, [4]);
 
         renderWeatherStats(weatherSummary);
         renderWeatherTable(weatherPoints);
@@ -701,16 +616,30 @@
       });
     }
 
-    async function loadEnergyOverlay() {
+    async function loadEnergyOverlay(forceReload = false) {
+      if (energyLoading) {
+        return;
+      }
+      if (energyLoaded && !forceReload) {
+        return;
+      }
+
       energyLoading = true;
-      renderEnergyStats(['Loading Chicago energy data…']);
-      const energyMetric = document.querySelector('select[name="energy_metric"]')?.value || 'energy_star_score';
+      renderEnergyStats(['Loading energy benchmarking records…']);
 
       try {
-        const response = await fetch(`/workspace/energy-overlay?metric=${encodeURIComponent(energyMetric)}`, { method: 'GET' });
+        selectedEnergyDataset = energyDatasetSelect.value || selectedEnergyDataset;
+        selectedEnergyMetric = energyMetricSelect.value || selectedEnergyMetric;
+
+        const params = new URLSearchParams({
+          dataset_id: selectedEnergyDataset,
+          metric: selectedEnergyMetric,
+        });
+        const response = await fetch(`/workspace/energy-overlay?${params.toString()}`, { method: 'GET' });
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}`);
         }
+
         const data = await response.json();
         energyPoints = Array.isArray(data.points) ? data.points : [];
         energyLoaded = Boolean(data.available && energyPoints.length);
@@ -718,68 +647,37 @@
           ? data.summary
           : [energyLoaded ? 'Energy overlay loaded.' : 'Energy overlay unavailable.'];
 
-        const traceText = energyPoints.map(p => `${p.name}<br>${p.metric}: ${Number(p.value).toFixed(2)}<br>${p.address || ''}`);
+        if (Array.isArray(data.metric_options) && data.metric_options.length) {
+          fillSelect(energyMetricSelect, data.metric_options, data.metric || selectedEnergyMetric);
+        }
+
+        selectedEnergyDataset = data.dataset_id || energyDatasetSelect.value || selectedEnergyDataset;
+        selectedEnergyMetric = data.metric || energyMetricSelect.value || selectedEnergyMetric;
+        if (selectedEnergyDataset) {
+          energyDatasetSelect.value = selectedEnergyDataset;
+        }
+        if (selectedEnergyMetric) {
+          energyMetricSelect.value = selectedEnergyMetric;
+        }
+
+        const pointText = energyPoints.map(p => {
+          const value = p.value == null ? 'n/a' : Number(p.value).toFixed(2);
+          return `Property type: ${p.property_type || 'n/a'}<br>Community area: ${p.community_area || 'n/a'}<br>Value: ${value}`;
+        });
+
         await Plotly.restyle('workspace-map', {
           lat: [energyPoints.map(p => p.latitude)],
           lon: [energyPoints.map(p => p.longitude)],
-          text: [traceText],
-          'marker.color': [energyPoints.map(p => p.value)]
-        }, [TRACE_INDEX.energy]);
+          text: [pointText],
+          'marker.color': [energyPoints.map(p => p.value ?? 0)],
+          'marker.colorbar.title.text': [data.metric_label || 'Energy Metric'],
+        }, [6]);
 
         renderEnergyStats(energySummary);
       } catch (err) {
         renderEnergyStats([`Energy overlay failed to load: ${err.message}`]);
       } finally {
         energyLoading = false;
-      }
-    }
-
-    function renderSchoolsStats(items) {
-      statsByMode.schools = items;
-      if (activeMode !== 'schools') {
-        return;
-      }
-      statsEl.innerHTML = '';
-      items.forEach(item => {
-        const li = document.createElement('li');
-        li.textContent = item;
-        statsEl.appendChild(li);
-      });
-    }
-
-    async function loadSchoolsOverlay() {
-      schoolsLoading = true;
-      renderSchoolsStats(['Loading Chicago school data…']);
-      const schoolMetric = document.querySelector('select[name="school_metric"]')?.value || 'school_type';
-      const schoolType = document.querySelector('input[name="school_type"]')?.value || 'all';
-      const schoolYear = document.querySelector('input[name="school_year"]')?.value || 'all';
-
-      try {
-        const query = new URLSearchParams({ metric: schoolMetric, school_type: schoolType, school_year: schoolYear });
-        const response = await fetch(`/workspace/schools-overlay?${query.toString()}`, { method: 'GET' });
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`);
-        }
-        const data = await response.json();
-        schoolsPoints = Array.isArray(data.points) ? data.points : [];
-        schoolsLoaded = Boolean(data.available && schoolsPoints.length);
-        schoolsSummary = Array.isArray(data.summary) && data.summary.length
-          ? data.summary
-          : [schoolsLoaded ? 'Schools overlay loaded.' : 'Schools overlay unavailable.'];
-
-        const traceText = schoolsPoints.map(p => `${p.name}<br>Type: ${p.school_type || 'n/a'}<br>Year: ${p.school_year || 'n/a'}<br>${p.metric}: ${Number(p.value).toFixed(2)}`);
-        await Plotly.restyle('workspace-map', {
-          lat: [schoolsPoints.map(p => p.latitude)],
-          lon: [schoolsPoints.map(p => p.longitude)],
-          text: [traceText],
-          'marker.color': [schoolsPoints.map(p => p.value)]
-        }, [TRACE_INDEX.schools]);
-
-        renderSchoolsStats(schoolsSummary);
-      } catch (err) {
-        renderSchoolsStats([`Schools overlay failed to load: ${err.message}`]);
-      } finally {
-        schoolsLoading = false;
       }
     }
 
@@ -796,39 +694,47 @@
       });
     }
 
-    async function loadCensusOverlay() {
+    async function loadCensusOverlay(forceReload = false) {
+      if (censusLoading) {
+        return;
+      }
+      if (censusLoaded && !forceReload) {
+        return;
+      }
+
       censusLoading = true;
-      renderCensusStats(['Loading census tract heatmap…']);
-      const censusMetric = document.querySelector('select[name="census_metric"]')?.value || 'black_share';
-      const censusYear = document.querySelector('select[name="census_year"]')?.value || '2022';
+      renderCensusStats(['Loading census tract geometry and ACS values…']);
 
       try {
-        const query = new URLSearchParams({ metric: censusMetric, year: censusYear });
-        const response = await fetch(`/workspace/census-overlay?${query.toString()}`, { method: 'GET' });
+        selectedCensusMetric = censusMetricSelect.value || selectedCensusMetric;
+
+        const params = new URLSearchParams({
+          metric: selectedCensusMetric,
+        });
+        const response = await fetch(`/workspace/census-overlay?${params.toString()}`, { method: 'GET' });
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}`);
         }
+
         const data = await response.json();
-        censusPoints = Array.isArray(data.points) ? data.points : [];
-        censusLoaded = Boolean(data.available && censusPoints.length);
+        censusLoaded = Boolean(data.available && Array.isArray(data.locations) && data.locations.length);
         censusSummary = Array.isArray(data.summary) && data.summary.length
           ? data.summary
           : [censusLoaded ? 'Census overlay loaded.' : 'Census overlay unavailable.'];
 
-        await Plotly.restyle('workspace-map', {
-          lat: [censusPoints.map(p => p.latitude)],
-          lon: [censusPoints.map(p => p.longitude)],
-          text: [censusPoints.map(p => `Tract ${p.tract}<br>${p.metric}: ${Number(p.value).toFixed(2)}<br>Population: ${p.population ?? 'n/a'}`)],
-          'marker.color': [censusPoints.map(p => p.value)],
-        }, [TRACE_INDEX.censusPoints]);
+        selectedCensusMetric = data.metric || selectedCensusMetric;
+        if (selectedCensusMetric) {
+          censusMetricSelect.value = selectedCensusMetric;
+        }
 
         await Plotly.restyle('workspace-map', {
-          lat: [censusPoints.map(p => p.latitude)],
-          lon: [censusPoints.map(p => p.longitude)],
-          z: [censusPoints.map(p => p.value)],
-        }, [TRACE_INDEX.censusHeatmap]);
-
-        updateCensusVisibility();
+          geojson: [data.geojson || { type: 'FeatureCollection', features: [] }],
+          locations: [data.locations || []],
+          z: [data.z || []],
+          text: [data.hover || []],
+          colorscale: [data.colorscale || 'YlOrRd'],
+          'colorbar.title.text': [data.metric_label || 'Census Metric'],
+        }, [7]);
 
         renderCensusStats(censusSummary);
       } catch (err) {
@@ -841,6 +747,19 @@
     document.querySelectorAll('.mode-btn').forEach(btn => {
       btn.addEventListener('click', () => applyMode(btn.dataset.mode));
     });
+
+    energyDatasetSelect.addEventListener('change', () => {
+      energyLoaded = false;
+    });
+    energyMetricSelect.addEventListener('change', () => {
+      energyLoaded = false;
+    });
+    censusMetricSelect.addEventListener('change', () => {
+      censusLoaded = false;
+    });
+
+    energyLoadButton.addEventListener('click', () => loadEnergyOverlay(true));
+    censusLoadButton.addEventListener('click', () => loadCensusOverlay(true));
 
     document.getElementById('prev-mode').addEventListener('click', () => {
       const i = modeOrder.indexOf(activeMode);
@@ -855,7 +774,7 @@
     applyMode(activeMode);
 
     const form = document.getElementById('workspace-form');
-    form.querySelectorAll('select,input[type="number"],input[type="text"]').forEach(el => {
+    form.querySelectorAll('select,input[type="number"]').forEach(el => {
       if (el.id !== 'mode-input') {
         el.addEventListener('change', () => form.submit());
       }
@@ -864,10 +783,6 @@
     if (showAllInput) {
       showAllInput.addEventListener('change', () => form.submit());
     }
-    const censusHeatmapInput = form.querySelector('input[name="census_heatmap"]');
-    if (censusHeatmapInput) {
-      censusHeatmapInput.addEventListener('change', () => updateCensusVisibility());
-    }
 
     const helpText = {
       'bin-help': 'Aggregation interval for sensor observations before overlays are computed.',
@@ -875,10 +790,7 @@
       'coverage-help': 'Minimum share of sensors that must be observing for a time slice to appear.',
       'interp-help': 'Linear keeps a fixed sample resolution across zoom; IDW/Kriging are available for comparison.',
       'points-help': 'Default hides sensors with zero observations at this time. Turn on Show all to include them with transparency.',
-      'distance-help': 'Network links are shown only when station-to-station distance is less than or equal to this threshold.',
-      'energy-help': 'Notebook-aligned Chicago energy benchmark metrics from Covered Buildings.',
-      'schools-help': 'Notebook-aligned school profile fields including school_type and graduation_rate_mean.',
-      'census-help': 'Census tract heatmap based on ACS race-share metrics used in ChicagoCensus notebooks.'
+      'distance-help': 'Network links are shown only when station-to-station distance is less than or equal to this threshold.'
     };
 
     const popover = document.getElementById('help-popover');

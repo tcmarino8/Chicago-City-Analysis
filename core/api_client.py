@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
+from typing import Any
 
 import pandas as pd
 from sodapy import Socrata
@@ -20,15 +21,17 @@ def fetch_rows(
     page_size: int = config.PAGE_SIZE,
     limit: int | None = None,
     app_token: str | None = None,
-) -> list[dict]:
+    **query_kwargs: Any,
+) -> list[dict[str, Any]]:
     """Pull the full dataset via offset-based pagination."""
     client = _build_client(app_token)
-    rows: list[dict] = []
+    rows: list[dict[str, Any]] = []
     offset = 0
     remaining = limit
+    request_kwargs = {key: value for key, value in query_kwargs.items() if value is not None}
     while True:
         batch_size = page_size if remaining is None else min(page_size, remaining)
-        data = client.get(dataset_id, limit=batch_size, offset=offset)
+        data = client.get(dataset_id, limit=batch_size, offset=offset, **request_kwargs)
         if not data:
             break
         rows.extend(data)

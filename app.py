@@ -1,21 +1,24 @@
 """Flask entry point for the Chicago AQI Sensor Network experience."""
 from __future__ import annotations
 
+from copy import deepcopy
 from functools import lru_cache
 
 import networkx as nx
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
+import requests
 from flask import Flask, jsonify, render_template, request
 from plotly.io import to_html
+from sodapy import Socrata
 
 try:
     import osmnx as ox
 except Exception:  # pragma: no cover - optional dependency
     ox = None
 
-from core import config, geo_utils, open_data_fetcher, weather_fetcher
+from core import config, geo_utils, weather_fetcher
 import data_intake
 import interpolation_models
 import network_analysis
@@ -35,21 +38,68 @@ WORKSPACE_BBOX = geo_utils.BoundingBox.from_points(
 METHOD_OPTIONS = [("IDW", "idw"), ("Kriging", "kriging")]
 WORKSPACE_METHOD_OPTIONS = [("Linear", "linear"), ("IDW", "idw"), ("Kriging", "kriging")]
 STREET_MAP_PLACE_NAME = "Chicago, Illinois, USA"
-ENERGY_METRIC_OPTIONS = [
-    ("Energy Star Score", "energy_star_score"),
-    ("Chicago Energy Rating", "chicago_energy_rating"),
+CHICAGO_OPENDATA_DOMAIN = "data.cityofchicago.org"
+CENSUS_YEAR = 2022
+
+ENERGY_DATASET_IDS = {
+    "tepd-j7h5": "Chicago Energy Benchmarking - 2014 Data Reported in 2015",
+    "ebtp-548e": "Chicago Energy Benchmarking - 2015 Data Reported in 2016",
+    "fpwt-snya": "Chicago Energy Benchmarking - 2016 Data Reported in 2017",
+    "j2ev-2azp": "Chicago Energy Benchmarking - 2017 Data Reported in 2018",
+    "m2kv-bmi3": "Chicago Energy Benchmarking - 2018 Data Reported in 2019",
+    "jn94-it7m": "Chicago Energy Benchmarking - 2019 Data Reported in 2020",
+    "ydbk-8hi6": "Chicago Energy Benchmarking - 2020 Data Reported in 2021",
+    "gkf4-txtp": "Chicago Energy Benchmarking - 2021 Data Reported in 2022",
+    "mz3g-jagv": "Chicago Energy Benchmarking - 2022 Data Reported in 2023",
+    "3a36-5x9a": "Chicago Energy Benchmarking - 2023 Data Reported in 2024",
+    "g5i5-yz37": "Chicago Energy Benchmarking - Covered Buildings",
+}
+DEFAULT_ENERGY_DATASET_ID = "3a36-5x9a"
+DEFAULT_ENERGY_METRIC = "site_eui_kbtu_sq_ft"
+ENERGY_NUMERIC_FIELDS = [
+    "property_gross_floor_area_epa_calculated_buildings_sq_ft",
+    "year_built",
+    "number_of_buildings",
+    "electricity_use_grid_purchase_and_generated_from_onsite_renewable_systems_kbtu",
+    "natural_gas_use_kbtu",
+    "site_eui_kbtu_sq_ft",
+    "source_eui_kbtu_sq_ft",
+    "weather_normalized_site_eui_kbtu_sq_ft",
+    "weather_normalized_source_eui_kbtu_sq_ft",
+    "total_ghg_emissions_metric_tons_co2e",
+    "ghg_intensity_metric_tons_co2e_sq_ft",
+    "energy_star_score",
+    "district_chilled_water_use_kbtu",
+    "district_steam_use_kbtu",
+    "all_other_fuel_use_kbtu",
 ]
-SCHOOL_METRIC_OPTIONS = [
-    ("School Type", "school_type"),
-    ("Graduation Rate Mean", "graduation_rate_mean"),
-]
-CENSUS_METRIC_OPTIONS = [
-    ("Median Household Income", "median_household_income"),
-    ("White Population", "white_population"),
-    ("Percent Black Pop", "black_share"),
-    ("Percent Asian Pop", "asian_share"),
-]
-CENSUS_YEAR_OPTIONS = [2020, 2021, 2022, 2023]
+
+CENSUS_METRICS = {
+    "median_income": {
+        "variable": "B19013_001E",
+        "label": "Median HH Income",
+        "colorscale": "YlOrRd",
+        "is_percent": False,
+    },
+    "white_pop": {
+        "variable": "white_share",
+        "label": "White Share of Tract",
+        "colorscale": "Viridis",
+        "is_percent": True,
+    },
+    "black_pop": {
+        "variable": "black_share",
+        "label": "Black Share of Tract",
+        "colorscale": "Viridis",
+        "is_percent": True,
+    },
+    "asian_pop": {
+        "variable": "asian_share",
+        "label": "Asian Share of Tract",
+        "colorscale": "Viridis",
+        "is_percent": True,
+    },
+}
 
 
 def _safe_float(value: str | None, default: float) -> float:
@@ -57,6 +107,329 @@ def _safe_float(value: str | None, default: float) -> float:
         return float(value) if value is not None else default
     except ValueError:
         return default
+
+
+@lru_cache(maxsize=1)
+def _open_data_client() -> Socrata:
+    return Socrata(CHICAGO_OPENDATA_DOMAIN, None)
+
+
+def _fetch_all_socrata_rows(api_key: str, page_size: int = 50_000) -> list[dict[str, object]]:
+    rows: list[dict[str, object]] = []
+    offset = 0
+    client = _open_data_client()
+    while True:
+        batch = client.get(api_key, limit=page_size, offset=offset)
+        if not batch:
+            break
+        rows.extend(batch)
+        if len(batch) < page_size:
+            break
+        offset += page_size
+    return rows
+
+
+@lru_cache(maxsize=len(ENERGY_DATASET_IDS))
+def _energy_dataset_frame(dataset_id: str) -> pd.DataFrame:
+    records = _fetch_all_socrata_rows(dataset_id)
+    return pd.DataFrame.from_records(records)
+
+
+def _normalize_energy_df(df: pd.DataFrame) -> pd.DataFrame:
+    work = df.copy()
+
+    if "location" in work.columns and ("latitude" not in work.columns or "longitude" not in work.columns):
+        lat_vals: list[float] = []
+        lon_vals: list[float] = []
+        for val in work["location"].tolist():
+            if isinstance(val, dict):
+                lat_vals.append(val.get("latitude"))
+                lon_vals.append(val.get("longitude"))
+            else:
+                lat_vals.append(np.nan)
+                lon_vals.append(np.nan)
+        if "latitude" not in work.columns:
+            work["latitude"] = lat_vals
+        if "longitude" not in work.columns:
+            work["longitude"] = lon_vals
+
+    for col in ENERGY_NUMERIC_FIELDS + ["latitude", "longitude"]:
+        if col in work.columns:
+            work[col] = pd.to_numeric(work[col], errors="coerce")
+
+    if "latitude" in work.columns and "longitude" in work.columns:
+        work = work.dropna(subset=["latitude", "longitude"])
+        work = work[(work["latitude"].between(41.55, 42.10)) & (work["longitude"].between(-88.0, -87.2))]
+
+    return work
+
+
+def _energy_metric_options(df: pd.DataFrame) -> list[dict[str, str]]:
+    options = []
+    for metric in ENERGY_NUMERIC_FIELDS:
+        if metric not in df.columns:
+            continue
+        col = pd.to_numeric(df[metric], errors="coerce")
+        if col.notna().sum() == 0:
+            continue
+        options.append({"value": metric, "label": metric.replace("_", " ").title()})
+    return options
+
+
+def _build_energy_overlay(dataset_id: str, metric: str) -> dict[str, object]:
+    if dataset_id not in ENERGY_DATASET_IDS:
+        dataset_id = DEFAULT_ENERGY_DATASET_ID
+
+    dataset_name = ENERGY_DATASET_IDS[dataset_id]
+    try:
+        df_raw = _energy_dataset_frame(dataset_id)
+    except Exception as exc:
+        return {
+            "available": False,
+            "dataset_id": dataset_id,
+            "dataset_name": dataset_name,
+            "metric": metric,
+            "metric_label": metric,
+            "metric_options": [],
+            "points": [],
+            "summary": [f"Energy overlay unavailable: {exc}"],
+            "loaded": True,
+        }
+
+    df = _normalize_energy_df(df_raw)
+    metric_options = _energy_metric_options(df)
+    metric_values = {opt["value"] for opt in metric_options}
+    if metric not in metric_values:
+        metric = DEFAULT_ENERGY_METRIC if DEFAULT_ENERGY_METRIC in metric_values else (metric_options[0]["value"] if metric_options else metric)
+
+    if df.empty or metric not in df.columns:
+        return {
+            "available": False,
+            "dataset_id": dataset_id,
+            "dataset_name": dataset_name,
+            "metric": metric,
+            "metric_label": metric.replace("_", " ").title(),
+            "metric_options": metric_options,
+            "points": [],
+            "summary": ["No mappable rows available for selected energy dataset."],
+            "loaded": True,
+        }
+
+    df[metric] = pd.to_numeric(df[metric], errors="coerce")
+    df = df.dropna(subset=[metric, "latitude", "longitude"])
+    if df.empty:
+        return {
+            "available": False,
+            "dataset_id": dataset_id,
+            "dataset_name": dataset_name,
+            "metric": metric,
+            "metric_label": metric.replace("_", " ").title(),
+            "metric_options": metric_options,
+            "points": [],
+            "summary": ["All rows are missing coordinates or selected metric values."],
+            "loaded": True,
+        }
+
+    if df.shape[0] > 12_000:
+        df = df.sample(n=12_000, random_state=7)
+
+    points = []
+    for row in df.itertuples(index=False):
+        property_type = getattr(row, "primary_property_type_epa_calculated", "n/a")
+        community_area = getattr(row, "community_area", "n/a")
+        points.append(
+            {
+                "latitude": float(row.latitude),
+                "longitude": float(row.longitude),
+                "value": float(getattr(row, metric)),
+                "property_type": str(property_type) if property_type is not None else "n/a",
+                "community_area": str(community_area) if community_area is not None else "n/a",
+            }
+        )
+
+    series = pd.to_numeric(df[metric], errors="coerce")
+    metric_label = metric.replace("_", " ").title()
+    summary = [
+        f"Dataset: {dataset_name}",
+        f"Rows loaded: {len(points):,}",
+        f"Metric: {metric_label}",
+        f"Mean: {series.mean():.2f}",
+        f"Median: {series.median():.2f}",
+    ]
+
+    return {
+        "available": True,
+        "dataset_id": dataset_id,
+        "dataset_name": dataset_name,
+        "metric": metric,
+        "metric_label": metric_label,
+        "metric_options": metric_options,
+        "points": points,
+        "summary": summary,
+        "loaded": True,
+    }
+
+
+def _tract_id_from_properties(properties: dict[str, object]) -> str:
+    if not properties:
+        return ""
+    for key in ["GEOID", "geoid", "GEOID10", "GEOID20"]:
+        value = properties.get(key)
+        if value:
+            digits = "".join(ch for ch in str(value) if ch.isdigit())
+            if len(digits) >= 11:
+                return digits[-11:]
+            return digits.zfill(11)
+
+    state = str(properties.get("STATE") or properties.get("STATEFP") or "")
+    county = str(properties.get("COUNTY") or properties.get("COUNTYFP") or "")
+    tract_raw = str(properties.get("TRACT") or properties.get("TRACTCE") or "")
+    tract_digits = "".join(ch for ch in tract_raw if ch.isdigit())
+    tract = tract_digits[:6] if len(tract_digits) >= 6 else tract_digits.zfill(6)
+    if state and county and tract:
+        state_digits = "".join(ch for ch in state if ch.isdigit()).zfill(2)
+        county_digits = "".join(ch for ch in county if ch.isdigit()).zfill(3)
+        return f"{state_digits}{county_digits}{tract}"
+    return ""
+
+
+@lru_cache(maxsize=1)
+def _chicago_tract_geojson() -> dict[str, object]:
+    # TIGERWeb geojson avoids adding a geopandas runtime dependency to the Flask app.
+    base_url = "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/Tracts_Blocks/MapServer/4/query"
+    params = {
+        "where": "STATE = '17' AND COUNTY = '031'",
+        "outFields": "GEOID,STATE,COUNTY,TRACT",
+        "outSR": 4326,
+        "f": "geojson",
+    }
+    resp = requests.get(base_url, params=params, timeout=60)
+    resp.raise_for_status()
+    raw = resp.json()
+    features = []
+    for feature in raw.get("features", []):
+        properties = feature.get("properties", {})
+        geoid = _tract_id_from_properties(properties)
+        if not geoid.startswith("17031"):
+            continue
+        properties["GEOID"] = geoid
+        feature["properties"] = properties
+        features.append(feature)
+    return {"type": "FeatureCollection", "features": features}
+
+
+@lru_cache(maxsize=1)
+def _census_tract_frame() -> pd.DataFrame:
+    selected_vars = [
+        "B01003_001E",
+        "B19013_001E",
+        "B02001_002E",
+        "B02001_003E",
+        "B02001_005E",
+    ]
+    base_url = f"https://api.census.gov/data/{CENSUS_YEAR}/acs/acs5"
+    params = {
+        "get": "NAME," + ",".join(selected_vars),
+        "for": "tract:*",
+        "in": "state:17 county:031",
+    }
+
+    resp = requests.get(base_url, params=params, timeout=60)
+    resp.raise_for_status()
+    rows = resp.json()
+    df = pd.DataFrame(rows[1:], columns=rows[0])
+    for var in selected_vars:
+        df[var] = pd.to_numeric(df[var], errors="coerce")
+    df.loc[df["B19013_001E"] < 0, "B19013_001E"] = pd.NA
+    df["GEOID"] = "17" + df["county"].astype(str).str.zfill(3) + df["tract"].astype(str).str.zfill(6)
+    df["white_share"] = df["B02001_002E"] / df["B01003_001E"]
+    df["black_share"] = df["B02001_003E"] / df["B01003_001E"]
+    df["asian_share"] = df["B02001_005E"] / df["B01003_001E"]
+    return df
+
+
+def _build_census_overlay(metric_key: str) -> dict[str, object]:
+    if metric_key not in CENSUS_METRICS:
+        metric_key = "median_income"
+    metric_meta = CENSUS_METRICS[metric_key]
+    metric_var = metric_meta["variable"]
+
+    try:
+        geojson = deepcopy(_chicago_tract_geojson())
+        census_df = _census_tract_frame()
+    except Exception as exc:
+        return {
+            "available": False,
+            "metric": metric_key,
+            "metric_label": metric_meta["label"],
+            "colorscale": metric_meta["colorscale"],
+            "is_percent": metric_meta["is_percent"],
+            "geojson": {"type": "FeatureCollection", "features": []},
+            "locations": [],
+            "z": [],
+            "hover": [],
+            "summary": [f"Census overlay unavailable: {exc}"],
+            "loaded": True,
+        }
+
+    value_map = census_df.set_index("GEOID")[metric_var].to_dict()
+    locations: list[str] = []
+    z_values: list[float | None] = []
+    hover_text: list[str] = []
+
+    for feature in geojson.get("features", []):
+        props = feature.get("properties", {})
+        geoid = props.get("GEOID") or _tract_id_from_properties(props)
+        if not geoid:
+            continue
+
+        value = value_map.get(str(geoid))
+        if pd.isna(value):
+            value = None
+
+        locations.append(str(geoid))
+        z_values.append(None if value is None else float(value))
+        if value is None:
+            hover_text.append(f"Tract {geoid}<br>{metric_meta['label']}: n/a")
+        elif metric_meta["is_percent"]:
+            hover_text.append(f"Tract {geoid}<br>{metric_meta['label']}: {float(value):.2%}")
+        else:
+            hover_text.append(f"Tract {geoid}<br>{metric_meta['label']}: ${float(value):,.0f}")
+
+    series = pd.Series(z_values, dtype="float64").replace([np.inf, -np.inf], np.nan).dropna()
+    matched_values = int(series.shape[0])
+    if series.empty:
+        summary = ["No census tract values were available for this metric."]
+    elif metric_meta["is_percent"]:
+        summary = [
+            f"Metric: {metric_meta['label']}",
+            f"Tracts loaded: {len(locations):,}",
+            f"Tracts with values: {matched_values:,}",
+            f"Mean: {series.mean():.2%}",
+            f"Median: {series.median():.2%}",
+        ]
+    else:
+        summary = [
+            f"Metric: {metric_meta['label']}",
+            f"Tracts loaded: {len(locations):,}",
+            f"Tracts with values: {matched_values:,}",
+            f"Mean: ${series.mean():,.0f}",
+            f"Median: ${series.median():,.0f}",
+        ]
+
+    return {
+        "available": bool(locations) and matched_values > 0,
+        "metric": metric_key,
+        "metric_label": metric_meta["label"],
+        "colorscale": metric_meta["colorscale"],
+        "is_percent": metric_meta["is_percent"],
+        "geojson": geojson,
+        "locations": locations,
+        "z": z_values,
+        "hover": hover_text,
+        "summary": summary,
+        "loaded": True,
+    }
 
 
 @lru_cache(maxsize=1)
@@ -432,31 +805,6 @@ def map_workspace():
     valid_methods = {value for _, value in WORKSPACE_METHOD_OPTIONS}
     if method not in valid_methods:
         method = "linear"
-    energy_metric = request.args.get("energy_metric", "energy_star_score")
-    valid_energy_metrics = {value for _, value in ENERGY_METRIC_OPTIONS}
-    if energy_metric not in valid_energy_metrics:
-        energy_metric = "energy_star_score"
-
-    school_metric = request.args.get("school_metric", "school_type")
-    valid_school_metrics = {value for _, value in SCHOOL_METRIC_OPTIONS}
-    if school_metric not in valid_school_metrics:
-        school_metric = "school_type"
-
-    school_type = request.args.get("school_type", "all")
-    school_year = request.args.get("school_year", "all")
-
-    census_metric = request.args.get("census_metric", "black_share")
-    valid_census_metrics = {value for _, value in CENSUS_METRIC_OPTIONS}
-    if census_metric not in valid_census_metrics:
-        census_metric = "black_share"
-    census_heatmap = request.args.get("census_heatmap", "0") in {"1", "true", "True", "on"}
-
-    try:
-        census_year = int(request.args.get("census_year", str(open_data_fetcher.DEFAULT_CENSUS_YEAR)))
-    except ValueError:
-        census_year = int(open_data_fetcher.DEFAULT_CENSUS_YEAR)
-    if census_year not in CENSUS_YEAR_OPTIONS:
-        census_year = int(open_data_fetcher.DEFAULT_CENSUS_YEAR)
     show_all_points = request.args.get("show_all", "0") in {"1", "true", "True", "on"}
     distance_limit_km = _safe_float(request.args.get("distance_km"), np.nan)
 
@@ -615,25 +963,33 @@ def map_workspace():
             "available": False,
             "points": [],
             "loaded": False,
-            "metric": energy_metric,
         },
-        "energy_summary": ["Chicago energy metrics load on demand. Click Energy to fetch it."],
-        "schools_overlay": {
-            "available": False,
-            "points": [],
-            "loaded": False,
-            "metric": school_metric,
+        "energy_summary": ["Energy benchmarking points load on demand. Click Energy to fetch it."],
+        "energy_config": {
+            "dataset_options": [
+                {"value": dataset_id, "label": dataset_name}
+                for dataset_id, dataset_name in ENERGY_DATASET_IDS.items()
+            ],
+            "selected_dataset_id": DEFAULT_ENERGY_DATASET_ID,
+            "selected_metric": DEFAULT_ENERGY_METRIC,
+            "metric_options": [{"value": DEFAULT_ENERGY_METRIC, "label": "Site Eui Kbtu Sq Ft"}],
         },
-        "schools_summary": ["Chicago school profile data loads on demand. Click Schools to fetch it."],
         "census_overlay": {
             "available": False,
-            "points": [],
+            "geojson": {"type": "FeatureCollection", "features": []},
+            "locations": [],
+            "z": [],
+            "hover": [],
             "loaded": False,
-            "metric": census_metric,
-            "census_year": census_year,
         },
-        "census_heatmap_enabled": census_heatmap,
-        "census_summary": ["Census tract map loads on demand. Toggle heatmap for density view."],
+        "census_summary": ["Census tract choropleth loads on demand. Click Census to fetch it."],
+        "census_config": {
+            "selected_metric": "median_income",
+            "metric_options": [
+                {"value": key, "label": value["label"]}
+                for key, value in CENSUS_METRICS.items()
+            ],
+        },
         "max_aqi_range": {
             "min": float(np.nanmin(sensor_max_aqi.values)) if len(sensor_max_aqi) else 0.0,
             "max": float(np.nanmax(sensor_max_aqi.values)) if len(sensor_max_aqi) else 1.0,
@@ -649,17 +1005,6 @@ def map_workspace():
         coverage_options=config.COVERAGE_THRESHOLDS,
         method=method,
         method_options=WORKSPACE_METHOD_OPTIONS,
-        energy_metric=energy_metric,
-        energy_metric_options=ENERGY_METRIC_OPTIONS,
-        school_metric=school_metric,
-        school_metric_options=SCHOOL_METRIC_OPTIONS,
-        school_type=school_type,
-        school_year=school_year,
-        census_metric=census_metric,
-        census_metric_options=CENSUS_METRIC_OPTIONS,
-        census_year=census_year,
-        census_year_options=CENSUS_YEAR_OPTIONS,
-        census_heatmap=census_heatmap,
         show_all_points=show_all_points,
         distance_options_km=distance_options_km,
         selected_distance_km=selected_distance_km,
@@ -693,33 +1038,15 @@ def workspace_weather_overlay():
 
 @app.route("/workspace/energy-overlay")
 def workspace_energy_overlay():
-    metric = request.args.get("metric", "energy_star_score")
-    overlay = open_data_fetcher.fetch_energy_overlay(metric=metric)
-    return jsonify(overlay)
-
-
-@app.route("/workspace/schools-overlay")
-def workspace_schools_overlay():
-    metric = request.args.get("metric", "school_type")
-    school_type = request.args.get("school_type", "all")
-    school_year = request.args.get("school_year", "all")
-    overlay = open_data_fetcher.fetch_schools_overlay(
-        metric=metric,
-        school_type=school_type,
-        school_year=school_year,
-    )
-    return jsonify(overlay)
+    dataset_id = request.args.get("dataset_id", DEFAULT_ENERGY_DATASET_ID)
+    metric = request.args.get("metric", DEFAULT_ENERGY_METRIC)
+    return jsonify(_build_energy_overlay(dataset_id, metric))
 
 
 @app.route("/workspace/census-overlay")
 def workspace_census_overlay():
-    metric = request.args.get("metric", "black_share")
-    try:
-        census_year = int(request.args.get("year", str(open_data_fetcher.DEFAULT_CENSUS_YEAR)))
-    except ValueError:
-        census_year = int(open_data_fetcher.DEFAULT_CENSUS_YEAR)
-    overlay = open_data_fetcher.fetch_census_overlay(metric=metric, census_year=census_year)
-    return jsonify(overlay)
+    metric = request.args.get("metric", "median_income")
+    return jsonify(_build_census_overlay(metric))
 
 
 @app.route("/")

@@ -12,3 +12,4 @@ ipywidgets>=8.0.0
 Flask>=3.0.0
 networkx>=3.0
 osmnx>=2.0.0
+requests>=2.31.0
