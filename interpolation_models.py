@@ -6,9 +6,16 @@ from typing import Literal
 
 import numpy as np
 import pandas as pd
-from pykrige.ok import OrdinaryKriging
-from scipy.interpolate import griddata
-from scipy.spatial import distance
+
+try:
+    from pykrige.ok import OrdinaryKriging
+except Exception:  # pragma: no cover - optional dependency
+    OrdinaryKriging = None
+
+try:
+    from scipy.interpolate import griddata
+except Exception:  # pragma: no cover - optional dependency
+    griddata = None
 
 from core import config, geo_utils
 
@@ -37,8 +44,10 @@ def _build_grid_from_bbox(bbox: geo_utils.BoundingBox, grid_resolution: int) -> 
 
 def _idw(points: np.ndarray, values: np.ndarray, grid_lon: np.ndarray, grid_lat: np.ndarray, power: float = 2.0) -> np.ndarray:
     grid_points = np.column_stack([grid_lon.ravel(), grid_lat.ravel()])
-    distances = distance.cdist(grid_points, points)
-    distances[distances == 0] = 1e-10
+    # Numpy-only pairwise distances to avoid a hard scipy dependency in production.
+    delta = grid_points[:, None, :] - points[None, :, :]
+    distances = np.sqrt(np.sum(delta * delta, axis=2))
+    distances = np.where(distances == 0, 1e-10, distances)
     weights = 1.0 / np.power(distances, power)
     weights_sum = weights.sum(axis=1, keepdims=True)
     weights_sum[weights_sum == 0] = 1.0
@@ -47,6 +56,8 @@ def _idw(points: np.ndarray, values: np.ndarray, grid_lon: np.ndarray, grid_lat:
 
 
 def _kriging(points: np.ndarray, values: np.ndarray, grid_lon: np.ndarray, grid_lat: np.ndarray) -> np.ndarray:
+    if OrdinaryKriging is None:
+        raise RuntimeError("Kriging unavailable: pykrige is not installed.")
     ok = OrdinaryKriging(
         points[:, 0],
         points[:, 1],
@@ -61,6 +72,8 @@ def _kriging(points: np.ndarray, values: np.ndarray, grid_lon: np.ndarray, grid_
 
 
 def _linear(points: np.ndarray, values: np.ndarray, grid_lon: np.ndarray, grid_lat: np.ndarray) -> np.ndarray:
+    if griddata is None:
+        raise RuntimeError("Linear interpolation unavailable: scipy is not installed.")
     grid_values = griddata(points, values, (grid_lon, grid_lat), method="linear")
     if np.isnan(grid_values).any():
         nearest = griddata(points, values, (grid_lon, grid_lat), method="nearest")

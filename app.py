@@ -9,8 +9,7 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 import requests
-from flask import Flask, jsonify, render_template, request
-from plotly.io import to_html
+from flask import Flask, jsonify, redirect, render_template, request, url_for
 from sodapy import Socrata
 
 try:
@@ -21,7 +20,6 @@ except Exception:  # pragma: no cover - optional dependency
 from core import config, geo_utils, weather_fetcher
 import data_intake
 import interpolation_models
-import network_analysis
 
 
 app = Flask(__name__)
@@ -35,7 +33,6 @@ WORKSPACE_BBOX = geo_utils.BoundingBox.from_points(
     PREPARED.sensor_catalog["longitude"],
     padding=0.1,
 )
-METHOD_OPTIONS = [("IDW", "idw"), ("Kriging", "kriging")]
 WORKSPACE_METHOD_OPTIONS = [("Linear", "linear"), ("IDW", "idw"), ("Kriging", "kriging")]
 STREET_MAP_PLACE_NAME = "Chicago, Illinois, USA"
 CHICAGO_OPENDATA_DOMAIN = "data.cityofchicago.org"
@@ -100,6 +97,10 @@ CENSUS_METRICS = {
         "is_percent": True,
     },
 }
+CENSUS_YEAR_OPTIONS = [2023, 2022, 2021, 2020, 2019, 2018, 2017]
+DEFAULT_CENSUS_VIEW = "single"
+DEFAULT_CENSUS_YEAR_NEW = CENSUS_YEAR_OPTIONS[0]
+DEFAULT_CENSUS_YEAR_OLD = CENSUS_YEAR_OPTIONS[1] if len(CENSUS_YEAR_OPTIONS) > 1 else CENSUS_YEAR_OPTIONS[0]
 
 
 def _safe_float(value: str | None, default: float) -> float:
@@ -318,8 +319,8 @@ def _chicago_tract_geojson() -> dict[str, object]:
     return {"type": "FeatureCollection", "features": features}
 
 
-@lru_cache(maxsize=1)
-def _census_tract_frame() -> pd.DataFrame:
+@lru_cache(maxsize=8)
+def _census_tract_frame(year: int) -> pd.DataFrame:
     selected_vars = [
         "B01003_001E",
         "B19013_001E",
@@ -327,7 +328,7 @@ def _census_tract_frame() -> pd.DataFrame:
         "B02001_003E",
         "B02001_005E",
     ]
-    base_url = f"https://api.census.gov/data/{CENSUS_YEAR}/acs/acs5"
+    base_url = f"https://api.census.gov/data/{year}/acs/acs5"
     params = {
         "get": "NAME," + ",".join(selected_vars),
         "for": "tract:*",
@@ -348,15 +349,24 @@ def _census_tract_frame() -> pd.DataFrame:
     return df
 
 
-def _build_census_overlay(metric_key: str) -> dict[str, object]:
+def _build_census_overlay(metric_key: str, view_mode: str, year_new: int, year_old: int) -> dict[str, object]:
     if metric_key not in CENSUS_METRICS:
         metric_key = "median_income"
+    if view_mode not in {"single", "change"}:
+        view_mode = DEFAULT_CENSUS_VIEW
+    valid_years = set(CENSUS_YEAR_OPTIONS)
+    if year_new not in valid_years:
+        year_new = DEFAULT_CENSUS_YEAR_NEW
+    if year_old not in valid_years:
+        year_old = DEFAULT_CENSUS_YEAR_OLD
+
     metric_meta = CENSUS_METRICS[metric_key]
     metric_var = metric_meta["variable"]
 
     try:
         geojson = deepcopy(_chicago_tract_geojson())
-        census_df = _census_tract_frame()
+        new_df = _census_tract_frame(year_new)
+        old_df = _census_tract_frame(year_old) if view_mode == "change" else None
     except Exception as exc:
         return {
             "available": False,
@@ -368,14 +378,21 @@ def _build_census_overlay(metric_key: str) -> dict[str, object]:
             "locations": [],
             "z": [],
             "hover": [],
+            "view": view_mode,
+            "year_new": year_new,
+            "year_old": year_old,
             "summary": [f"Census overlay unavailable: {exc}"],
             "loaded": True,
         }
 
-    value_map = census_df.set_index("GEOID")[metric_var].to_dict()
+    new_map = new_df.set_index("GEOID")[metric_var].to_dict()
+    old_map = old_df.set_index("GEOID")[metric_var].to_dict() if old_df is not None else {}
+
     locations: list[str] = []
     z_values: list[float | None] = []
     hover_text: list[str] = []
+    zmid = None
+    colorscale = metric_meta["colorscale"]
 
     for feature in geojson.get("features", []):
         props = feature.get("properties", {})
@@ -383,26 +400,64 @@ def _build_census_overlay(metric_key: str) -> dict[str, object]:
         if not geoid:
             continue
 
-        value = value_map.get(str(geoid))
-        if pd.isna(value):
-            value = None
+        value_new = new_map.get(str(geoid))
+        value_old = old_map.get(str(geoid)) if view_mode == "change" else None
+
+        if pd.isna(value_new):
+            value_new = None
+        if view_mode == "change" and pd.isna(value_old):
+            value_old = None
+
+        if view_mode == "change":
+            value = None if (value_new is None or value_old is None) else float(value_new) - float(value_old)
+        else:
+            value = value_new
 
         locations.append(str(geoid))
         z_values.append(None if value is None else float(value))
-        if value is None:
-            hover_text.append(f"Tract {geoid}<br>{metric_meta['label']}: n/a")
-        elif metric_meta["is_percent"]:
-            hover_text.append(f"Tract {geoid}<br>{metric_meta['label']}: {float(value):.2%}")
+
+        if view_mode == "change":
+            if value is None:
+                hover_text.append(f"Tract {geoid}<br>{metric_meta['label']} ({year_new} - {year_old}): n/a")
+            elif metric_meta["is_percent"]:
+                hover_text.append(f"Tract {geoid}<br>{metric_meta['label']} ({year_new} - {year_old}): {float(value) * 100:+.2f} pp")
+            else:
+                hover_text.append(f"Tract {geoid}<br>{metric_meta['label']} ({year_new} - {year_old}): ${float(value):+,.0f}")
         else:
-            hover_text.append(f"Tract {geoid}<br>{metric_meta['label']}: ${float(value):,.0f}")
+            if value is None:
+                hover_text.append(f"Tract {geoid}<br>{metric_meta['label']} ({year_new}): n/a")
+            elif metric_meta["is_percent"]:
+                hover_text.append(f"Tract {geoid}<br>{metric_meta['label']} ({year_new}): {float(value):.2%}")
+            else:
+                hover_text.append(f"Tract {geoid}<br>{metric_meta['label']} ({year_new}): ${float(value):,.0f}")
 
     series = pd.Series(z_values, dtype="float64").replace([np.inf, -np.inf], np.nan).dropna()
     matched_values = int(series.shape[0])
     if series.empty:
         summary = ["No census tract values were available for this metric."]
+    elif view_mode == "change" and metric_meta["is_percent"]:
+        colorscale = "RdBu"
+        zmid = 0.0
+        summary = [
+            f"Metric: {metric_meta['label']} ({year_new} - {year_old})",
+            f"Tracts loaded: {len(locations):,}",
+            f"Tracts with values: {matched_values:,}",
+            f"Mean change: {series.mean() * 100:+.2f} pp",
+            f"Median change: {series.median() * 100:+.2f} pp",
+        ]
+    elif view_mode == "change":
+        colorscale = "RdBu"
+        zmid = 0.0
+        summary = [
+            f"Metric: {metric_meta['label']} ({year_new} - {year_old})",
+            f"Tracts loaded: {len(locations):,}",
+            f"Tracts with values: {matched_values:,}",
+            f"Mean change: ${series.mean():+,.0f}",
+            f"Median change: ${series.median():+,.0f}",
+        ]
     elif metric_meta["is_percent"]:
         summary = [
-            f"Metric: {metric_meta['label']}",
+            f"Metric: {metric_meta['label']} ({year_new})",
             f"Tracts loaded: {len(locations):,}",
             f"Tracts with values: {matched_values:,}",
             f"Mean: {series.mean():.2%}",
@@ -410,7 +465,7 @@ def _build_census_overlay(metric_key: str) -> dict[str, object]:
         ]
     else:
         summary = [
-            f"Metric: {metric_meta['label']}",
+            f"Metric: {metric_meta['label']} ({year_new})",
             f"Tracts loaded: {len(locations):,}",
             f"Tracts with values: {matched_values:,}",
             f"Mean: ${series.mean():,.0f}",
@@ -420,9 +475,13 @@ def _build_census_overlay(metric_key: str) -> dict[str, object]:
     return {
         "available": bool(locations) and matched_values > 0,
         "metric": metric_key,
-        "metric_label": metric_meta["label"],
-        "colorscale": metric_meta["colorscale"],
+        "metric_label": f"{metric_meta['label']} ({year_new} - {year_old})" if view_mode == "change" else f"{metric_meta['label']} ({year_new})",
+        "colorscale": colorscale,
         "is_percent": metric_meta["is_percent"],
+        "view": view_mode,
+        "year_new": year_new,
+        "year_old": year_old,
+        "zmid": zmid,
         "geojson": geojson,
         "locations": locations,
         "z": z_values,
@@ -430,50 +489,6 @@ def _build_census_overlay(metric_key: str) -> dict[str, object]:
         "summary": summary,
         "loaded": True,
     }
-
-
-@lru_cache(maxsize=1)
-def _sensor_summary() -> pd.DataFrame:
-    stats = (
-        PREPARED.time_series.groupby("sensor_name")
-        .agg(
-            observations=("aqi_value", "size"),
-            avg_aqi=("aqi_value", "mean"),
-            latitude=("latitude", "mean"),
-            longitude=("longitude", "mean"),
-        )
-        .reset_index()
-    )
-    catalog = PREPARED.sensor_catalog
-    merged = catalog.merge(stats, on="sensor_name", how="left", suffixes=("", "_stat"))
-    merged["observations"] = merged["observations"].fillna(0)
-    merged["avg_aqi"] = merged["avg_aqi"].fillna(0.0)
-    return merged
-
-
-def _build_sensor_graph(summary_df: pd.DataFrame) -> nx.Graph:
-    G = nx.Graph()
-    for row in summary_df.itertuples(index=False):
-        G.add_node(
-            row.sensor_name,
-            latitude=float(row.latitude),
-            longitude=float(row.longitude),
-            observations=int(row.observations),
-            avg_aqi=float(row.avg_aqi),
-        )
-    coords_df = summary_df[["latitude", "longitude"]]
-    distance_matrix = geo_utils.pairwise_distance_matrix(coords_df)
-    epsilon = 1e-3
-    names = summary_df["sensor_name"].to_list()
-    n = len(names)
-    for i in range(n):
-        for j in range(i + 1, n):
-            dist = distance_matrix[i, j]
-            if np.isnan(dist):
-                continue
-            weight = 1.0 / max(dist, epsilon)
-            G.add_edge(names[i], names[j], weight=weight, distance_km=float(dist))
-    return G
 
 
 @lru_cache(maxsize=len(config.BIN_OPTIONS))
@@ -497,34 +512,6 @@ def _time_options(bin_code: str, min_coverage: float = 0.0) -> list[dict[str, st
     return [{"label": ts.strftime("%Y-%m-%d %H:%M"), "value": ts.isoformat()} for ts in times]
 
 
-def _build_uptime_fig(df: pd.DataFrame, center: dict[str, float], zoom: float) -> go.Figure:
-    colors = np.where(df["is_observing"], "#34c759", "#ff3b30")
-    hover = (
-        "Station: "
-        + df["sensor_name"].astype(str)
-        + "<br>Status: "
-        + np.where(df["is_observing"], "Observing", "Idle")
-        + "<br>AQI: "
-        + df["aqi_value"].round(2).astype(str)
-    )
-    fig = go.Figure(
-        go.Scattermap(
-            lat=df["latitude"],
-            lon=df["longitude"],
-            mode="markers",
-            marker={"size": 12, "color": colors, "opacity": 0.85},
-            text=hover,
-            hoverinfo="text",
-        )
-    )
-    fig.update_layout(
-        mapbox={"style": "carto-positron", "center": center, "zoom": zoom},
-        margin={"l": 0, "r": 0, "t": 0, "b": 0},
-        height=600,
-    )
-    return fig
-
-
 def _uptime_stats(stats: dict[str, float]) -> list[str]:
     entries = [
         f"Observing: {stats['observing']}",
@@ -537,69 +524,6 @@ def _uptime_stats(stats: dict[str, float]) -> list[str]:
     if stats.get("insufficient"):
         entries.append("Warning: coverage below threshold")
     return entries
-
-
-def _build_network_fig(G: nx.Graph) -> go.Figure:
-    if G.number_of_nodes() == 0:
-        return go.Figure()
-    positions = nx.spring_layout(G, weight="distance_km", seed=7, k=0.3)
-    edge_x, edge_y = [], []
-    for u, v in G.edges():
-        x0, y0 = positions[u]
-        x1, y1 = positions[v]
-        edge_x.extend([x0, x1, None])
-        edge_y.extend([y0, y1, None])
-    edge_trace = go.Scatter(
-        x=edge_x,
-        y=edge_y,
-        mode="lines",
-        line={"width": 1, "color": "#aaa"},
-        hoverinfo="none",
-    )
-    node_x = [positions[n][0] for n in G.nodes()]
-    node_y = [positions[n][1] for n in G.nodes()]
-    values = [G.nodes[n].get("aqi_value") for n in G.nodes()]
-    node_color = [0.0 if value is None or (isinstance(value, float) and np.isnan(value)) else value for value in values]
-    node_text = []
-    for name, value in zip(G.nodes(), values):
-        if value is None or (isinstance(value, float) and np.isnan(value)):
-            text_value = "n/a"
-        else:
-            text_value = f"{value:.1f}"
-        node_text.append(f"{name}<br>AQI: {text_value}")
-    node_trace = go.Scatter(
-        x=node_x,
-        y=node_y,
-        mode="markers",
-        marker={
-            "size": 14,
-            "color": node_color,
-            "colorscale": "Turbo",
-            "showscale": True,
-            "colorbar": {"title": "AQI"},
-        },
-        text=node_text,
-        hoverinfo="text",
-    )
-    fig = go.Figure(data=[edge_trace, node_trace])
-    fig.update_layout(margin={"l": 0, "r": 0, "t": 0, "b": 0}, height=600)
-    return fig
-
-
-def _network_metrics(G: nx.Graph) -> list[dict[str, str]]:
-    df = network_analysis.compute_node_metrics(G)
-    top = df.sort_values("degree", ascending=False).head(10)
-    return top.to_dict("records")
-
-
-def _network_summary(G: nx.Graph) -> list[str]:
-    summary = network_analysis.compute_graph_summary(G)
-    return [
-        f"Nodes: {summary['nodes']}",
-        f"Edges: {summary['edges']}",
-        f"Density: {summary['density']:.3f}",
-        f"Avg degree: {summary['avg_degree']:.2f}",
-    ]
 
 
 def _network_overlay_summary(
@@ -635,44 +559,6 @@ def _interpolation_stats(result: interpolation_models.InterpolationResult) -> li
         f"Mean AQI: {result.grid_values.mean():.1f}",
         f"Max AQI: {result.grid_values.max():.1f}",
     ]
-
-
-def _network_map(summary_df: pd.DataFrame) -> go.Figure:
-    if summary_df.empty:
-        return go.Figure()
-    sizes = summary_df["observations"].astype(float)
-    marker_size = 10 + 2 * np.sqrt(sizes.clip(lower=1))
-    hover = (
-        "Sensor: "
-        + summary_df["sensor_name"].astype(str)
-        + "<br>Observations: "
-        + sizes.astype(int).astype(str)
-        + "<br>Avg AQI: "
-        + summary_df["avg_aqi"].round(2).astype(str)
-    )
-    fig = go.Figure(
-        go.Scattermap(
-            lat=summary_df["latitude"],
-            lon=summary_df["longitude"],
-            mode="markers",
-            marker={
-                "size": marker_size,
-                "color": summary_df["avg_aqi"],
-                "colorscale": "Turbo",
-                "showscale": True,
-                "colorbar": {"title": "Avg AQI"},
-                "opacity": 0.85,
-            },
-            text=hover,
-            hoverinfo="text",
-        )
-    )
-    fig.update_layout(
-        mapbox={"style": "carto-positron", "center": MAP_CENTER, "zoom": 9},
-        margin={"l": 0, "r": 0, "t": 0, "b": 0},
-        height=650,
-    )
-    return fig
 
 
 @lru_cache(maxsize=1)
@@ -736,11 +622,7 @@ def _build_street_overlay(place_name: str = STREET_MAP_PLACE_NAME) -> dict[str, 
 def inject_nav_links():
     return {
         "nav_links": [
-            ("Map Workspace", "map_workspace"),
-            ("Overview", "overview"),
-            ("Data Explorer", "data_explorer"),
-            ("Network Analysis", "network_view"),
-            ("Interpolation Studio", "interpolation_view"),
+            ("Workspace", "map_workspace"),
         ]
     }
 
@@ -985,6 +867,17 @@ def map_workspace():
         "census_summary": ["Census tract choropleth loads on demand. Click Census to fetch it."],
         "census_config": {
             "selected_metric": "median_income",
+            "selected_view": DEFAULT_CENSUS_VIEW,
+            "selected_year_new": DEFAULT_CENSUS_YEAR_NEW,
+            "selected_year_old": DEFAULT_CENSUS_YEAR_OLD,
+            "view_options": [
+                {"value": "single", "label": "Single Year"},
+                {"value": "change", "label": "Change (New - Old)"},
+            ],
+            "year_options": [
+                {"value": year, "label": str(year)}
+                for year in CENSUS_YEAR_OPTIONS
+            ],
             "metric_options": [
                 {"value": key, "label": value["label"]}
                 for key, value in CENSUS_METRICS.items()
@@ -1046,214 +939,21 @@ def workspace_energy_overlay():
 @app.route("/workspace/census-overlay")
 def workspace_census_overlay():
     metric = request.args.get("metric", "median_income")
-    return jsonify(_build_census_overlay(metric))
+    view = request.args.get("view", DEFAULT_CENSUS_VIEW)
+    try:
+        year_new = int(request.args.get("year_new", str(DEFAULT_CENSUS_YEAR_NEW)))
+    except ValueError:
+        year_new = DEFAULT_CENSUS_YEAR_NEW
+    try:
+        year_old = int(request.args.get("year_old", str(DEFAULT_CENSUS_YEAR_OLD)))
+    except ValueError:
+        year_old = DEFAULT_CENSUS_YEAR_OLD
+    return jsonify(_build_census_overlay(metric, view, year_new, year_old))
 
 
 @app.route("/")
 def overview():
-    goals = [
-        "Understand Chicago's air-quality coverage using open Socrata data.",
-        "Explain modeling choices spanning interpolation, network dynamics, and (future) STGNNs.",
-        "Share interactive visuals that can be explored without a notebook runtime.",
-    ]
-    highlights = [
-        "Paginated Socrata ingestion eliminates the 5k-row cap.",
-        "Modules for intake, network analysis, and interpolation keep logic reusable.",
-        "Flask site stitches narrative, stats, and visualizations into one shareable hub.",
-    ]
-    return render_template("overview.html", goals=goals, highlights=highlights)
-
-
-@app.route("/data-explorer")
-def data_explorer():
-    bin_code = request.args.get("bin", config.DEFAULT_BIN)
-    coverage_str = request.args.get("coverage", str(config.DEFAULT_COVERAGE_THRESHOLD))
-    coverage_threshold = _safe_float(coverage_str, config.DEFAULT_COVERAGE_THRESHOLD)
-    center_lat = _safe_float(request.args.get("center_lat"), MAP_CENTER["lat"])
-    center_lon = _safe_float(request.args.get("center_lon"), MAP_CENTER["lon"])
-    zoom = _safe_float(request.args.get("zoom"), 9.0)
-    map_center = {"lat": center_lat, "lon": center_lon}
-    time_options = _time_options(bin_code, coverage_threshold)
-    if not time_options:
-        aggregated = get_aggregated(bin_code)
-        if aggregated.empty:
-            message = "No aggregated data available for the selected bin."
-        else:
-            message = "No time bins meet the selected coverage requirement."
-        return render_template(
-            "data_explorer.html",
-            bin_code=bin_code,
-            bin_options=config.BIN_OPTIONS,
-            time_options=[],
-            selected_time=None,
-            coverage_threshold=coverage_threshold,
-            coverage_options=config.COVERAGE_THRESHOLDS,
-            map_center=map_center,
-            zoom=zoom,
-            plot_html=None,
-            stats_list=[],
-            message=message,
-        )
-    selected_time = request.args.get("time")
-    if not selected_time or all(opt["value"] != selected_time for opt in time_options):
-        selected_time = time_options[0]["value"]
-    aggregated = get_aggregated(bin_code)
-    time_value = pd.to_datetime(selected_time)
-    merged, stats = data_intake.compute_uptime(aggregated, PREPARED.sensor_catalog, time_value, coverage_threshold)
-    fig = _build_uptime_fig(merged, center=map_center, zoom=zoom)
-    plot_html = to_html(fig, full_html=False, include_plotlyjs="cdn")
-    stats_list = _uptime_stats(stats)
-    return render_template(
-        "data_explorer.html",
-        bin_code=bin_code,
-        bin_options=config.BIN_OPTIONS,
-        time_options=time_options,
-        selected_time=selected_time,
-        coverage_threshold=coverage_threshold,
-        coverage_options=config.COVERAGE_THRESHOLDS,
-        map_center=map_center,
-        zoom=zoom,
-        plot_html=plot_html,
-        stats_list=stats_list,
-        message=None,
-    )
-
-
-@app.route("/network")
-def network_view():
-    summary_df = _sensor_summary()
-    if summary_df.empty:
-        return render_template(
-            "network.html",
-            plot_html=None,
-            summary_list=[],
-            metrics=[],
-            message="No sensor data available.",
-        )
-    G = _build_sensor_graph(summary_df)
-    map_fig = _network_map(summary_df)
-    plot_html = to_html(map_fig, full_html=False, include_plotlyjs="cdn")
-    summary_list = _network_summary(G)
-    top_nodes = (
-        summary_df.sort_values("observations", ascending=False)
-        .head(5)
-        .loc[:, ["sensor_name", "latitude", "longitude", "observations", "avg_aqi"]]
-        .assign(
-            observations=lambda df: df["observations"].astype(int),
-            avg_aqi=lambda df: df["avg_aqi"].astype(float),
-        )
-        .to_dict("records")
-    )
-    return render_template(
-        "network.html",
-        plot_html=plot_html,
-        summary_list=summary_list,
-        metrics=top_nodes,
-        message=None,
-    )
-
-
-@app.route("/interpolation")
-def interpolation_view():
-    bin_code = request.args.get("bin", config.DEFAULT_BIN)
-    coverage_str = request.args.get("coverage", str(config.DEFAULT_COVERAGE_THRESHOLD))
-    coverage_threshold = _safe_float(coverage_str, config.DEFAULT_COVERAGE_THRESHOLD)
-    coverage_threshold = min(max(coverage_threshold, 0.0), 1.0)
-    method = request.args.get("method", "idw")
-    grid_res_str = request.args.get("grid", str(config.DEFAULT_GRID_RESOLUTION))
-    try:
-        grid_resolution = int(grid_res_str)
-    except ValueError:
-        grid_resolution = config.DEFAULT_GRID_RESOLUTION
-    time_options = _time_options(bin_code, coverage_threshold)
-    uptime_message = None
-    interpolation_message = None
-    uptime_plot_html = None
-    interpolation_plot_html = None
-    uptime_stats_list: list[str] = []
-    interpolation_stats: list[str] = []
-    if not time_options:
-        aggregated = get_aggregated(bin_code)
-        if aggregated.empty:
-            uptime_message = "No aggregated data available for the selected bin."
-        else:
-            uptime_message = "No time bins meet the selected coverage requirement."
-        return render_template(
-            "interpolation.html",
-            bin_code=bin_code,
-            bin_options=config.BIN_OPTIONS,
-            coverage_threshold=coverage_threshold,
-            coverage_options=config.COVERAGE_THRESHOLDS,
-            time_options=[],
-            selected_time=None,
-            method=method,
-            method_options=METHOD_OPTIONS,
-            grid_resolution=grid_resolution,
-            uptime_plot_html=uptime_plot_html,
-            uptime_stats=uptime_stats_list,
-            interpolation_plot_html=interpolation_plot_html,
-            interpolation_stats=interpolation_stats,
-            uptime_message=uptime_message,
-            interpolation_message=interpolation_message,
-        )
-    selected_time = request.args.get("time")
-    if not selected_time or all(opt["value"] != selected_time for opt in time_options):
-        selected_time = time_options[0]["value"]
-    aggregated = get_aggregated(bin_code)
-    time_value = pd.to_datetime(selected_time)
-    merged, uptime_stats = data_intake.compute_uptime(
-        aggregated,
-        PREPARED.sensor_catalog,
-        time_value,
-        coverage_threshold,
-    )
-    uptime_fig = _build_uptime_fig(merged, center=MAP_CENTER, zoom=9.0)
-    uptime_plot_html = to_html(uptime_fig, full_html=False, include_plotlyjs="cdn")
-    uptime_stats_list = _uptime_stats(uptime_stats)
-    df_slice = data_intake.filter_by_time(aggregated, time_value)
-    result = interpolation_models.interpolate_time_slice(df_slice, method=method, grid_resolution=grid_resolution)
-    if result is None:
-        interpolation_message = "Need at least three observing stations to interpolate."
-    else:
-        contour = go.Contour(
-            x=result.grid_lon[0],
-            y=result.grid_lat[:, 0],
-            z=result.grid_values,
-            colorscale="Turbo",
-            contours_coloring="heatmap",
-            colorbar={"title": "AQI"},
-            showscale=True,
-        )
-        scatter = go.Scatter(
-            x=result.source_points["longitude"],
-            y=result.source_points["latitude"],
-            mode="markers",
-            marker={"color": "black", "size": 6},
-            text=result.source_points["sensor_name"],
-            name="Sensors",
-        )
-        fig = go.Figure([contour, scatter])
-        fig.update_layout(xaxis_title="Longitude", yaxis_title="Latitude", height=650)
-        interpolation_plot_html = to_html(fig, full_html=False, include_plotlyjs="cdn")
-        interpolation_stats = _interpolation_stats(result)
-    return render_template(
-        "interpolation.html",
-        bin_code=bin_code,
-        bin_options=config.BIN_OPTIONS,
-        coverage_threshold=coverage_threshold,
-        coverage_options=config.COVERAGE_THRESHOLDS,
-        time_options=time_options,
-        selected_time=selected_time,
-        method=method,
-        method_options=METHOD_OPTIONS,
-        grid_resolution=grid_resolution,
-        uptime_plot_html=uptime_plot_html,
-        uptime_stats=uptime_stats_list,
-        interpolation_plot_html=interpolation_plot_html,
-        interpolation_stats=interpolation_stats,
-        uptime_message=uptime_message,
-        interpolation_message=interpolation_message,
-    )
+    return redirect(url_for("map_workspace"))
 
 
 if __name__ == "__main__":

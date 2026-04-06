@@ -18,7 +18,7 @@
       <input type="hidden" name="mode" id="mode-input" value="explorer" />
     </div>
 
-    <div class="control-group">
+    <div class="control-group" data-modes="explorer,network,interpolation">
       <label>Time Bin <span class="info-icon" data-help="bin-help">i</span></label>
       <select name="bin">
         {% for option in bin_options %}
@@ -27,7 +27,7 @@
       </select>
     </div>
 
-    <div class="control-group">
+    <div class="control-group" data-modes="explorer,network,interpolation">
       <label>Timestamp <span class="info-icon" data-help="time-help">i</span></label>
       <select name="time">
         {% for opt in time_options %}
@@ -36,7 +36,7 @@
       </select>
     </div>
 
-    <div class="control-group">
+    <div class="control-group" data-modes="explorer,network,interpolation">
       <label>Coverage <span class="info-icon" data-help="coverage-help">i</span></label>
       <select name="coverage">
         {% for option in coverage_options %}
@@ -45,7 +45,7 @@
       </select>
     </div>
 
-    <div class="control-group">
+    <div class="control-group" data-modes="interpolation">
       <label>Interpolation <span class="info-icon" data-help="interp-help">i</span></label>
       <select name="method">
         {% for label, value in method_options %}
@@ -54,12 +54,12 @@
       </select>
     </div>
 
-    <div class="control-group compact">
+    <div class="control-group compact" data-modes="interpolation">
       <label>Grid</label>
       <input type="number" name="grid" value="{{ grid_resolution }}" min="30" max="200" step="10" />
     </div>
 
-    <div class="control-group compact">
+    <div class="control-group compact" data-modes="network">
       <label>Link dist (km) <span class="info-icon" data-help="distance-help">i</span></label>
       <select name="distance_km">
         {% for opt in distance_options_km %}
@@ -68,35 +68,57 @@
       </select>
     </div>
 
-    <div class="control-group compact">
+    <div class="control-group compact" data-modes="network">
       <label>Points <span class="info-icon" data-help="points-help">i</span></label>
       <label style="display:flex; align-items:center; gap:6px; margin-top: 6px;">
         <input type="checkbox" name="show_all" value="1" {% if show_all_points %}checked{% endif %} />
         <span style="font-size:0.8rem; color:#dce3f2;">Show all</span>
       </label>
     </div>
+
+    <div class="control-group" data-modes="energy">
+      <label>Energy Dataset</label>
+      <select id="energy-dataset-select" data-overlay-control="true"></select>
+    </div>
+
+    <div class="control-group" data-modes="energy">
+      <label>Energy Metric</label>
+      <select id="energy-metric-select" data-overlay-control="true"></select>
+    </div>
+
+    <div class="control-group compact" data-modes="energy">
+      <label>Energy Layer</label>
+      <button type="button" id="energy-load-btn" style="margin-top: 6px;">Load</button>
+    </div>
+
+    <div class="control-group" data-modes="census">
+      <label>Census Metric</label>
+      <select id="census-metric-select" data-overlay-control="true"></select>
+    </div>
+
+    <div class="control-group compact" data-modes="census">
+      <label>Census View</label>
+      <select id="census-view-select" data-overlay-control="true"></select>
+    </div>
+
+    <div class="control-group compact" data-modes="census">
+      <label>New Year</label>
+      <select id="census-year-new-select" data-overlay-control="true"></select>
+    </div>
+
+    <div class="control-group compact" data-modes="census" id="census-year-old-group">
+      <label>Old Year</label>
+      <select id="census-year-old-select" data-overlay-control="true"></select>
+    </div>
+
+    <div class="control-group compact" data-modes="census">
+      <label>Census Layer</label>
+      <button type="button" id="census-load-btn" style="margin-top: 6px;">Load</button>
+    </div>
   </form>
 
   <div class="map-stage">
     <div id="workspace-map" class="workspace-map"></div>
-
-    <div class="mode-side-panel" id="mode-side-panel" hidden>
-      <div class="mode-side-panel__section" id="energy-controls" hidden>
-        <h4>Energy Controls</h4>
-        <label for="energy-dataset-select">Dataset</label>
-        <select id="energy-dataset-select"></select>
-        <label for="energy-metric-select">Metric</label>
-        <select id="energy-metric-select"></select>
-        <button type="button" id="energy-load-btn">Load Energy Layer</button>
-      </div>
-
-      <div class="mode-side-panel__section" id="census-controls" hidden>
-        <h4>Census Controls</h4>
-        <label for="census-metric-select">Metric</label>
-        <select id="census-metric-select"></select>
-        <button type="button" id="census-load-btn">Load Census Layer</button>
-      </div>
-    </div>
 
     <div class="overlay-panel" id="overlay-panel">
       <h3 id="overlay-title">Explorer</h3>
@@ -174,8 +196,19 @@
     let censusSummary = payload.census_summary || ['Census tract choropleth loads on demand. Click Census to fetch it.'];
     let censusLoaded = Boolean(censusOverlay.loaded && Array.isArray(censusOverlay.locations) && censusOverlay.locations.length);
     let censusLoading = false;
-    const censusConfig = payload.census_config || { metric_options: [], selected_metric: 'median_income' };
+    const censusConfig = payload.census_config || {
+      metric_options: [],
+      selected_metric: 'median_income',
+      view_options: [],
+      selected_view: 'single',
+      year_options: [],
+      selected_year_new: 2023,
+      selected_year_old: 2022,
+    };
     let selectedCensusMetric = censusConfig.selected_metric || 'median_income';
+    let selectedCensusView = censusConfig.selected_view || 'single';
+    let selectedCensusYearNew = String(censusConfig.selected_year_new || '2023');
+    let selectedCensusYearOld = String(censusConfig.selected_year_old || '2022');
     const maxAqiRange = payload.max_aqi_range || { min: 0, max: 100 };
     const maxAqiMin = Number.isFinite(maxAqiRange.min) ? maxAqiRange.min : 0;
     const maxAqiMax = Number.isFinite(maxAqiRange.max) ? maxAqiRange.max : 100;
@@ -382,14 +415,23 @@
       census: 'Census Overlay'
     };
 
-    const modeSidePanel = document.getElementById('mode-side-panel');
-    const energyControls = document.getElementById('energy-controls');
-    const censusControls = document.getElementById('census-controls');
+    const modeScopedControls = Array.from(document.querySelectorAll('.workspace-controls .control-group[data-modes]'));
     const energyDatasetSelect = document.getElementById('energy-dataset-select');
     const energyMetricSelect = document.getElementById('energy-metric-select');
     const censusMetricSelect = document.getElementById('census-metric-select');
+    const censusViewSelect = document.getElementById('census-view-select');
+    const censusYearNewSelect = document.getElementById('census-year-new-select');
+    const censusYearOldSelect = document.getElementById('census-year-old-select');
+    const censusYearOldGroup = document.getElementById('census-year-old-group');
     const energyLoadButton = document.getElementById('energy-load-btn');
     const censusLoadButton = document.getElementById('census-load-btn');
+
+    function updateModeScopedControls(mode) {
+      modeScopedControls.forEach((group) => {
+        const modes = (group.dataset.modes || '').split(',').map(m => m.trim()).filter(Boolean);
+        group.style.display = modes.includes(mode) ? '' : 'none';
+      });
+    }
 
     function fillSelect(selectEl, options, selectedValue) {
       selectEl.innerHTML = '';
@@ -410,10 +452,22 @@
     fillSelect(energyDatasetSelect, energyConfig.dataset_options || [], selectedEnergyDataset);
     fillSelect(energyMetricSelect, energyConfig.metric_options || [], selectedEnergyMetric);
     fillSelect(censusMetricSelect, censusConfig.metric_options || [], selectedCensusMetric);
+    fillSelect(censusViewSelect, censusConfig.view_options || [], selectedCensusView);
+    fillSelect(censusYearNewSelect, censusConfig.year_options || [], selectedCensusYearNew);
+    fillSelect(censusYearOldSelect, censusConfig.year_options || [], selectedCensusYearOld);
 
     selectedEnergyDataset = energyDatasetSelect.value || selectedEnergyDataset;
     selectedEnergyMetric = energyMetricSelect.value || selectedEnergyMetric;
     selectedCensusMetric = censusMetricSelect.value || selectedCensusMetric;
+    selectedCensusView = censusViewSelect.value || selectedCensusView;
+    selectedCensusYearNew = censusYearNewSelect.value || selectedCensusYearNew;
+    selectedCensusYearOld = censusYearOldSelect.value || selectedCensusYearOld;
+
+    function updateCensusYearControlVisibility() {
+      const showOldYear = selectedCensusView === 'change';
+      censusYearOldGroup.style.display = showOldYear ? '' : 'none';
+    }
+    updateCensusYearControlVisibility();
 
     const weatherTable = document.getElementById('weather-table');
     const weatherTableBody = document.getElementById('weather-table-body');
@@ -492,11 +546,9 @@
         loadCensusOverlay();
       }
 
-      const shouldShowSidePanel = mode === 'energy' || mode === 'census';
-      modeSidePanel.hidden = !shouldShowSidePanel;
-      energyControls.hidden = mode !== 'energy';
-      censusControls.hidden = mode !== 'census';
-      overlayPanel.style.top = shouldShowSidePanel ? '236px' : '86px';
+      overlayPanel.style.top = '86px';
+      updateModeScopedControls(mode);
+      updateCensusYearControlVisibility();
     }
 
     function renderStreetStats(items) {
@@ -707,9 +759,15 @@
 
       try {
         selectedCensusMetric = censusMetricSelect.value || selectedCensusMetric;
+        selectedCensusView = censusViewSelect.value || selectedCensusView;
+        selectedCensusYearNew = censusYearNewSelect.value || selectedCensusYearNew;
+        selectedCensusYearOld = censusYearOldSelect.value || selectedCensusYearOld;
 
         const params = new URLSearchParams({
           metric: selectedCensusMetric,
+          view: selectedCensusView,
+          year_new: selectedCensusYearNew,
+          year_old: selectedCensusYearOld,
         });
         const response = await fetch(`/workspace/census-overlay?${params.toString()}`, { method: 'GET' });
         if (!response.ok) {
@@ -723,9 +781,22 @@
           : [censusLoaded ? 'Census overlay loaded.' : 'Census overlay unavailable.'];
 
         selectedCensusMetric = data.metric || selectedCensusMetric;
+        selectedCensusView = data.view || selectedCensusView;
+        selectedCensusYearNew = String(data.year_new || selectedCensusYearNew);
+        selectedCensusYearOld = String(data.year_old || selectedCensusYearOld);
         if (selectedCensusMetric) {
           censusMetricSelect.value = selectedCensusMetric;
         }
+        if (selectedCensusView) {
+          censusViewSelect.value = selectedCensusView;
+        }
+        if (selectedCensusYearNew) {
+          censusYearNewSelect.value = selectedCensusYearNew;
+        }
+        if (selectedCensusYearOld) {
+          censusYearOldSelect.value = selectedCensusYearOld;
+        }
+        updateCensusYearControlVisibility();
 
         await Plotly.restyle('workspace-map', {
           geojson: [data.geojson || { type: 'FeatureCollection', features: [] }],
@@ -734,6 +805,7 @@
           text: [data.hover || []],
           colorscale: [data.colorscale || 'YlOrRd'],
           'colorbar.title.text': [data.metric_label || 'Census Metric'],
+          zmid: [data.zmid == null ? null : data.zmid],
         }, [7]);
 
         renderCensusStats(censusSummary);
@@ -757,6 +829,19 @@
     censusMetricSelect.addEventListener('change', () => {
       censusLoaded = false;
     });
+    censusViewSelect.addEventListener('change', () => {
+      selectedCensusView = censusViewSelect.value || 'single';
+      censusLoaded = false;
+      updateCensusYearControlVisibility();
+    });
+    censusYearNewSelect.addEventListener('change', () => {
+      selectedCensusYearNew = censusYearNewSelect.value || selectedCensusYearNew;
+      censusLoaded = false;
+    });
+    censusYearOldSelect.addEventListener('change', () => {
+      selectedCensusYearOld = censusYearOldSelect.value || selectedCensusYearOld;
+      censusLoaded = false;
+    });
 
     energyLoadButton.addEventListener('click', () => loadEnergyOverlay(true));
     censusLoadButton.addEventListener('click', () => loadCensusOverlay(true));
@@ -775,7 +860,7 @@
 
     const form = document.getElementById('workspace-form');
     form.querySelectorAll('select,input[type="number"]').forEach(el => {
-      if (el.id !== 'mode-input') {
+      if (el.id !== 'mode-input' && !el.dataset.overlayControl) {
         el.addEventListener('change', () => form.submit());
       }
     });

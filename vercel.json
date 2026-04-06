@@ -11,6 +11,18 @@
           "static/**",
           "data/**",
           "core/**"
+        ],
+        "excludeFiles": [
+          "SensorsNetwork_Venv/**",
+          ".venv/**",
+          "venv/**",
+          "cache/**",
+          "notebooks/**",
+          "HTML_MAPS/**",
+          "%AppData%/**",
+          "pages/**",
+          "**/*.ipynb",
+          "**/__pycache__/**"
         ]
       }
     }
