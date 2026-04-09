@@ -101,6 +101,71 @@ CENSUS_YEAR_OPTIONS = [2023, 2022, 2021, 2020, 2019, 2018, 2017]
 DEFAULT_CENSUS_VIEW = "single"
 DEFAULT_CENSUS_YEAR_NEW = CENSUS_YEAR_OPTIONS[0]
 DEFAULT_CENSUS_YEAR_OLD = CENSUS_YEAR_OPTIONS[1] if len(CENSUS_YEAR_OPTIONS) > 1 else CENSUS_YEAR_OPTIONS[0]
+AIR_QUALITY_SUBVIEWS = {"sensors", "network", "interpolation"}
+DEFAULT_AIR_QUALITY_SUBVIEW = "sensors"
+AIR_METRIC_LABELS = {
+    "aqi_value": "PM2.5 Mass (Configured)",
+    "pm2_5concmassindividual_raw": "PM2.5 Mass (Raw)",
+    "pm2_5concnumindividual_raw": "PM2.5 Number (Raw)",
+    "pm2_5concnumindividual_value": "PM2.5 Number (Calibrated)",
+    "no2concindividual_raw": "NO2 (Raw)",
+    "no2concindividual_value": "NO2 (Calibrated)",
+    "atmpressureindividual_raw": "Atmospheric Pressure (Raw)",
+    "atmpressureindividual_value": "Atmospheric Pressure (Calibrated)",
+    "relhumidambientindividual": "Ambient Relative Humidity",
+    "temperatureambientindividual": "Ambient Temperature",
+    "windspeedindividual_value": "Wind Speed",
+    "winddirectionindividual_value": "Wind Direction",
+}
+
+
+def _air_metric_label(column_name: str) -> str:
+    if column_name in AIR_METRIC_LABELS:
+        return AIR_METRIC_LABELS[column_name]
+    return column_name.replace("_", " ").title()
+
+
+def _air_metric_options(df: pd.DataFrame) -> list[dict[str, str]]:
+    if df.empty:
+        return [{"value": "aqi_value", "label": _air_metric_label("aqi_value")}]
+
+    excluded_columns = {"latitude", "longitude"}
+    preferred_order = [
+        "aqi_value",
+        "pm2_5concmassindividual_raw",
+        "pm2_5concnumindividual_raw",
+        "pm2_5concnumindividual_value",
+        "no2concindividual_raw",
+        "no2concindividual_value",
+        "atmpressureindividual_raw",
+        "atmpressureindividual_value",
+        "relhumidambientindividual",
+        "temperatureambientindividual",
+        "windspeedindividual_value",
+        "winddirectionindividual_value",
+    ]
+
+    valid: list[str] = []
+    for col in df.columns:
+        if col in excluded_columns or col.startswith(":@computed_region_"):
+            continue
+        if not pd.api.types.is_numeric_dtype(df[col]):
+            continue
+        numeric_col = pd.to_numeric(df[col], errors="coerce")
+        if numeric_col.notna().sum() == 0:
+            continue
+        valid.append(col)
+
+    ordered: list[str] = [col for col in preferred_order if col in valid]
+    ordered.extend(col for col in valid if col not in set(ordered))
+
+    if "aqi_value" not in ordered and "aqi_value" in df.columns:
+        ordered.insert(0, "aqi_value")
+
+    if not ordered:
+        ordered = ["aqi_value"]
+
+    return [{"value": col, "label": _air_metric_label(col)} for col in ordered]
 
 
 def _safe_float(value: str | None, default: float) -> float:
@@ -108,6 +173,14 @@ def _safe_float(value: str | None, default: float) -> float:
         return float(value) if value is not None else default
     except ValueError:
         return default
+
+
+def _normalized_coverage_threshold(value: str | None, default: float) -> float:
+    threshold = _safe_float(value, default)
+    # Accept both fractional input (0.5) and percentage-style input (50).
+    if threshold > 1.0:
+        threshold = threshold / 100.0
+    return min(max(threshold, 0.0), 1.0)
 
 
 @lru_cache(maxsize=1)
@@ -491,13 +564,25 @@ def _build_census_overlay(metric_key: str, view_mode: str, year_new: int, year_o
     }
 
 
-@lru_cache(maxsize=len(config.BIN_OPTIONS))
-def get_aggregated(bin_code: str) -> pd.DataFrame:
-    return data_intake.aggregate_time_series(PREPARED.time_series, bin_code)
+@lru_cache(maxsize=128)
+def get_aggregated(bin_code: str, metric_column: str = "aqi_value") -> pd.DataFrame:
+    source = PREPARED.time_series
+    value_column = metric_column if metric_column in source.columns else "aqi_value"
+    df = source[["sensor_name", "time", "latitude", "longitude", value_column]].copy()
+    df[value_column] = pd.to_numeric(df[value_column], errors="coerce")
+    df["time_bin"] = df["time"].dt.floor(bin_code)
+    aggregated = (
+        df.groupby(["sensor_name", "time_bin", "latitude", "longitude"])
+        .agg(aqi_value=(value_column, "mean"), reading_count=(value_column, "count"))
+        .reset_index()
+        .rename(columns={"time_bin": "time"})
+        .sort_values("time")
+    )
+    return aggregated
 
 
-def _time_options(bin_code: str, min_coverage: float = 0.0) -> list[dict[str, str]]:
-    df = get_aggregated(bin_code)
+def _time_options(bin_code: str, min_coverage: float = 0.0, metric_column: str = "aqi_value") -> list[dict[str, str]]:
+    df = get_aggregated(bin_code, metric_column)
     if df.empty:
         return []
     total_sensors = max(PREPARED.sensor_catalog.shape[0], 1)
@@ -552,12 +637,13 @@ def _network_overlay_summary(
     ]
 
 
-def _interpolation_stats(result: interpolation_models.InterpolationResult) -> list[str]:
+def _interpolation_stats(result: interpolation_models.InterpolationResult, metric_label: str) -> list[str]:
     return [
         f"Method: {result.method_used.upper()}",
-        f"Min AQI: {result.grid_values.min():.1f}",
-        f"Mean AQI: {result.grid_values.mean():.1f}",
-        f"Max AQI: {result.grid_values.max():.1f}",
+        f"Metric: {metric_label}",
+        f"Min: {result.grid_values.min():.1f}",
+        f"Mean: {result.grid_values.mean():.1f}",
+        f"Max: {result.grid_values.max():.1f}",
     ]
 
 
@@ -681,8 +767,26 @@ def _build_network_overlay(
 @app.route("/workspace")
 def map_workspace():
     bin_code = request.args.get("bin", config.DEFAULT_BIN)
+    requested_mode = request.args.get("mode", "explorer")
+    requested_aqi_view = request.args.get("aqi_view", DEFAULT_AIR_QUALITY_SUBVIEW)
+    if requested_mode in {"network", "interpolation"}:
+        requested_aqi_view = requested_mode
+        requested_mode = "explorer"
+    if requested_aqi_view not in AIR_QUALITY_SUBVIEWS:
+        requested_aqi_view = DEFAULT_AIR_QUALITY_SUBVIEW
+
+    air_metric_options = _air_metric_options(PREPARED.time_series)
+    valid_air_metrics = {opt["value"] for opt in air_metric_options}
+    selected_air_metric = request.args.get("aq_metric", "aqi_value")
+    if selected_air_metric not in valid_air_metrics:
+        selected_air_metric = air_metric_options[0]["value"]
+    selected_air_metric_label = next(
+        (opt["label"] for opt in air_metric_options if opt["value"] == selected_air_metric),
+        _air_metric_label(selected_air_metric),
+    )
+
     coverage_str = request.args.get("coverage", str(config.DEFAULT_COVERAGE_THRESHOLD))
-    coverage_threshold = min(max(_safe_float(coverage_str, config.DEFAULT_COVERAGE_THRESHOLD), 0.0), 1.0)
+    coverage_threshold = _normalized_coverage_threshold(coverage_str, config.DEFAULT_COVERAGE_THRESHOLD)
     method = request.args.get("method", "linear")
     valid_methods = {value for _, value in WORKSPACE_METHOD_OPTIONS}
     if method not in valid_methods:
@@ -697,7 +801,7 @@ def map_workspace():
         grid_resolution = config.DEFAULT_GRID_RESOLUTION
     grid_resolution = int(np.clip(grid_resolution, 30, 200))
 
-    time_options = _time_options(bin_code, coverage_threshold)
+    time_options = _time_options(bin_code, coverage_threshold, selected_air_metric)
     if not time_options:
         return render_template(
             "workspace.html",
@@ -722,7 +826,7 @@ def map_workspace():
     if not selected_time or all(opt["value"] != selected_time for opt in time_options):
         selected_time = time_options[0]["value"]
 
-    aggregated = get_aggregated(bin_code)
+    aggregated = get_aggregated(bin_code, selected_air_metric)
     time_value = pd.to_datetime(selected_time)
     merged, uptime_stats = data_intake.compute_uptime(
         aggregated,
@@ -812,22 +916,28 @@ def map_workspace():
                     "value": float(value),
                 }
             )
-        interpolation_stats = _interpolation_stats(interpolation_result)
+        interpolation_stats = _interpolation_stats(interpolation_result, selected_air_metric_label)
 
     workspace_payload = {
         "map_center": MAP_CENTER,
         "time": time_value.strftime("%Y-%m-%d %H:%M"),
-        "active_mode": request.args.get("mode", "explorer"),
+        "active_mode": requested_mode,
+        "active_aqi_view": requested_aqi_view,
         "show_all_points": show_all_points,
         "selected_distance_km": selected_distance_km,
         "distance_options_km": distance_options_km,
         "uptime_points": uptime_points,
-        "uptime_stats": _uptime_stats(uptime_stats),
+        "uptime_stats": [f"Metric: {selected_air_metric_label}"] + _uptime_stats(uptime_stats),
         "network_overlay": network_overlay,
-        "network_summary": _network_overlay_summary(network_overlay, selected_distance_km),
+        "network_summary": [f"Metric: {selected_air_metric_label}"] + _network_overlay_summary(network_overlay, selected_distance_km),
         "interpolation_points": interpolation_points,
         "interpolation_stats": interpolation_stats,
         "interpolation_method_used": interpolation_result.method_used if interpolation_result else method,
+        "air_config": {
+            "selected_metric": selected_air_metric,
+            "selected_metric_label": selected_air_metric_label,
+            "metric_options": air_metric_options,
+        },
         "street_overlay": {
             "available": False,
             "lat": [],

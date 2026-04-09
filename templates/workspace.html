@@ -6,9 +6,7 @@
       <label>Mode</label>
       <div class="mode-switch">
         <button type="button" id="prev-mode" class="arrow-btn" aria-label="Previous mode">◀</button>
-        <button type="button" class="mode-btn" data-mode="explorer">Explorer</button>
-        <button type="button" class="mode-btn" data-mode="network">Network</button>
-        <button type="button" class="mode-btn" data-mode="interpolation">Interpolation</button>
+        <button type="button" class="mode-btn" data-mode="explorer">Air Quaility</button>
         <button type="button" class="mode-btn" data-mode="weather">Weather</button>
         <button type="button" class="mode-btn" data-mode="streetmaps">Streetmaps</button>
         <button type="button" class="mode-btn" data-mode="energy">Energy</button>
@@ -16,9 +14,24 @@
         <button type="button" id="next-mode" class="arrow-btn" aria-label="Next mode">▶</button>
       </div>
       <input type="hidden" name="mode" id="mode-input" value="explorer" />
+      <input type="hidden" name="aqi_view" id="aqi-view-input" value="sensors" />
     </div>
 
-    <div class="control-group" data-modes="explorer,network,interpolation">
+    <div class="control-group" data-modes="explorer">
+      <label>Air Quaility View</label>
+      <div class="mode-switch" id="aqi-view-switch" style="padding: 4px; gap: 6px;">
+        <button type="button" class="mode-btn aqi-view-btn" data-aqi-view="sensors">Sensors</button>
+        <button type="button" class="mode-btn aqi-view-btn" data-aqi-view="network">Network</button>
+        <button type="button" class="mode-btn aqi-view-btn" data-aqi-view="interpolation">Interpolation</button>
+      </div>
+    </div>
+
+    <div class="control-group" data-modes="explorer">
+      <label>Air Quaility Metric</label>
+      <select name="aq_metric" id="air-metric-select"></select>
+    </div>
+
+    <div class="control-group" data-modes="explorer">
       <label>Time Bin <span class="info-icon" data-help="bin-help">i</span></label>
       <select name="bin">
         {% for option in bin_options %}
@@ -27,7 +40,7 @@
       </select>
     </div>
 
-    <div class="control-group" data-modes="explorer,network,interpolation">
+    <div class="control-group" data-modes="explorer">
       <label>Timestamp <span class="info-icon" data-help="time-help">i</span></label>
       <select name="time">
         {% for opt in time_options %}
@@ -36,7 +49,7 @@
       </select>
     </div>
 
-    <div class="control-group" data-modes="explorer,network,interpolation">
+    <div class="control-group" data-modes="explorer">
       <label>Coverage <span class="info-icon" data-help="coverage-help">i</span></label>
       <select name="coverage">
         {% for option in coverage_options %}
@@ -45,7 +58,7 @@
       </select>
     </div>
 
-    <div class="control-group" data-modes="interpolation">
+    <div class="control-group" data-modes="explorer" data-aqi-views="interpolation">
       <label>Interpolation <span class="info-icon" data-help="interp-help">i</span></label>
       <select name="method">
         {% for label, value in method_options %}
@@ -54,12 +67,12 @@
       </select>
     </div>
 
-    <div class="control-group compact" data-modes="interpolation">
+    <div class="control-group compact" data-modes="explorer" data-aqi-views="interpolation">
       <label>Grid</label>
       <input type="number" name="grid" value="{{ grid_resolution }}" min="30" max="200" step="10" />
     </div>
 
-    <div class="control-group compact" data-modes="network">
+    <div class="control-group compact" data-modes="explorer" data-aqi-views="network">
       <label>Link dist (km) <span class="info-icon" data-help="distance-help">i</span></label>
       <select name="distance_km">
         {% for opt in distance_options_km %}
@@ -68,7 +81,7 @@
       </select>
     </div>
 
-    <div class="control-group compact" data-modes="network">
+    <div class="control-group compact" data-modes="explorer" data-aqi-views="network">
       <label>Points <span class="info-icon" data-help="points-help">i</span></label>
       <label style="display:flex; align-items:center; gap:6px; margin-top: 6px;">
         <input type="checkbox" name="show_all" value="1" {% if show_all_points %}checked{% endif %} />
@@ -121,7 +134,7 @@
     <div id="workspace-map" class="workspace-map"></div>
 
     <div class="overlay-panel" id="overlay-panel">
-      <h3 id="overlay-title">Explorer</h3>
+      <h3 id="overlay-title">Air Quaility Overlay</h3>
       <p class="overlay-time" id="overlay-time"></p>
       <ul id="overlay-stats"></ul>
     </div>
@@ -165,10 +178,21 @@
       return;
     }
 
-    const modeOrder = ['explorer', 'network', 'interpolation', 'weather', 'streetmaps', 'energy', 'census'];
+    const modeOrder = ['explorer', 'weather', 'streetmaps', 'energy', 'census'];
+    const aqiViewOrder = ['sensors', 'network', 'interpolation'];
     const modeInput = document.getElementById('mode-input');
+    const aqiViewInput = document.getElementById('aqi-view-input');
     let activeMode = modeOrder.includes(payload.active_mode) ? payload.active_mode : 'explorer';
+    let activeAqiView = aqiViewOrder.includes(payload.active_aqi_view) ? payload.active_aqi_view : 'sensors';
     modeInput.value = activeMode;
+    aqiViewInput.value = activeAqiView;
+
+    const airConfig = payload.air_config || {
+      selected_metric: 'aqi_value',
+      selected_metric_label: 'Air Quaility Metric',
+      metric_options: [{ value: 'aqi_value', label: 'PM2.5 Mass (Configured)' }],
+    };
+    const airMetricLabel = airConfig.selected_metric_label || 'Air Quaility Metric';
 
     const uptime = payload.uptime_points || [];
     const networkNodes = (payload.network_overlay && payload.network_overlay.nodes) || [];
@@ -219,7 +243,7 @@
       mode: 'markers',
       lat: uptime.map(p => p.latitude),
       lon: uptime.map(p => p.longitude),
-      text: uptime.map(p => `${p.sensor_name}<br>Status: ${p.is_observing ? 'Observing' : 'No observations'}<br>Obs count: ${p.observation_count ?? 0}<br>Max AQI (binned): ${p.max_aqi ?? 'n/a'}`),
+      text: uptime.map(p => `${p.sensor_name}<br>Status: ${p.is_observing ? 'Observing' : 'No observations'}<br>Obs count: ${p.observation_count ?? 0}<br>Max ${airMetricLabel}: ${p.max_aqi ?? 'n/a'}`),
       hoverinfo: 'text',
       marker: {
         size: uptime.map(p => p.is_observing ? 11 : 8),
@@ -229,7 +253,7 @@
         cmin: maxAqiMin,
         cmax: maxAqiCmax,
         showscale: true,
-        colorbar: { title: 'Max AQI', bgcolor: 'rgba(18,18,18,0.65)', tickfont: { color: '#e7e7e7' }, titlefont: { color: '#e7e7e7' } },
+        colorbar: { title: `Max ${airMetricLabel}`, bgcolor: 'rgba(18,18,18,0.65)', tickfont: { color: '#e7e7e7' }, titlefont: { color: '#e7e7e7' } },
         line: { width: 1, color: '#202020' },
         opacity: uptime.map(p => p.opacity ?? (p.is_observing ? 0.95 : 0.22))
       },
@@ -260,7 +284,7 @@
       mode: 'markers',
       lat: networkNodes.map(p => p.latitude),
       lon: networkNodes.map(p => p.longitude),
-      text: networkNodes.map(p => `${p.sensor_name}<br>Status: ${p.is_observing ? 'Observing' : 'No observations'}<br>AQI: ${p.aqi_value ?? 'n/a'}`),
+      text: networkNodes.map(p => `${p.sensor_name}<br>Status: ${p.is_observing ? 'Observing' : 'No observations'}<br>${airMetricLabel}: ${p.aqi_value ?? 'n/a'}`),
       hoverinfo: 'text',
       marker: {
         size: 9,
@@ -269,7 +293,7 @@
         cmin: 0,
         cmax: 100,
         showscale: true,
-        colorbar: { title: 'AQI', bgcolor: 'rgba(18,18,18,0.65)', tickfont: { color: '#e7e7e7' }, titlefont: { color: '#e7e7e7' } },
+        colorbar: { title: airMetricLabel, bgcolor: 'rgba(18,18,18,0.65)', tickfont: { color: '#e7e7e7' }, titlefont: { color: '#e7e7e7' } },
         line: { width: 1, color: '#111' },
         opacity: networkNodes.map(p => p.opacity ?? (p.is_observing ? 0.9 : 0.28))
       },
@@ -282,7 +306,7 @@
       mode: 'markers',
       lat: interpolation.map(p => p.latitude),
       lon: interpolation.map(p => p.longitude),
-      text: interpolation.map(p => `Interpolated AQI: ${p.value.toFixed(2)}`),
+      text: interpolation.map(p => `Interpolated ${airMetricLabel}: ${p.value.toFixed(2)}`),
       hoverinfo: 'text',
       marker: {
         size: 8,
@@ -291,7 +315,7 @@
         reversescale: false,
         showscale: true,
         opacity: 0.45,
-        colorbar: { title: 'Interpolated AQI', bgcolor: 'rgba(18,18,18,0.65)', tickfont: { color: '#e7e7e7' }, titlefont: { color: '#e7e7e7' } }
+        colorbar: { title: `Interpolated ${airMetricLabel}`, bgcolor: 'rgba(18,18,18,0.65)', tickfont: { color: '#e7e7e7' }, titlefont: { color: '#e7e7e7' } }
       },
       visible: false,
       name: 'Linear Interpolation Grid'
@@ -406,16 +430,23 @@
     };
 
     const titles = {
-      explorer: 'Explorer Overlay',
-      network: 'Network Overlay',
-      interpolation: 'Interpolation Overlay',
+      explorer: 'Air Quaility Overlay',
       weather: 'Weather Overlay',
       streetmaps: 'Streetmaps Overlay',
       energy: 'Energy Overlay',
       census: 'Census Overlay'
     };
 
+    const aqiSubviewTitles = {
+      sensors: 'Air Quaility Sensors',
+      network: 'Air Quaility Network',
+      interpolation: 'Air Quaility Interpolation',
+    };
+
     const modeScopedControls = Array.from(document.querySelectorAll('.workspace-controls .control-group[data-modes]'));
+    const aqiScopedControls = Array.from(document.querySelectorAll('.workspace-controls .control-group[data-aqi-views]'));
+    const aqiViewButtons = Array.from(document.querySelectorAll('.aqi-view-btn'));
+    const airMetricSelect = document.getElementById('air-metric-select');
     const energyDatasetSelect = document.getElementById('energy-dataset-select');
     const energyMetricSelect = document.getElementById('energy-metric-select');
     const censusMetricSelect = document.getElementById('census-metric-select');
@@ -451,6 +482,7 @@
 
     fillSelect(energyDatasetSelect, energyConfig.dataset_options || [], selectedEnergyDataset);
     fillSelect(energyMetricSelect, energyConfig.metric_options || [], selectedEnergyMetric);
+    fillSelect(airMetricSelect, airConfig.metric_options || [], airConfig.selected_metric || 'aqi_value');
     fillSelect(censusMetricSelect, censusConfig.metric_options || [], selectedCensusMetric);
     fillSelect(censusViewSelect, censusConfig.view_options || [], selectedCensusView);
     fillSelect(censusYearNewSelect, censusConfig.year_options || [], selectedCensusYearNew);
@@ -462,6 +494,20 @@
     selectedCensusView = censusViewSelect.value || selectedCensusView;
     selectedCensusYearNew = censusYearNewSelect.value || selectedCensusYearNew;
     selectedCensusYearOld = censusYearOldSelect.value || selectedCensusYearOld;
+
+    function updateAqiScopedControls(aqiView) {
+      aqiScopedControls.forEach((group) => {
+        const views = (group.dataset.aqiViews || '').split(',').map(v => v.trim()).filter(Boolean);
+        group.style.display = views.includes(aqiView) ? '' : 'none';
+      });
+    }
+
+    function updateAqiViewButtons(aqiView) {
+      aqiViewButtons.forEach((btn) => {
+        btn.classList.toggle('active', btn.dataset.aqiView === aqiView);
+      });
+      aqiViewInput.value = aqiView;
+    }
 
     function updateCensusYearControlVisibility() {
       const showOldYear = selectedCensusView === 'change';
@@ -505,29 +551,49 @@
     }
     renderWeatherTable(weatherPoints, weatherLoaded ? undefined : 'Switch to Weather mode to load live NOAA station observations.');
 
-    function applyMode(mode) {
+    function applyMode(mode, requestedAqiView = null) {
       activeMode = mode;
+      if (mode === 'explorer' && requestedAqiView && aqiViewOrder.includes(requestedAqiView)) {
+        activeAqiView = requestedAqiView;
+      }
       modeInput.value = mode;
+      aqiViewInput.value = activeAqiView;
 
-      const modeVisibility = {
-        explorer: [true, false, false, false, false, false, false, false],
-        network: [false, true, true, false, false, false, false, false],
-        interpolation: [false, false, false, true, false, false, false, false],
-        weather: [true, false, false, false, true, false, false, false],
-        streetmaps: [true, false, false, false, false, true, false, false],
-        energy: [false, false, false, false, false, false, true, false],
-        census: [false, false, false, false, false, false, false, true],
-      };
-      Plotly.restyle('workspace-map', { visible: modeVisibility[mode] });
+      let visibility = [false, false, false, false, false, false, false, false];
+      if (mode === 'explorer') {
+        if (activeAqiView === 'network') {
+          visibility = [false, true, true, false, false, false, false, false];
+        } else if (activeAqiView === 'interpolation') {
+          visibility = [false, false, false, true, false, false, false, false];
+        } else {
+          visibility = [true, false, false, false, false, false, false, false];
+        }
+      } else if (mode === 'weather') {
+        visibility = [true, false, false, false, true, false, false, false];
+      } else if (mode === 'streetmaps') {
+        visibility = [true, false, false, false, false, true, false, false];
+      } else if (mode === 'energy') {
+        visibility = [false, false, false, false, false, false, true, false];
+      } else if (mode === 'census') {
+        visibility = [false, false, false, false, false, false, false, true];
+      }
+      Plotly.restyle('workspace-map', { visible: visibility });
 
       document.querySelectorAll('.mode-btn').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.mode === mode);
       });
 
-      titleEl.textContent = titles[mode] || 'Overlay';
+      if (mode === 'explorer') {
+        titleEl.textContent = aqiSubviewTitles[activeAqiView] || titles.explorer;
+      } else {
+        titleEl.textContent = titles[mode] || 'Overlay';
+      }
       timeEl.textContent = `Time slice: ${payload.time}`;
       statsEl.innerHTML = '';
-      (statsByMode[mode] || []).forEach(item => {
+      const activeStats = mode === 'explorer'
+        ? (activeAqiView === 'network' ? statsByMode.network : (activeAqiView === 'interpolation' ? statsByMode.interpolation : statsByMode.explorer))
+        : statsByMode[mode];
+      (activeStats || []).forEach(item => {
         const li = document.createElement('li');
         li.textContent = item;
         statsEl.appendChild(li);
@@ -548,6 +614,8 @@
 
       overlayPanel.style.top = '86px';
       updateModeScopedControls(mode);
+      updateAqiViewButtons(activeAqiView);
+      updateAqiScopedControls(activeAqiView);
       updateCensusYearControlVisibility();
     }
 
@@ -817,7 +885,13 @@
     }
 
     document.querySelectorAll('.mode-btn').forEach(btn => {
-      btn.addEventListener('click', () => applyMode(btn.dataset.mode));
+      if (btn.dataset.mode) {
+        btn.addEventListener('click', () => applyMode(btn.dataset.mode));
+      }
+    });
+
+    aqiViewButtons.forEach((btn) => {
+      btn.addEventListener('click', () => applyMode('explorer', btn.dataset.aqiView));
     });
 
     energyDatasetSelect.addEventListener('change', () => {
@@ -856,7 +930,7 @@
       applyMode(modeOrder[(i + 1) % modeOrder.length]);
     });
 
-    applyMode(activeMode);
+    applyMode(activeMode, activeAqiView);
 
     const form = document.getElementById('workspace-form');
     form.querySelectorAll('select,input[type="number"]').forEach(el => {
