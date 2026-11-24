@@ -75,6 +75,37 @@ def _reload_air_data(refresh: bool) -> data_intake.PreparedData:
     return PREPARED
 
 
+def _empty_prepared_data() -> data_intake.PreparedData:
+    return data_intake.PreparedData(
+        time_series=pd.DataFrame(columns=["sensor_name", "time", "latitude", "longitude", "aqi_value"]),
+        sensor_catalog=pd.DataFrame(columns=["sensor_name", "latitude", "longitude"]),
+        source="null",
+        refreshed_at=None,
+        source_warning=None,
+    )
+
+
+def _ensure_air_data_loaded(refresh: bool = False) -> data_intake.PreparedData:
+    global PREPARED, MAP_CENTER, WORKSPACE_BBOX, AIR_DATA_LOAD_ERROR
+
+    should_load = refresh or PREPARED.time_series.empty
+    if not should_load:
+        return PREPARED
+
+    try:
+        AIR_DATA_LOAD_ERROR = None
+        return _reload_air_data(refresh=refresh)
+    except Exception as exc:
+        PREPARED = _empty_prepared_data()
+        MAP_CENTER = dict(DEFAULT_MAP_CENTER)
+        WORKSPACE_BBOX = geo_utils.BoundingBox(41.5, 42.2, -88.0, -87.2)
+        AIR_DATA_LOAD_ERROR = str(exc)
+        aggregated_fn = globals().get("get_aggregated")
+        if aggregated_fn is not None:
+            aggregated_fn.cache_clear()
+        return PREPARED
+
+
 def _provided_refresh_secret() -> str:
     auth_header = request.headers.get("Authorization", "")
     if auth_header.lower().startswith("bearer "):
@@ -100,10 +131,10 @@ def _workspace_mapbox_config() -> dict[str, object]:
     }
 
 
-PREPARED = data_intake.PreparedData(time_series=pd.DataFrame(), sensor_catalog=pd.DataFrame())
+PREPARED = _empty_prepared_data()
 MAP_CENTER = dict(DEFAULT_MAP_CENTER)
 WORKSPACE_BBOX = geo_utils.BoundingBox(41.5, 42.2, -88.0, -87.2)
-_reload_air_data(refresh=False)
+AIR_DATA_LOAD_ERROR: str | None = None
 WORKSPACE_METHOD_OPTIONS = [("Linear", "linear"), ("IDW", "idw"), ("Kriging", "kriging")]
 STREET_MAP_PLACE_NAME = "Chicago, Illinois, USA"
 CHICAGO_OPENDATA_DOMAIN = "data.cityofchicago.org"
@@ -654,8 +685,14 @@ def _build_census_overlay(metric_key: str, view_mode: str, year_new: int, year_o
 
 @lru_cache(maxsize=128)
 def get_aggregated(bin_code: str, metric_column: str = "aqi_value") -> pd.DataFrame:
+    _ensure_air_data_loaded()
     source = PREPARED.time_series
+    required_columns = {"sensor_name", "time", "latitude", "longitude"}
+    if source.empty or not required_columns.issubset(source.columns):
+        return pd.DataFrame(columns=["sensor_name", "time", "latitude", "longitude", "aqi_value", "reading_count"])
     value_column = metric_column if metric_column in source.columns else "aqi_value"
+    if value_column not in source.columns:
+        return pd.DataFrame(columns=["sensor_name", "time", "latitude", "longitude", "aqi_value", "reading_count"])
     df = source[["sensor_name", "time", "latitude", "longitude", value_column]].copy()
     df[value_column] = pd.to_numeric(df[value_column], errors="coerce")
     df["time_bin"] = df["time"].dt.floor(bin_code)
@@ -700,6 +737,17 @@ def _uptime_stats(stats: dict[str, float]) -> list[str]:
 
 
 def _air_data_status() -> dict[str, object]:
+    _ensure_air_data_loaded()
+    if PREPARED.time_series.empty or "time" not in PREPARED.time_series.columns:
+        return {
+            "label": "Unavailable",
+            "tone": "warning",
+            "latest_observation": None,
+            "latest_age_hours": None,
+            "refreshed_at": None,
+            "warning": AIR_DATA_LOAD_ERROR,
+        }
+
     latest_time = pd.to_datetime(PREPARED.time_series["time"], errors="coerce").max()
     now = datetime.now(timezone.utc)
     latest_age_hours = None
@@ -960,6 +1008,7 @@ def _build_network_overlay(
 
 @app.route("/workspace")
 def map_workspace():
+    _ensure_air_data_loaded()
     json_request = request.args.get("format") == "json"
     bin_code = request.args.get("bin", config.DEFAULT_BIN)
     requested_mode = request.args.get("mode", "explorer")

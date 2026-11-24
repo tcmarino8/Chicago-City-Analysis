@@ -32,8 +32,8 @@ This folder is now configured for Vercel serverless deployment.
 
 ### Data freshness
 
-- On Vercel, air-quality data is fetched from the Chicago Open Data Socrata API for each cold start and ordered newest-first.
-- `data/chicago_aqi_cache.csv` is a bundled emergency fallback used when Socrata is unavailable. Local development uses that cache by default.
+- Air-quality data now lazy-loads on the first workspace request (instead of module import) to avoid startup crashes.
+- If Socrata is unavailable and no cache is present, the app stays up and returns an empty/null air-data state rather than failing function invocation.
 - Weather, Census, and energy layers call their public APIs on demand.
 - Street network data is fetched on demand from OpenStreetMap through OSMnx.
 - Set `AIR_DATA_PREFER_LIVE=true` to test API-first loading locally. Leave it unset to use the local cache.
