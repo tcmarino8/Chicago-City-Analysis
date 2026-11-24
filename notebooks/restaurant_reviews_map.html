@@ -1,0 +1,3501 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_2c09f101a57c82337a99c657b884bd74 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+</head>
+<body>
+    
+    
+            <div class="folium-map" id="map_2c09f101a57c82337a99c657b884bd74" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_2c09f101a57c82337a99c657b884bd74 = L.map(
+                "map_2c09f101a57c82337a99c657b884bd74",
+                {
+                    center: [41.88864165, -87.63437774500008],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 13,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_1b15caff67d1c9f3324f9c116542ff73 = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_1b15caff67d1c9f3324f9c116542ff73.addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+            var marker_fd9e08f82418e583ebcb997d9f7f6566 = L.marker(
+                [41.8841279, -87.6479354],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_10ce2db7e626ca4d1a6c21c75c51f24d = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_1e402bfda97a4dd82151880d00c35b8a = $(`<div id="html_1e402bfda97a4dd82151880d00c35b8a" style="width: 100.0%; height: 100.0%;">     <b>Girl & The Goat</b><br>     <b>Date:</b> 2026-05-25<br><br>     After hearing so much about the Girl & The Goat, I finally made it! It’s awesome that an amazing restaurant like this is still innovating and offering great food for more than 15 years. It’s no wonder that other restauranteurs have followed suit and established this area as restaurant row in the West Loop. Since we were all looking forward to this reservation, we made sure to try as many things as we could. We ordered multiple items that are to be shared family style. We opted for the pita & dips, chickpea fritters, sautéed green beans, roasted asparagus, pan roasted halibut, and sticky glazed pork shank. Their house Manhattan was a little sweeter than I’m used to, but it was delicious, and my mom thoroughly enjoyed her espresso martini. Since three out of the four of us were celebrating birthdays, the staff even surprised us with a sweet treat to end the meal. The interior of the restaurant was dimly lit and inviting. It was a total vibe. However, the weather was perfect so I was happy. They had a wonderful patio option. Their staff was absolutely top-notch.     </div>`)[0];
+                popup_10ce2db7e626ca4d1a6c21c75c51f24d.setContent(html_1e402bfda97a4dd82151880d00c35b8a);
+            
+        
+
+        marker_fd9e08f82418e583ebcb997d9f7f6566.bindPopup(popup_10ce2db7e626ca4d1a6c21c75c51f24d)
+        ;
+
+        
+    
+    
+            marker_fd9e08f82418e583ebcb997d9f7f6566.bindTooltip(
+                `<div>
+                     Girl & The Goat
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_cf7f838eed758e9025035a188e7bd257 = L.marker(
+                [41.8841279, -87.6479354],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_a7d5bc4affa4a0d0ce77a8f06c47dad0 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_898176a90e67f65b295991e8896d95f6 = $(`<div id="html_898176a90e67f65b295991e8896d95f6" style="width: 100.0%; height: 100.0%;">     <b>Girl & The Goat</b><br>     <b>Date:</b> 2026-06-06<br><br>     An unforgettable dining experience in the West Loop! We loved the bold experiments and flavor combinations on the menu. The dishes were incredibly delicious, especially the Wood Oven Roasted Pig Face and the Goat Liver Mousse, which were absolute standouts. We paired our meal with a fantastic local Chicago beer, which was a great touch. From the food to the relaxed atmosphere on the patio, everything was perfect. A must-visit in Chicago!     </div>`)[0];
+                popup_a7d5bc4affa4a0d0ce77a8f06c47dad0.setContent(html_898176a90e67f65b295991e8896d95f6);
+            
+        
+
+        marker_cf7f838eed758e9025035a188e7bd257.bindPopup(popup_a7d5bc4affa4a0d0ce77a8f06c47dad0)
+        ;
+
+        
+    
+    
+            marker_cf7f838eed758e9025035a188e7bd257.bindTooltip(
+                `<div>
+                     Girl & The Goat
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_b88c0d6c8ee2d9c4b4f7989448b29149 = L.marker(
+                [41.8841279, -87.6479354],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_28cf00eb88b7df6be933c064b3c9f727 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_adcbd14fd1aa03de2214f759c437239f = $(`<div id="html_adcbd14fd1aa03de2214f759c437239f" style="width: 100.0%; height: 100.0%;">     <b>Girl & The Goat</b><br>     <b>Date:</b> 2026-01-30<br><br>     When I found out I was coming to Chicago for the week, the first thing I did was book a reservation for The Girl and the Goat! It did not disappoint! It was probably one of the best meals I’ve had in a long time! The restaurant had great atmosphere! The Goat Fashioned was a fantastic drink. I ended up getting four plates, the Chickpea Fritters, Hamachi Poke, Roasted Pig Face, and the Goat Empanadas. They were all amazing and very unique, I would have a hard time picking a favorite. This is a place you must visit if you are in Chicago area, but make sure you make your reservations ahead of time!     </div>`)[0];
+                popup_28cf00eb88b7df6be933c064b3c9f727.setContent(html_adcbd14fd1aa03de2214f759c437239f);
+            
+        
+
+        marker_b88c0d6c8ee2d9c4b4f7989448b29149.bindPopup(popup_28cf00eb88b7df6be933c064b3c9f727)
+        ;
+
+        
+    
+    
+            marker_b88c0d6c8ee2d9c4b4f7989448b29149.bindTooltip(
+                `<div>
+                     Girl & The Goat
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_cd1f6e7950a9145d5f1be00fa6b20466 = L.marker(
+                [41.8841279, -87.6479354],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_ab044025ec82c7c49044b16c1d45cc07 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_d5bd7b013fa95537347a8027b348e05f = $(`<div id="html_d5bd7b013fa95537347a8027b348e05f" style="width: 100.0%; height: 100.0%;">     <b>Girl & The Goat</b><br>     <b>Date:</b> 2026-02-10<br><br>     When we arrived at Girl & the Goat, we were initially seated at a table that was extremely cramped, despite there being plenty of open tables available. We were moved to a different table, which we appreciated, but it was still kind of ridiculous that we were placed there in the first place, that table honestly shouldn’t exist. The food, however, was absolutely phenomenal. We ordered the goat empanadas, curry fried pork belly, confit goat belly, and the roasted pig face. Every dish was savory, sweet, and incredibly well balanced. Four plates for two people was the perfect amount of food, and we left completely satisfied. The drinks were also excellent. It was a great birthday dinner     </div>`)[0];
+                popup_ab044025ec82c7c49044b16c1d45cc07.setContent(html_d5bd7b013fa95537347a8027b348e05f);
+            
+        
+
+        marker_cd1f6e7950a9145d5f1be00fa6b20466.bindPopup(popup_ab044025ec82c7c49044b16c1d45cc07)
+        ;
+
+        
+    
+    
+            marker_cd1f6e7950a9145d5f1be00fa6b20466.bindTooltip(
+                `<div>
+                     Girl & The Goat
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_9e9dabdfd4dd4a9f80f6b0b627c7f562 = L.marker(
+                [41.8841279, -87.6479354],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_1f7ede1183fefa2e3106b388c4086d32 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_1e3e4d6eba4b6f17df4e343c005cbfd2 = $(`<div id="html_1e3e4d6eba4b6f17df4e343c005cbfd2" style="width: 100.0%; height: 100.0%;">     <b>Girl & The Goat</b><br>     <b>Date:</b> 2026-01-12<br><br>     We stopped in while we were in town before a basketball game and Wow!! We were able to sit at the bar after a minimal wait. The bartender did an amazing job describing the food and he gave us great recommendations. The goat liver, phenomenal!! The perogies, to die for!! The sea bass just melted! Then there is the pig face….The perfect mix of textures make this dish one of the best dishes I ever had!! Such a wonderful experience!!     </div>`)[0];
+                popup_1f7ede1183fefa2e3106b388c4086d32.setContent(html_1e3e4d6eba4b6f17df4e343c005cbfd2);
+            
+        
+
+        marker_9e9dabdfd4dd4a9f80f6b0b627c7f562.bindPopup(popup_1f7ede1183fefa2e3106b388c4086d32)
+        ;
+
+        
+    
+    
+            marker_9e9dabdfd4dd4a9f80f6b0b627c7f562.bindTooltip(
+                `<div>
+                     Girl & The Goat
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_ce691ed93e89cec9089c94b0be88efcf = L.marker(
+                [41.88700499999999, -87.64885009999999],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_9b993ab49afdf26cf5f7391e7203ca0c = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_930bd3636e1498e2909fab6c7c8b3920 = $(`<div id="html_930bd3636e1498e2909fab6c7c8b3920" style="width: 100.0%; height: 100.0%;">     <b>Aba</b><br>     <b>Date:</b> 2026-06-07<br><br>     First time dinning here, came in for lunch on a Saturday. We had the crispy short rib hummus and charred eggplant to start which were both phenomenal. We split the chicken kefta kebab with the Greek village salad which was light and flavorful. We planning on hopping around places in the area and didn’t want to have anything too heavy.  All of the drinks we had were very refreshing with lots of unique flavors. We finished off with the creme brulee pie which matched rest of our experience at Aba, unbelievable!  Our server Colleen and the GM Zach were both were hospitable and attentive.  We will definitely be coming back for dinner next time to order more food items.     </div>`)[0];
+                popup_9b993ab49afdf26cf5f7391e7203ca0c.setContent(html_930bd3636e1498e2909fab6c7c8b3920);
+            
+        
+
+        marker_ce691ed93e89cec9089c94b0be88efcf.bindPopup(popup_9b993ab49afdf26cf5f7391e7203ca0c)
+        ;
+
+        
+    
+    
+            marker_ce691ed93e89cec9089c94b0be88efcf.bindTooltip(
+                `<div>
+                     Aba
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_834c7b91c2cdb6e558093799f6074b60 = L.marker(
+                [41.88700499999999, -87.64885009999999],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_36427c3ee331ebe6100f6cee7450cd16 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_d19f1499398de0a2372632023e28a037 = $(`<div id="html_d19f1499398de0a2372632023e28a037" style="width: 100.0%; height: 100.0%;">     <b>Aba</b><br>     <b>Date:</b> 2026-02-04<br><br>     Wow, what an experience! You arrive to the building and have to take an elevator up to the restaurant and are greeted with a beautiful vibe I wish I could have at my house. Low-lit lighting, foliage, and decor reminiscent of a coastal getaway. We met friends here for restaurant week and ordered off the tailored menu. For my order, the mocktail was a fun twist, the appetizer wasn’t a traditional salad but still delicious, the main was served on a beautiful sombrero plate, and the dessert filled me over the top! I loved that the Greek salad was essentially a block of cheese with tomatoes, (I even got to try something new, a caper berry) no complaints here! The main left a little to be desired as perhaps mashed potatoes could have been mixed differently but the pomegranate seeds complimented the small bit of short rib excellently. The date cake dessert was a fabulous new experience that kept me going spoonful after spoonful. Wow! So glad I got to have the Aba experience!     </div>`)[0];
+                popup_36427c3ee331ebe6100f6cee7450cd16.setContent(html_d19f1499398de0a2372632023e28a037);
+            
+        
+
+        marker_834c7b91c2cdb6e558093799f6074b60.bindPopup(popup_36427c3ee331ebe6100f6cee7450cd16)
+        ;
+
+        
+    
+    
+            marker_834c7b91c2cdb6e558093799f6074b60.bindTooltip(
+                `<div>
+                     Aba
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_0f0695aac8d58f453f15a3af73ee7873 = L.marker(
+                [41.88700499999999, -87.64885009999999],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_e3a8a133c4d6fdd557adfd898510263d = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_bd932ef9a7d6f11ccf805b5e79c3685e = $(`<div id="html_bd932ef9a7d6f11ccf805b5e79c3685e" style="width: 100.0%; height: 100.0%;">     <b>Aba</b><br>     <b>Date:</b> 2026-03-08<br><br>     I’ve visited this spot three times now, once for brunch and twice for dinner. The food has been consistently delicious. The green harissa chicken is a standout, and the chocolate babka French toast is easily the best I’ve had in a long time. The pita and hummus always taste incredibly fresh, and the portion sizes are generous across the board.  It’s a popular spot, so expect a bit of a wait as well as delay in service during busy weekends, but it’s nothing out of the ordinary. The only minor downside was that on one of my visits, the music was played at a volume that made conversation a bit difficult.  Overall, best Mediterranean restaurant I’ve been to in Chicago     </div>`)[0];
+                popup_e3a8a133c4d6fdd557adfd898510263d.setContent(html_bd932ef9a7d6f11ccf805b5e79c3685e);
+            
+        
+
+        marker_0f0695aac8d58f453f15a3af73ee7873.bindPopup(popup_e3a8a133c4d6fdd557adfd898510263d)
+        ;
+
+        
+    
+    
+            marker_0f0695aac8d58f453f15a3af73ee7873.bindTooltip(
+                `<div>
+                     Aba
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_a09f781addf5efb9c23a6e6282601fce = L.marker(
+                [41.88700499999999, -87.64885009999999],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_4d7d14d23a4a3fd814da2ff88a6c0dce = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_536a504ed903f51f1bb073fd1eab606d = $(`<div id="html_536a504ed903f51f1bb073fd1eab606d" style="width: 100.0%; height: 100.0%;">     <b>Aba</b><br>     <b>Date:</b> 2026-03-08<br><br>     Beautiful atmosphere the best service. I especially enjoyed the dips and appetizer plates. The meats (kebabs and skirt steak) were not to my liking but I know people who would like them. The whipped feta and roasted garlic hummus are worth a repeat trip.     </div>`)[0];
+                popup_4d7d14d23a4a3fd814da2ff88a6c0dce.setContent(html_536a504ed903f51f1bb073fd1eab606d);
+            
+        
+
+        marker_a09f781addf5efb9c23a6e6282601fce.bindPopup(popup_4d7d14d23a4a3fd814da2ff88a6c0dce)
+        ;
+
+        
+    
+    
+            marker_a09f781addf5efb9c23a6e6282601fce.bindTooltip(
+                `<div>
+                     Aba
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_77e535279e659fbad861461e2022f984 = L.marker(
+                [41.88700499999999, -87.64885009999999],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_42cce3aed5c538d3ad37af5548fe78ac = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_3b9edb94c1f1b5de5912a6e2b4392778 = $(`<div id="html_3b9edb94c1f1b5de5912a6e2b4392778" style="width: 100.0%; height: 100.0%;">     <b>Aba</b><br>     <b>Date:</b> 2026-06-03<br><br>     Incredible food, amazing vibes, and the staff were absolutely wonderful! We had the Crispy Short Rib Hummus and the Shawarma-Spiced Skirt Steak Frites—both were packed with flavor. The grilled chicken was also delicious, and the cocktails are top-tier. Do not leave without getting the Whole Crème brûlée pie   it’s spectacular. 10/10 recommend!     </div>`)[0];
+                popup_42cce3aed5c538d3ad37af5548fe78ac.setContent(html_3b9edb94c1f1b5de5912a6e2b4392778);
+            
+        
+
+        marker_77e535279e659fbad861461e2022f984.bindPopup(popup_42cce3aed5c538d3ad37af5548fe78ac)
+        ;
+
+        
+    
+    
+            marker_77e535279e659fbad861461e2022f984.bindTooltip(
+                `<div>
+                     Aba
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_42077736131624b7c19161c8bd0a6918 = L.marker(
+                [41.8879525, -87.6322647],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_41f51133255d8bb4385610a83b710cb7 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_bc0357bdc33ddd973eb110e5d6cc910e = $(`<div id="html_bc0357bdc33ddd973eb110e5d6cc910e" style="width: 100.0%; height: 100.0%;">     <b>River Roast</b><br>     <b>Date:</b> 2026-06-04<br><br>     Beautiful patio overlooking the river if you can get a table.  Happy hour 4-5:45pm is limited to the bar area. Half off of bites, cocktails, and wine. Service could be improved but they are kind when visible.     </div>`)[0];
+                popup_41f51133255d8bb4385610a83b710cb7.setContent(html_bc0357bdc33ddd973eb110e5d6cc910e);
+            
+        
+
+        marker_42077736131624b7c19161c8bd0a6918.bindPopup(popup_41f51133255d8bb4385610a83b710cb7)
+        ;
+
+        
+    
+    
+            marker_42077736131624b7c19161c8bd0a6918.bindTooltip(
+                `<div>
+                     River Roast
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_4253d2e0c9729f681ecb2aaf0d85dda3 = L.marker(
+                [41.8879525, -87.6322647],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_5aeeb9c33c28bea541e210611e1be7af = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_4b9f8aae3fe2bbe9e68125ab4f158995 = $(`<div id="html_4b9f8aae3fe2bbe9e68125ab4f158995" style="width: 100.0%; height: 100.0%;">     <b>River Roast</b><br>     <b>Date:</b> 2026-04-26<br><br>     We had a great brunch here on our final day here. It was a simple, compact menu but everything we each chose was enjoyable, from the burger to the fried chicken sandwich to the kid's cheeseburger. Fries were perfectly crisp and salted.  Service was friendly, engaged, and executed with detail after a slightly delayed start.  Only bummer was the lack of the view because of the external construction / scaffolding which obscured any nice views of the river.     </div>`)[0];
+                popup_5aeeb9c33c28bea541e210611e1be7af.setContent(html_4b9f8aae3fe2bbe9e68125ab4f158995);
+            
+        
+
+        marker_4253d2e0c9729f681ecb2aaf0d85dda3.bindPopup(popup_5aeeb9c33c28bea541e210611e1be7af)
+        ;
+
+        
+    
+    
+            marker_4253d2e0c9729f681ecb2aaf0d85dda3.bindTooltip(
+                `<div>
+                     River Roast
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_93c542a30dc13d3b28e10e325576a323 = L.marker(
+                [41.8879525, -87.6322647],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_b8f53b865e3504f4bc3467aab5b5ca53 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_98d4a556636c2a891cd049b2c2d6e2a0 = $(`<div id="html_98d4a556636c2a891cd049b2c2d6e2a0" style="width: 100.0%; height: 100.0%;">     <b>River Roast</b><br>     <b>Date:</b> 2026-03-30<br><br>     Had a great time at River Roast. The food was solid and flavorful (4★), with well-executed dishes, though not overly memorable. The ambience truly stands out—beautiful riverfront views and a vibrant setting make it special. Service was excellent, attentive, and welcoming throughout (5★). Overall, a wonderful dining experience I’d happily recommend, especially for the atmosphere and hospitality.     </div>`)[0];
+                popup_b8f53b865e3504f4bc3467aab5b5ca53.setContent(html_98d4a556636c2a891cd049b2c2d6e2a0);
+            
+        
+
+        marker_93c542a30dc13d3b28e10e325576a323.bindPopup(popup_b8f53b865e3504f4bc3467aab5b5ca53)
+        ;
+
+        
+    
+    
+            marker_93c542a30dc13d3b28e10e325576a323.bindTooltip(
+                `<div>
+                     River Roast
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_fb565317861cef558c914f9ac31fe430 = L.marker(
+                [41.8879525, -87.6322647],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_a018b59f2db1dc882c3585cbe1ac575f = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_afdd1cb3e5ea6df852a62b51d37978e0 = $(`<div id="html_afdd1cb3e5ea6df852a62b51d37978e0" style="width: 100.0%; height: 100.0%;">     <b>River Roast</b><br>     <b>Date:</b> 2025-11-01<br><br>     Great spot on the river walk! We used the valet in front, and they were able to seat us a little earlier than our reservation. Very friendly staff. The food was great, and we enjoyed a bottle of wine. The macaroni was delicious and pimentos and  breadcrumbs were a nice touch. We walked outside after dinner to soak in the views!     </div>`)[0];
+                popup_a018b59f2db1dc882c3585cbe1ac575f.setContent(html_afdd1cb3e5ea6df852a62b51d37978e0);
+            
+        
+
+        marker_fb565317861cef558c914f9ac31fe430.bindPopup(popup_a018b59f2db1dc882c3585cbe1ac575f)
+        ;
+
+        
+    
+    
+            marker_fb565317861cef558c914f9ac31fe430.bindTooltip(
+                `<div>
+                     River Roast
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_3a223a505b4ad9812b5de1cc5140b119 = L.marker(
+                [41.8879525, -87.6322647],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_65ede76824ceec11b2c46d69e4fc1feb = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_fc93704f6d8617d83edc77174ec6a82a = $(`<div id="html_fc93704f6d8617d83edc77174ec6a82a" style="width: 100.0%; height: 100.0%;">     <b>River Roast</b><br>     <b>Date:</b> 2026-05-17<br><br>     Great spot. It was a bit of a walk to reach the entrance due to construction on the river side. My partner and I each order the pork shanks (oink) over sweet potato puree. Mine was well seasoned, but my partner felt his could have used more flavor (seasoning). The shank portions were generous! Despite the scaffolding, the views of the water from our bar seats was still possible. Oh, the Old Fashions (2 each) were a perfect pairing with the meal.     </div>`)[0];
+                popup_65ede76824ceec11b2c46d69e4fc1feb.setContent(html_fc93704f6d8617d83edc77174ec6a82a);
+            
+        
+
+        marker_3a223a505b4ad9812b5de1cc5140b119.bindPopup(popup_65ede76824ceec11b2c46d69e4fc1feb)
+        ;
+
+        
+    
+    
+            marker_3a223a505b4ad9812b5de1cc5140b119.bindTooltip(
+                `<div>
+                     River Roast
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_257ecc28ee2f7a6e0c5dd2131f30580b = L.marker(
+                [41.8843373, -87.6292766],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_e80d04809815ddef7e58af3b1b13018e = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_fd513d49836c6aaba35f0fe228b5bb4f = $(`<div id="html_fd513d49836c6aaba35f0fe228b5bb4f" style="width: 100.0%; height: 100.0%;">     <b>The Dearborn</b><br>     <b>Date:</b> 2026-06-02<br><br>     6/1/26: Tony is an awesome waiter. I hope to get him next time I'm in. The brussel sprouts are so good! I have enjoyed everything I've had here, just make sure you make reservations.  Original: Fish and chips was very good. I just needed a bit more tartar sauce from the beginning and it would have been perfect. I'm sure I could have got more if I asked, but I didn't. Service was great, atmosphere was good, but very busy that night (Wednesday night).     </div>`)[0];
+                popup_e80d04809815ddef7e58af3b1b13018e.setContent(html_fd513d49836c6aaba35f0fe228b5bb4f);
+            
+        
+
+        marker_257ecc28ee2f7a6e0c5dd2131f30580b.bindPopup(popup_e80d04809815ddef7e58af3b1b13018e)
+        ;
+
+        
+    
+    
+            marker_257ecc28ee2f7a6e0c5dd2131f30580b.bindTooltip(
+                `<div>
+                     The Dearborn
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_7bc08b9701fefc51ddcfe6b2b69bcfa3 = L.marker(
+                [41.8843373, -87.6292766],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_7c2c4b0b521bcbcc6a0dfb4cdf108f75 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_0dca4866f92fa4e623c2a199536466e4 = $(`<div id="html_0dca4866f92fa4e623c2a199536466e4" style="width: 100.0%; height: 100.0%;">     <b>The Dearborn</b><br>     <b>Date:</b> 2026-06-08<br><br>     OMG...the rabbit curry pot pie is out of this world. the curry has the right amount of heat and the rabbit melts in your mouth. our server Keven (sounds like Steven w a K) is knowledgeable about the menu and had good recommendations. The gnocchi with octopus and chorizo had amazing freshness and bursting with flavor. drinks were on point. Great date night spot. not crowded, quiet and calm. for the amount of food, the price was right.     </div>`)[0];
+                popup_7c2c4b0b521bcbcc6a0dfb4cdf108f75.setContent(html_0dca4866f92fa4e623c2a199536466e4);
+            
+        
+
+        marker_7bc08b9701fefc51ddcfe6b2b69bcfa3.bindPopup(popup_7c2c4b0b521bcbcc6a0dfb4cdf108f75)
+        ;
+
+        
+    
+    
+            marker_7bc08b9701fefc51ddcfe6b2b69bcfa3.bindTooltip(
+                `<div>
+                     The Dearborn
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_bd4657946439d8942b77e9a45edcdf87 = L.marker(
+                [41.8843373, -87.6292766],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_fc07427f8d3b600ab2bd93639a0e812b = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_38e3941e482b6a5b198653bced8e939f = $(`<div id="html_38e3941e482b6a5b198653bced8e939f" style="width: 100.0%; height: 100.0%;">     <b>The Dearborn</b><br>     <b>Date:</b> 2026-05-28<br><br>     Had a wonderful experience! The staff and manager went above and beyond for our visit! They provided us with a private table and made my birthday feel very special. Provided a hand written note and a birthday dessert. The food was fabulous but the service and friendliness made it that much better. Can’t wait to go back when we are in Chicago.     </div>`)[0];
+                popup_fc07427f8d3b600ab2bd93639a0e812b.setContent(html_38e3941e482b6a5b198653bced8e939f);
+            
+        
+
+        marker_bd4657946439d8942b77e9a45edcdf87.bindPopup(popup_fc07427f8d3b600ab2bd93639a0e812b)
+        ;
+
+        
+    
+    
+            marker_bd4657946439d8942b77e9a45edcdf87.bindTooltip(
+                `<div>
+                     The Dearborn
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_7c621bb5abd189fb975f2a68391c25da = L.marker(
+                [41.8843373, -87.6292766],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_0b5fa9c2f1c8aa4def03ef46d9ebbd68 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_39bb2b0772a55b2769bfe56cf936df4c = $(`<div id="html_39bb2b0772a55b2769bfe56cf936df4c" style="width: 100.0%; height: 100.0%;">     <b>The Dearborn</b><br>     <b>Date:</b> 2026-05-23<br><br>     I’ve never written a review specifically for the contribution of the desire for a restaurant to succeed during these unstable financial times but this is it ⭐️⭐️⭐️⭐️⭐️and I give permission for my review to be used in a testimonial 😊  To start off, I almost removed a star for atmosphere because the 5/22/2016 private bridal party on the upper level treated the accessible bathroom as their private bathroom and my friend in a wheelchair had to wait for the women who used it as such to leave despite all the stalls in the regular women’s  bathroom two doors down being fully available. It wasn’t the restaurants fault, it was the fault of the lack of awareness of the bridal party that other people besides them would need the bathroom. Thank you to the gentleman who apologized on their behalf for their ignorance. Thank you also for the waitress that showed us how to use the manual elevator to get to the bathroom and waited for us at that level to guide us to the bathroom that was occupied.  My friend and I spilt a bottle of Italian wine 🍷 to toast our upcoming vacation, as well as some delicious fries. The fries I think were hand cut and well cooked, we both wished the serving was bigger! The barista let us taste a wine before we decided to split a different bottle, excellent service! She also refilled our glasses throughout our evening, and another bartender refilled our water. We were very well attended to 🥂  I smelled the curry chicken dish from the gentleman sitting next to me and it smelled divine 😍 then the woman next to my friend ordered the same thing and my friend whose ex husband is South Asian said it smelled just like what he used to make for dinner. I tried to get the ingredients to no avail lol. I will definitely order a vegan/vegetarian version the next time 😋  I ordered a fish and chips to go for my doorman because the menu said it beat a famous chef’s recipe and he loves fish and chips. He agreed it was the best he’s ever had! He said he will be coming for dinner very soon 👌🏾  I’m moving across the country next week but I’m so grateful I got to experience The Dearborn. I look forward to to dining here again when I come back home 🫶🏾     </div>`)[0];
+                popup_0b5fa9c2f1c8aa4def03ef46d9ebbd68.setContent(html_39bb2b0772a55b2769bfe56cf936df4c);
+            
+        
+
+        marker_7c621bb5abd189fb975f2a68391c25da.bindPopup(popup_0b5fa9c2f1c8aa4def03ef46d9ebbd68)
+        ;
+
+        
+    
+    
+            marker_7c621bb5abd189fb975f2a68391c25da.bindTooltip(
+                `<div>
+                     The Dearborn
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_92b82ffece2bbc04271141099d724bb3 = L.marker(
+                [41.8843373, -87.6292766],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_edc0214a86323b392c75cc435926e57c = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_cb1d5c32df69304bcbab1709844c8592 = $(`<div id="html_cb1d5c32df69304bcbab1709844c8592" style="width: 100.0%; height: 100.0%;">     <b>The Dearborn</b><br>     <b>Date:</b> 2026-05-17<br><br>     I had dinner and drinks at The Dearborn while on a business trip with one of my colleagues, and we had a very good experience.  The restaurant was busy but not overly noisy, which made it easy to have a conversation and enjoy the evening. The service was great throughout the meal.  We both ordered the hamburger, which I highly recommend. It came with fries, and the portion was very generous. The food was flavorful, well prepared, and satisfying.  Overall, it’s definitely a place to consider if you are visiting Chicago and looking for a lively restaurant with good food, great service, and a comfortable atmosphere.     </div>`)[0];
+                popup_edc0214a86323b392c75cc435926e57c.setContent(html_cb1d5c32df69304bcbab1709844c8592);
+            
+        
+
+        marker_92b82ffece2bbc04271141099d724bb3.bindPopup(popup_edc0214a86323b392c75cc435926e57c)
+        ;
+
+        
+    
+    
+            marker_92b82ffece2bbc04271141099d724bb3.bindTooltip(
+                `<div>
+                     The Dearborn
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_89488b13860a25a2f8e9882d075b78b5 = L.marker(
+                [41.884577, -87.64252139999999],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_15d73ed5523f8f07f76f8430288750d1 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_058d60afffe3745515b7e9b96aef3027 = $(`<div id="html_058d60afffe3745515b7e9b96aef3027" style="width: 100.0%; height: 100.0%;">     <b>Alla Vita</b><br>     <b>Date:</b> 2026-02-18<br><br>     ****update: alla vita reached out after an open table review, and has made it right by offering a gift card to use on my next visit. i genuinely appreciate that kind of customer service, and will return next time i’m in chicago.  visited for an intimate birthday with a friend.  had an espresso martini while we waited for our table to be ready, it was delish. only complaint is that it was $22, so i only got one.  our server joe was amazing. all around provided amazing service. i did the restaurant week menu, and unfortunately i have to say that the food was extremely mid for the price.  i started with the tuna crudo, which was probably the saltiest thing i have ever had in my life. second, i had the kale caesar, which was pretty delicious, but had entirely too many red onions. then i had the chicken parm, which was literally just chicken with cheese broiled on top, no pasta…flavor was definitely lacking. had olive oil gelato and a birthday dessert, which i did not like the olive oil gelato because the olive oil flavor was way too overpowering, and the ice cream birthday cake was just okay.  even with the restaurant week deal, i feel like $91 for that meal, including FIVE DOLLARS for a 12oz can of sprite, is just too much. not sure that i would return.     </div>`)[0];
+                popup_15d73ed5523f8f07f76f8430288750d1.setContent(html_058d60afffe3745515b7e9b96aef3027);
+            
+        
+
+        marker_89488b13860a25a2f8e9882d075b78b5.bindPopup(popup_15d73ed5523f8f07f76f8430288750d1)
+        ;
+
+        
+    
+    
+            marker_89488b13860a25a2f8e9882d075b78b5.bindTooltip(
+                `<div>
+                     Alla Vita
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_fa2b246aab66ff4589508ebb9df8216b = L.marker(
+                [41.884577, -87.64252139999999],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_58a355ec07b7a959f2c2009512b36e52 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_c6bfec6c8525394da4f21db95cfc7c31 = $(`<div id="html_c6bfec6c8525394da4f21db95cfc7c31" style="width: 100.0%; height: 100.0%;">     <b>Alla Vita</b><br>     <b>Date:</b> 2026-05-29<br><br>     I took my best friend scarlett here for her 18th birthday and it was absolutely fantastic! the restaurant alone could give this place 5 stars with its hanging vines, romantic arch ways, really cool light fixtures, and beautiful wooden tables but they also put her name on the menu! the food was beyond delicious, all of our friends enjoyed everything. we got the rigatoni pasta (my favorite), margarita pizza, fusilloni, and the paccheri. everything was so rich, tasteful, and delicious. Antonio was awesome regardless of it being a packed night; he made scarlett feel special! i absolutely recommend anybody coming here for birthdays or a cute date!     </div>`)[0];
+                popup_58a355ec07b7a959f2c2009512b36e52.setContent(html_c6bfec6c8525394da4f21db95cfc7c31);
+            
+        
+
+        marker_fa2b246aab66ff4589508ebb9df8216b.bindPopup(popup_58a355ec07b7a959f2c2009512b36e52)
+        ;
+
+        
+    
+    
+            marker_fa2b246aab66ff4589508ebb9df8216b.bindTooltip(
+                `<div>
+                     Alla Vita
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_08ca5568d4758c825a678bce3a6f3819 = L.marker(
+                [41.884577, -87.64252139999999],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_e6c24a99b8caf2c9e18c76fa6468934b = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_ae8fb4c95761b6b31e33119c7654b95a = $(`<div id="html_ae8fb4c95761b6b31e33119c7654b95a" style="width: 100.0%; height: 100.0%;">     <b>Alla Vita</b><br>     <b>Date:</b> 2025-11-27<br><br>     We came on a Monday and made reservations in advanced to sit outside. In the warmer months, they have a cute patio. When that patio is closed, you still get to enjoy a beautifully decorated and chic interior. We were sat quickly and we started off with the marinated olives, the arancini and a salad. The olives had a rosemary olive oil, and had a generous amount of olives in the platter. The arancini were small but they were dense, and melted in your mouth. The marinated pork inside was creamy and paired well with the aioli sauce they served alongside them. We got the alla vita chopped salad and boy, it was full of life! The ingredients were vibrant, and had a nice distribution among everything. For my entree I got the ricotta dumplings, and I would be lying if I didn’t say I initially was skeptical when I saw the portion size but quickly was reassured. These dumplings are dense and absolutely delicious. The cacio e pepe was like a pillow, doused in a warm buttery sauce and the creamy ricotta had me savoring every bite. My partner got the rigatoni vodka pasta and her dish was wonderful too. My biggest issue was we waited a bit to  order, but the food came quickly after we had ordered. Our allergies were easily accommodated as well. What really makes this place special is the amount of love and care that gets put into their homemade pasta and dishes, and it is absolutely worth every penny.     </div>`)[0];
+                popup_e6c24a99b8caf2c9e18c76fa6468934b.setContent(html_ae8fb4c95761b6b31e33119c7654b95a);
+            
+        
+
+        marker_08ca5568d4758c825a678bce3a6f3819.bindPopup(popup_e6c24a99b8caf2c9e18c76fa6468934b)
+        ;
+
+        
+    
+    
+            marker_08ca5568d4758c825a678bce3a6f3819.bindTooltip(
+                `<div>
+                     Alla Vita
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_aa853f81411f9f680fc43f8f9a232cea = L.marker(
+                [41.884577, -87.64252139999999],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_41821a5974556738f0bf54cb8cff4010 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_6cb4df51981e352d6885a3f55f18d21f = $(`<div id="html_6cb4df51981e352d6885a3f55f18d21f" style="width: 100.0%; height: 100.0%;">     <b>Alla Vita</b><br>     <b>Date:</b> 2026-02-23<br><br>     Allavita was the very first restaurant we visited after landing home from Rome last spring… and somehow the experience didn’t end at the airport. The flavors, the music, and the warm ambience felt like Italy had followed us back to Chicago. We absolutely fell in love with it.  On our first visit, Lanthan welcomed us immediately and graciously found us a table even without a reservation — a kindness we still remember.  Since then, we’ve returned often to explore different dishes and are never disappointed.  One of the most memorable was the carne crudo — unbelievably beautiful and served with delicate little pillows of dough you could gently crack open or fold around the tartare. Thoughtful, refined, and completely joyful to eat.  These are the kinds of dinners that make you excited about life — and about chefs who still manage to surprise you.  General Managers Nicole and Jo have been incredibly warm and gracious, and servers Jo and Oscar make every visit feel special and welcoming. The entire team consistently guides us to wonderful choices on the menu.  Allavita isn’t just a great meal — it’s an experience we genuinely look forward to again and again.     </div>`)[0];
+                popup_41821a5974556738f0bf54cb8cff4010.setContent(html_6cb4df51981e352d6885a3f55f18d21f);
+            
+        
+
+        marker_aa853f81411f9f680fc43f8f9a232cea.bindPopup(popup_41821a5974556738f0bf54cb8cff4010)
+        ;
+
+        
+    
+    
+            marker_aa853f81411f9f680fc43f8f9a232cea.bindTooltip(
+                `<div>
+                     Alla Vita
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_324d532afe3ecc84edee435acea9cb30 = L.marker(
+                [41.884577, -87.64252139999999],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_fa5ceea9df026fdf8cb4fdce90c319bd = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_7c3fda32c228c2b500c8bf24f5c7b57a = $(`<div id="html_7c3fda32c228c2b500c8bf24f5c7b57a" style="width: 100.0%; height: 100.0%;">     <b>Alla Vita</b><br>     <b>Date:</b> 2026-01-17<br><br>     Alla Vita is such a great spot in the West Loop. The ambiance alone makes it worth visiting. The space feels intimate and thoughtfully designed, with warm Edison bulb lighting, greenery, and beautiful ceiling details that give the restaurant a cozy but elevated feel. On both of my visits, service was excellent throughout the meal. Everything came out quickly, and the staff checked in on us multiple times to make sure we had everything we needed without ever feeling rushed. Food-wise, both pasta dishes we ordered were outstanding. The squash sacchetti was delicate and flavorful, with a really nice balance that didn’t feel heavy. The brown butter sauce really added to the dish. The cacio e pepe gnocchi was rich, comforting, and perfectly executed. Overall, Alla Vita delivered on food, service, and atmosphere. It’s an easy place to recommend for a date night or a special dinner where you want great pasta in a beautiful setting. Just remember a reservation, they get pretty busy.     </div>`)[0];
+                popup_fa5ceea9df026fdf8cb4fdce90c319bd.setContent(html_7c3fda32c228c2b500c8bf24f5c7b57a);
+            
+        
+
+        marker_324d532afe3ecc84edee435acea9cb30.bindPopup(popup_fa5ceea9df026fdf8cb4fdce90c319bd)
+        ;
+
+        
+    
+    
+            marker_324d532afe3ecc84edee435acea9cb30.bindTooltip(
+                `<div>
+                     Alla Vita
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_5f2b206ef1fea5703978ffad45875518 = L.marker(
+                [41.902422, -87.628886],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_0c7c631030a7b2c73499d3ac7e7b88de = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_263e27ca88e83d9f143e0d350934a4a9 = $(`<div id="html_263e27ca88e83d9f143e0d350934a4a9" style="width: 100.0%; height: 100.0%;">     <b>Somerset</b><br>     <b>Date:</b> 2026-05-01<br><br>     Enjoyed a nice brunch here. I have food allergies but had to ask for ingredients and the server was unsure. They were accommodating and checked with the kitchen and all was good. Food was fair. Not great but good. The ambiance was perfect for Sunday brunch!     </div>`)[0];
+                popup_0c7c631030a7b2c73499d3ac7e7b88de.setContent(html_263e27ca88e83d9f143e0d350934a4a9);
+            
+        
+
+        marker_5f2b206ef1fea5703978ffad45875518.bindPopup(popup_0c7c631030a7b2c73499d3ac7e7b88de)
+        ;
+
+        
+    
+    
+            marker_5f2b206ef1fea5703978ffad45875518.bindTooltip(
+                `<div>
+                     Somerset
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_6eb2a2ff457adb1209237f60e0fdca2e = L.marker(
+                [41.902422, -87.628886],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_907eb06280330e2f46477f645ab16745 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_458d5d0cc8b5d0fde041750d8d76bac6 = $(`<div id="html_458d5d0cc8b5d0fde041750d8d76bac6" style="width: 100.0%; height: 100.0%;">     <b>Somerset</b><br>     <b>Date:</b> 2026-05-04<br><br>     It was a nice modern American restaurant. I love the filet and the peppers was a good addition to the steak. It did feel a bit small of a portion compared to other restaurants I been in the area. The Thyme Traveler taste a bit too alcoholic for me and it wouldn't be something I ordered again. I would ordered the filet again if I ever came back. :)     </div>`)[0];
+                popup_907eb06280330e2f46477f645ab16745.setContent(html_458d5d0cc8b5d0fde041750d8d76bac6);
+            
+        
+
+        marker_6eb2a2ff457adb1209237f60e0fdca2e.bindPopup(popup_907eb06280330e2f46477f645ab16745)
+        ;
+
+        
+    
+    
+            marker_6eb2a2ff457adb1209237f60e0fdca2e.bindTooltip(
+                `<div>
+                     Somerset
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_000bfc74961f97dd041d553bd91c48ae = L.marker(
+                [41.902422, -87.628886],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_11c4af7361b3d334b76b6430fd659bfa = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_91dacb1b300ab94bbfe850e3e424eb07 = $(`<div id="html_91dacb1b300ab94bbfe850e3e424eb07" style="width: 100.0%; height: 100.0%;">     <b>Somerset</b><br>     <b>Date:</b> 2025-09-22<br><br>     Such a cute place to eat! I love the setting. You have indoor, outdoor and indooroutdoor options for seating and the bar area is really nice. I sat outside and enjoyed myself. It's right off the street, so it's not quiet but it didn't bother me much. The food was ok. French toast (I deconstructed mine) moist and the breakfast potatoes were cooked well. I added onions and bell peppers to mine. The syrup had an odd flavor that I couldn't quite put my finger on. I ordered a white mocha and the server brought me a regular mocha. Only after I asked of it was what I ordered did he say that don't have white mocha. Wish he would've said that from jump.     </div>`)[0];
+                popup_11c4af7361b3d334b76b6430fd659bfa.setContent(html_91dacb1b300ab94bbfe850e3e424eb07);
+            
+        
+
+        marker_000bfc74961f97dd041d553bd91c48ae.bindPopup(popup_11c4af7361b3d334b76b6430fd659bfa)
+        ;
+
+        
+    
+    
+            marker_000bfc74961f97dd041d553bd91c48ae.bindTooltip(
+                `<div>
+                     Somerset
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_fbfc735fcb74be8d209d383728acd170 = L.marker(
+                [41.902422, -87.628886],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_d14d5f9283e6e7b3ebc1f239d0f85442 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_ea3570a74cae9544d50ecf0f6c939407 = $(`<div id="html_ea3570a74cae9544d50ecf0f6c939407" style="width: 100.0%; height: 100.0%;">     <b>Somerset</b><br>     <b>Date:</b> 2026-01-01<br><br>     Absolutely wonderful experience at Somerset. The food was outstanding from start to finish. The peri peri chicken was perfectly seasoned and cooked, full of flavor without being overwhelming, and the whole pan-seared branzino was fresh, delicate, and beautifully prepared. What really elevated the evening was our server, Irina. She was incredibly kind, attentive, and professional, making us feel genuinely welcome and well taken care of throughout the meal. Great atmosphere, excellent food, and lovely service — Somerset is a place we’ll happily return to and recommend.     </div>`)[0];
+                popup_d14d5f9283e6e7b3ebc1f239d0f85442.setContent(html_ea3570a74cae9544d50ecf0f6c939407);
+            
+        
+
+        marker_fbfc735fcb74be8d209d383728acd170.bindPopup(popup_d14d5f9283e6e7b3ebc1f239d0f85442)
+        ;
+
+        
+    
+    
+            marker_fbfc735fcb74be8d209d383728acd170.bindTooltip(
+                `<div>
+                     Somerset
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_02cd5198b898c04b3f9cce61f1ae6753 = L.marker(
+                [41.902422, -87.628886],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_44d4ad3895f3d5c0ed8e64503cd593ec = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_661001ec7e1eabe9583579b9930bcc08 = $(`<div id="html_661001ec7e1eabe9583579b9930bcc08" style="width: 100.0%; height: 100.0%;">     <b>Somerset</b><br>     <b>Date:</b> 2025-11-07<br><br>     I would never recommend this place. The service was absolutely awful I had to wait so long for my food that I practically fainted from hunger. The staff seemed completely uninterested and unorganized, and no one bothered to check in or apologize for the delay. By the time the food finally arrived, any enjoyment was long gone. For a place that’s supposed to have a good reputation, this was a total disappointment. Save yourself the frustration and go somewhere else for breakfast     </div>`)[0];
+                popup_44d4ad3895f3d5c0ed8e64503cd593ec.setContent(html_661001ec7e1eabe9583579b9930bcc08);
+            
+        
+
+        marker_02cd5198b898c04b3f9cce61f1ae6753.bindPopup(popup_44d4ad3895f3d5c0ed8e64503cd593ec)
+        ;
+
+        
+    
+    
+            marker_02cd5198b898c04b3f9cce61f1ae6753.bindTooltip(
+                `<div>
+                     Somerset
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_aa24d9aa4165b238265710430c9bb369 = L.marker(
+                [41.890795, -87.6244234],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_c6fdae8dd129fa21d9caec0779149964 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_7051c372524d15083240c5e39dca2a45 = $(`<div id="html_7051c372524d15083240c5e39dca2a45" style="width: 100.0%; height: 100.0%;">     <b>The Purple Pig Restaurant</b><br>     <b>Date:</b> 2026-06-03<br><br>     Food is quite excellent here. Beef tartare was well flavored, nice presentation, just the right amount of toast to go with it. The pork ribeye was juicy and tender. Dessert was quite decent. Service is friendly and attentive. Atmosphere wise is quite noisy like a sports bar more than a restaurant.     </div>`)[0];
+                popup_c6fdae8dd129fa21d9caec0779149964.setContent(html_7051c372524d15083240c5e39dca2a45);
+            
+        
+
+        marker_aa24d9aa4165b238265710430c9bb369.bindPopup(popup_c6fdae8dd129fa21d9caec0779149964)
+        ;
+
+        
+    
+    
+            marker_aa24d9aa4165b238265710430c9bb369.bindTooltip(
+                `<div>
+                     The Purple Pig Restaurant
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_bd96509c9b4bb8ec9f3c28117c52a179 = L.marker(
+                [41.890795, -87.6244234],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_1294aa16776540229a6ccf35a053b9d0 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_d6560c3d1547adc79213aa30a90fab1a = $(`<div id="html_d6560c3d1547adc79213aa30a90fab1a" style="width: 100.0%; height: 100.0%;">     <b>The Purple Pig Restaurant</b><br>     <b>Date:</b> 2025-12-29<br><br>     Delicious and satisfying lunch! We started with shared appetizers of pig ears and bone marrow served with toasted bread. For the main courses, my friend had a duck accompanied by three buns to stuff the meat into, while I opted for the aged pork chop, which came with small potatoes. The portions were generous and satisfying. The service was excellent, and I highly recommend making a reservation ahead of time for earlier in the day.     </div>`)[0];
+                popup_1294aa16776540229a6ccf35a053b9d0.setContent(html_d6560c3d1547adc79213aa30a90fab1a);
+            
+        
+
+        marker_bd96509c9b4bb8ec9f3c28117c52a179.bindPopup(popup_1294aa16776540229a6ccf35a053b9d0)
+        ;
+
+        
+    
+    
+            marker_bd96509c9b4bb8ec9f3c28117c52a179.bindTooltip(
+                `<div>
+                     The Purple Pig Restaurant
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_60efa4c91bad7d9ef11adb31346040c9 = L.marker(
+                [41.890795, -87.6244234],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_e104663381217c01b39e2306c7e1a5c6 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_b5f3d299ff2dd108ade7c5a250ad68cc = $(`<div id="html_b5f3d299ff2dd108ade7c5a250ad68cc" style="width: 100.0%; height: 100.0%;">     <b>The Purple Pig Restaurant</b><br>     <b>Date:</b> 2026-05-25<br><br>     I managed to get a reservation. Every dish was amazing! We especially loved the bone marrow, and the bread that came with it was so good — my kids absolutely loved it. If you like spicy food, you’d probably love the Spanish octopus dish too.     </div>`)[0];
+                popup_e104663381217c01b39e2306c7e1a5c6.setContent(html_b5f3d299ff2dd108ade7c5a250ad68cc);
+            
+        
+
+        marker_60efa4c91bad7d9ef11adb31346040c9.bindPopup(popup_e104663381217c01b39e2306c7e1a5c6)
+        ;
+
+        
+    
+    
+            marker_60efa4c91bad7d9ef11adb31346040c9.bindTooltip(
+                `<div>
+                     The Purple Pig Restaurant
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_70eb3b7ca5034457abaaba0e055f2d69 = L.marker(
+                [41.890795, -87.6244234],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_90da2d9772702bbd1b9dc3d2e6edf637 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_2d71803e97f96d84cc5c5a51cccac928 = $(`<div id="html_2d71803e97f96d84cc5c5a51cccac928" style="width: 100.0%; height: 100.0%;">     <b>The Purple Pig Restaurant</b><br>     <b>Date:</b> 2026-04-30<br><br>     Wow this is one of the best restaurants we ever been. If you are in Chicago Downtown you must have dinner at the Purple Pig.  We ate a lot, we order some stuff but the Executive chef came to our place at the bar and we were talking and he offered more dishes on the house… and everything was AMAZING!!  First we order Roasted Piquillo Peppers, they were really good, and not hot at all, so if you are not a mexican, don’t have to worry about how hot it was.  Then we ordered Crispy Pig’s Ear, it was a combination of Kale, Pickled Peppers + Fried Egg… wow what a creative combination, and what a taste… you must try it!!!  After that we had Salt-Roasted Beets with Crumbled Goat Cheese  and Pistachio Butter…this was the best pistachio I ever taste… the Pistachio butter was wonderful… and in combination with the Roasted Beets… UFFFF the amazing taste.  Then the chef got to us another dish, not in the menu, or at least I don’t remember it. It was a pair of tapas with homemade morcilla. The morcilla was amazing too, they should include that in the menu very soon.  The final dish was the pasta Agnolotti… but for me it was cannelloni filled with Beef Short Rib and covered with Bone Marrow and Brown Butter. At this point we were 100% full but we sacrifice our self and ate it… and it completely worth it.  Dessert… of course, why not… so we got Chocolate Sponge Cake  with Roasted Almond Sauce + Shaved Almonds, and chef didn’t let us go without having the Orange Coconut Panna Cotta… oh my God, both were wonderful, but we couldn’t finish them.  Check the pictures…     </div>`)[0];
+                popup_90da2d9772702bbd1b9dc3d2e6edf637.setContent(html_2d71803e97f96d84cc5c5a51cccac928);
+            
+        
+
+        marker_70eb3b7ca5034457abaaba0e055f2d69.bindPopup(popup_90da2d9772702bbd1b9dc3d2e6edf637)
+        ;
+
+        
+    
+    
+            marker_70eb3b7ca5034457abaaba0e055f2d69.bindTooltip(
+                `<div>
+                     The Purple Pig Restaurant
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_14cfceeda3f826a06d5c31abc76ebd61 = L.marker(
+                [41.890795, -87.6244234],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_e4644de87327d3cf615dc51417adcaee = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_931ede8cf8d045dca39b27f2b54f2691 = $(`<div id="html_931ede8cf8d045dca39b27f2b54f2691" style="width: 100.0%; height: 100.0%;">     <b>The Purple Pig Restaurant</b><br>     <b>Date:</b> 2026-01-30<br><br>     Great experience. My bf had highly recommended this to me based on the last time he came here (when it was at the old location). Good service. Nice interior. The food was mostly all delicious. The beets appetizer was recommended by the server. I'm not really into beets but surprisingly this was super good. The beets were soft. Paired well with the cheese and peanut butter. Interesting combos that I wouldve never thought of but it works! The pork tongue was good too. Mushroom risotto was a great entrees! Filled with scallops and mushrooms. Delicious and simple. The pork shoulder was another recommendation by the server. It was good, but bf and I enjoyed the mushroom risotto more. The pork shoulder was a bit heavy and the sauce was a bit salty for our personal taste. Saw the table next to us get apple cobbler and it looked so good that we had to get one also. It was so delicious! The pipping hot apple cobbler with the melty cinnamon ice cream. Great meal.     </div>`)[0];
+                popup_e4644de87327d3cf615dc51417adcaee.setContent(html_931ede8cf8d045dca39b27f2b54f2691);
+            
+        
+
+        marker_14cfceeda3f826a06d5c31abc76ebd61.bindPopup(popup_e4644de87327d3cf615dc51417adcaee)
+        ;
+
+        
+    
+    
+            marker_14cfceeda3f826a06d5c31abc76ebd61.bindTooltip(
+                `<div>
+                     The Purple Pig Restaurant
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_28f35456e754e669a7a23cb5280cc635 = L.marker(
+                [41.894981, -87.63158],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_c4c6c51f96288147db82bf185f0e2df6 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_f76b2bb88418649a13af28dc99cc8120 = $(`<div id="html_f76b2bb88418649a13af28dc99cc8120" style="width: 100.0%; height: 100.0%;">     <b>AMBAR Restaurant, Chicago</b><br>     <b>Date:</b> 2026-02-16<br><br>     Good place! We decided to go with the $55 per person unlimited option, and the concept is actually very interesting. You can order anything from the menu in unlimited quantities, served in smaller portions — which makes it perfect for trying a lot of different dishes.  We visited on a Sunday evening. It was quite busy, but the food came out fairly quickly.  I really enjoyed the spreads, the tartare was excellent, and the shrimp and mussels were very good. The lamb flatbread and the mini burger were also great. And the bread — AMAZING. The bakery selection is truly top-level.  The branzino and the NY steak were a bit 50/50 for me. For some reason, they completely cover the dishes with a spicy sauce, which overpowers the natural flavor of the fish and the meat.  We were served by Matija — he was great, attentive, and patiently answered all of our questions 🫶🏼     </div>`)[0];
+                popup_c4c6c51f96288147db82bf185f0e2df6.setContent(html_f76b2bb88418649a13af28dc99cc8120);
+            
+        
+
+        marker_28f35456e754e669a7a23cb5280cc635.bindPopup(popup_c4c6c51f96288147db82bf185f0e2df6)
+        ;
+
+        
+    
+    
+            marker_28f35456e754e669a7a23cb5280cc635.bindTooltip(
+                `<div>
+                     AMBAR Restaurant, Chicago
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_ee4e12d069b43e448174c9d833753e5e = L.marker(
+                [41.894981, -87.63158],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_bc1aae4b6b4ec1d9deafecbbe627106b = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_1388c687298b8ed66ebb042a0496e2b3 = $(`<div id="html_1388c687298b8ed66ebb042a0496e2b3" style="width: 100.0%; height: 100.0%;">     <b>AMBAR Restaurant, Chicago</b><br>     <b>Date:</b> 2026-03-04<br><br>     Bang for your buck! The food was delicious! We did the unlimited $55 small plates and unlimited drinks and it was fantastic! I ate sooo much lol. Service is great, food is even better and reservations are much much needed! Will be dinning here again in 2 weeks.     </div>`)[0];
+                popup_bc1aae4b6b4ec1d9deafecbbe627106b.setContent(html_1388c687298b8ed66ebb042a0496e2b3);
+            
+        
+
+        marker_ee4e12d069b43e448174c9d833753e5e.bindPopup(popup_bc1aae4b6b4ec1d9deafecbbe627106b)
+        ;
+
+        
+    
+    
+            marker_ee4e12d069b43e448174c9d833753e5e.bindTooltip(
+                `<div>
+                     AMBAR Restaurant, Chicago
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_f8da653dc25ae3821f8b1ba3454bb950 = L.marker(
+                [41.894981, -87.63158],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_f18101b81eda9f11c43268f584e781ae = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_677fbffdef4c41b7afb1733c29925afb = $(`<div id="html_677fbffdef4c41b7afb1733c29925afb" style="width: 100.0%; height: 100.0%;">     <b>AMBAR Restaurant, Chicago</b><br>     <b>Date:</b> 2026-02-16<br><br>     My wife and I celebrated Valentine’s Day here with the unlimited dinner and drinks specials. We were able to try over 2 dozen dishes and wish we had bigger stomachs!! What a beautiful way to experience the Balkan cuisine.  We were blown away by the quality of the food and attention to detail. I recommend the intricate house sangria and tender beef goulash - non-negotiables for us!!  Service was great and we felt very well cared for. Also felt safe as a lesbian couple. We will definitely be back with friends and family!     </div>`)[0];
+                popup_f18101b81eda9f11c43268f584e781ae.setContent(html_677fbffdef4c41b7afb1733c29925afb);
+            
+        
+
+        marker_f8da653dc25ae3821f8b1ba3454bb950.bindPopup(popup_f18101b81eda9f11c43268f584e781ae)
+        ;
+
+        
+    
+    
+            marker_f8da653dc25ae3821f8b1ba3454bb950.bindTooltip(
+                `<div>
+                     AMBAR Restaurant, Chicago
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_e483e04a945669e826f9c14c45e88eb2 = L.marker(
+                [41.894981, -87.63158],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_1dfa415299f48516c8ef75efd8efb518 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_ee01be2848ad3a3508c176bc11b06a0f = $(`<div id="html_ee01be2848ad3a3508c176bc11b06a0f" style="width: 100.0%; height: 100.0%;">     <b>AMBAR Restaurant, Chicago</b><br>     <b>Date:</b> 2026-02-19<br><br>     I visited Ambar Restaurant Chicago and overall had a very pleasant experience. The atmosphere was cozy, the service was excellent, and our server was incredibly kind and attentive. We ordered the Unlimited Ambar Experience, which is a great way to try many dishes in smaller portions. While waiting for the food, we started with Turkish coffee, and the first bites — Kajmak with homemade bread, sirnica, and meat pie — were fantastic. I have to say, this was the best kajmak I’ve had since moving to the U.S. The rest of the dishes came out quickly. The beef soup was flavorful, although a bit heavy on the black pepper. The ćevapi had great taste but could’ve used an extra minute or two on the grill, as they were slightly undercooked in the middle. They were also served with a spicy feta spread, which is creative but not the traditional pairing. The meat pie was a bit dry. We also tried the Krempita for dessert. As a baker with a refined palate for desserts, I tend to notice these details, and while it was pleasant, our server shared that it is not house-made and comes from a local store. I was a bit disappointed, as I expected a homemade dessert to better reflect the restaurant’s otherwise strong and authentic culinary concept. Overall, I enjoyed my visit, and the quality ingredients and concept stand out. My only suggestion is to keep traditional dishes closer to their original form — Balkan food shines the most when it stays authentic. Still, I would definitely come back and try more dishes!     </div>`)[0];
+                popup_1dfa415299f48516c8ef75efd8efb518.setContent(html_ee01be2848ad3a3508c176bc11b06a0f);
+            
+        
+
+        marker_e483e04a945669e826f9c14c45e88eb2.bindPopup(popup_1dfa415299f48516c8ef75efd8efb518)
+        ;
+
+        
+    
+    
+            marker_e483e04a945669e826f9c14c45e88eb2.bindTooltip(
+                `<div>
+                     AMBAR Restaurant, Chicago
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_7e1c913a6ea44140c7c08a53363f2ab2 = L.marker(
+                [41.894981, -87.63158],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_378fdf70fea1b4f5125b6b151424c3cd = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_e9b55b8b8db469eafdf86a29e7a132e7 = $(`<div id="html_e9b55b8b8db469eafdf86a29e7a132e7" style="width: 100.0%; height: 100.0%;">     <b>AMBAR Restaurant, Chicago</b><br>     <b>Date:</b> 2026-04-20<br><br>     We had an absolutely amazing experience. The food was outstanding — incredibly вкусно, diverse, and honestly surprisingly high-level for the U.S.  It truly felt like a real European dining experience, and my husband and I were genuinely impressed. Every dish was top quality, and the cocktails and desserts were just as exceptional.  A special thank you to our waiter Marco — he made our evening unforgettable. Attentive, professional, and truly excellent at what he does. We will definitely be coming back!     </div>`)[0];
+                popup_378fdf70fea1b4f5125b6b151424c3cd.setContent(html_e9b55b8b8db469eafdf86a29e7a132e7);
+            
+        
+
+        marker_7e1c913a6ea44140c7c08a53363f2ab2.bindPopup(popup_378fdf70fea1b4f5125b6b151424c3cd)
+        ;
+
+        
+    
+    
+            marker_7e1c913a6ea44140c7c08a53363f2ab2.bindTooltip(
+                `<div>
+                     AMBAR Restaurant, Chicago
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_1f0cf177a67b10959d83ad8b48e7e68c = L.marker(
+                [41.8688213, -87.6260978],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_694752dc439e6bb8603ac5eccda0b241 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_4e7a82f9b8ac33d522039786dc341a14 = $(`<div id="html_4e7a82f9b8ac33d522039786dc341a14" style="width: 100.0%; height: 100.0%;">     <b>Eleven City Diner</b><br>     <b>Date:</b> 2026-06-13<br><br>     10 out of 10 for food, service, and atmosphere. Half of us ordered off the all-day breakfast menu and half of us ordered dinner.  Everything was fresh and so good.  The portions were amazing and the side house potatoes were probably the best potatoes I've ever had. Most importantly we were immediately welcomed with smiles by the hosts and our waitress was so friendly too, it was refreshing!  Visiting from St. Louis, MO and Eleven City popping up when searching local places with good reviews.  So glad we made it during our visit.     </div>`)[0];
+                popup_694752dc439e6bb8603ac5eccda0b241.setContent(html_4e7a82f9b8ac33d522039786dc341a14);
+            
+        
+
+        marker_1f0cf177a67b10959d83ad8b48e7e68c.bindPopup(popup_694752dc439e6bb8603ac5eccda0b241)
+        ;
+
+        
+    
+    
+            marker_1f0cf177a67b10959d83ad8b48e7e68c.bindTooltip(
+                `<div>
+                     Eleven City Diner
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_83768604ceab45a6d8441f06958699dd = L.marker(
+                [41.8688213, -87.6260978],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_fdfe0a335797c899c2d9d07bcaa27218 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_4315302c63773e330b659ebbe1910ccc = $(`<div id="html_4315302c63773e330b659ebbe1910ccc" style="width: 100.0%; height: 100.0%;">     <b>Eleven City Diner</b><br>     <b>Date:</b> 2026-06-07<br><br>     This is my husband’s and my new go-to place for any meal when we’re in Chicago! We were just here for 3 days and literally went there every. single. day. First of all, we’ve always been seated before the estimated wait time, and our food arrives no later than 10 min after we order. But most importantly, the food is AMAZING. This past weekend, we each got 3 different dishes and EVERYTHING was mouth-watering good and HUGE portion sizes! Oh, and they’re homemade root beer?? Get OUTTA here 🤯😍 Our waiters have been great—great work ethic, running all over cuz they’re busy but still taking good care of us, and seems like they’re having a fun time. The only 2 negative things, and not even negative enough to take off a star, but more just informational for those deciding to try this place out: 1. The environment is very loud. Some may like it because it adds to the overall old fashioned diner vibes. But I had a very difficult time as a 32 year old hearing my waiter, so I can’t imagine a hard-of-hearing customer being able to have any sort of conversation. 2. The milkshakes are large, but the flavor isn’t anything spectacular. My chocolate shake was actually TOO chocolatey (and that’s saying a lot coming from me). The milkshakes are about the only thing on the menu that I do believe is overpriced for the quality.     </div>`)[0];
+                popup_fdfe0a335797c899c2d9d07bcaa27218.setContent(html_4315302c63773e330b659ebbe1910ccc);
+            
+        
+
+        marker_83768604ceab45a6d8441f06958699dd.bindPopup(popup_fdfe0a335797c899c2d9d07bcaa27218)
+        ;
+
+        
+    
+    
+            marker_83768604ceab45a6d8441f06958699dd.bindTooltip(
+                `<div>
+                     Eleven City Diner
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_7b0989571772732118619c7821da6d93 = L.marker(
+                [41.8688213, -87.6260978],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_0e74140b1660ee6845eb55f31f5234ed = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_5a0c82deb8f356e835d213c51fcdf90f = $(`<div id="html_5a0c82deb8f356e835d213c51fcdf90f" style="width: 100.0%; height: 100.0%;">     <b>Eleven City Diner</b><br>     <b>Date:</b> 2026-05-22<br><br>     If you’re in Chicago, do yourself a favor and check out Eleven City Diner. The food was excellent and the service was beyond excellent — one of those places where the staff genuinely makes the experience better.  The French toast was fantastic, but the real star of the meal was the brisket sandwich with their house dipping sauce. It’s almost like a consommé, but richer and packed with brisket flavor from the brine. Absolutely incredible.  The Michelada was also one of the best I’ve had — made with their homemade mix and local Chicago beer.  On top of all that, the atmosphere is awesome. Full old-school 1950s diner vibes with classic music playing the whole time. Great food, great service, and a really fun experience overall.     </div>`)[0];
+                popup_0e74140b1660ee6845eb55f31f5234ed.setContent(html_5a0c82deb8f356e835d213c51fcdf90f);
+            
+        
+
+        marker_7b0989571772732118619c7821da6d93.bindPopup(popup_0e74140b1660ee6845eb55f31f5234ed)
+        ;
+
+        
+    
+    
+            marker_7b0989571772732118619c7821da6d93.bindTooltip(
+                `<div>
+                     Eleven City Diner
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_7080bf83db4134f7b48970a4e4cbd3bb = L.marker(
+                [41.8688213, -87.6260978],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_15d83a3158e3b56f4579086705c3cca4 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_48773e835ba6562efecda1210b48b16f = $(`<div id="html_48773e835ba6562efecda1210b48b16f" style="width: 100.0%; height: 100.0%;">     <b>Eleven City Diner</b><br>     <b>Date:</b> 2026-05-29<br><br>     If you are looking for an incredible breakfast spot, this is it!  The food here is executed perfectly. The breakfast sandwich was phenomenal—the eggs were hands-down the fluffiest I've ever had, and the bacon was perfectly cooked with amazing flavor. Also, do not skip the pancakes. They are incredibly fluffy on the inside with a beautifully crispy outer edge, and they have a fantastic vanilla flavor that elevates the whole stack.  The atmosphere has a great, nostalgic old-school diner vibe, made even better by the  jazz music playing in the background. It sets the perfect morning mood.  To top it all off, our server Joaquin was ABSOLUTELY amazing. He was attentive, friendly, and provided top-tier service that made a great meal even better.  I’ll absolutely be back. Highly recommend!     </div>`)[0];
+                popup_15d83a3158e3b56f4579086705c3cca4.setContent(html_48773e835ba6562efecda1210b48b16f);
+            
+        
+
+        marker_7080bf83db4134f7b48970a4e4cbd3bb.bindPopup(popup_15d83a3158e3b56f4579086705c3cca4)
+        ;
+
+        
+    
+    
+            marker_7080bf83db4134f7b48970a4e4cbd3bb.bindTooltip(
+                `<div>
+                     Eleven City Diner
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_b0d0fb07fc30203b4789497e1bb2757f = L.marker(
+                [41.8688213, -87.6260978],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_d4f1c3ba962caffff29f217262011c84 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_f33bbfa54ac16afac483896ae924ebde = $(`<div id="html_f33bbfa54ac16afac483896ae924ebde" style="width: 100.0%; height: 100.0%;">     <b>Eleven City Diner</b><br>     <b>Date:</b> 2026-01-13<br><br>     What a great discovery this place turned out to be. We noticed a crowd waiting right at opening time and decided to check it out, and the energy inside felt fun and inviting. The food absolutely lived up to the atmosphere. The Reuben egg roll and the mini Reubens were fantastic, full of flavor and perfectly done. I also tried the corned beef hash and a pickle plate, which was exactly what it promised and very satisfying. Definitely glad we stopped in.     </div>`)[0];
+                popup_d4f1c3ba962caffff29f217262011c84.setContent(html_f33bbfa54ac16afac483896ae924ebde);
+            
+        
+
+        marker_b0d0fb07fc30203b4789497e1bb2757f.bindPopup(popup_d4f1c3ba962caffff29f217262011c84)
+        ;
+
+        
+    
+    
+            marker_b0d0fb07fc30203b4789497e1bb2757f.bindTooltip(
+                `<div>
+                     Eleven City Diner
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_0d18d4e1abc9618be1e0b29cad3a1fcd = L.marker(
+                [41.889026, -87.628642],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_4c548aff0cfd6c01ecf2083ec8b0dc94 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_8e05b0d6e9533f4d60ae64c3d9e8152d = $(`<div id="html_8e05b0d6e9533f4d60ae64c3d9e8152d" style="width: 100.0%; height: 100.0%;">     <b>STK Steakhouse</b><br>     <b>Date:</b> 2026-06-12<br><br>     STK Downtown Chicago was an incredible experience! Out of the four STK locations I’ve visited, this one has been my favorite so far. The atmosphere is unmatched, the location is fantastic, and the overall vibe made for a memorable evening.  A special shoutout to Bianca, our server, who was beyond perfection. She was attentive, friendly, knowledgeable, and went above and beyond with recommendations from both the food and drink menus. Her service truly elevated the entire experience and was some of the best service we’ve had in a long time.  Thank you to the entire STK team for creating such a great dining experience. We can’t wait to come back!     </div>`)[0];
+                popup_4c548aff0cfd6c01ecf2083ec8b0dc94.setContent(html_8e05b0d6e9533f4d60ae64c3d9e8152d);
+            
+        
+
+        marker_0d18d4e1abc9618be1e0b29cad3a1fcd.bindPopup(popup_4c548aff0cfd6c01ecf2083ec8b0dc94)
+        ;
+
+        
+    
+    
+            marker_0d18d4e1abc9618be1e0b29cad3a1fcd.bindTooltip(
+                `<div>
+                     STK Steakhouse
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_414630810853c9ea7bc9dfc8ca64f9a4 = L.marker(
+                [41.889026, -87.628642],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_3bbdc1cc3a2709706347f461456fa6d2 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_dec1bde5048698d82ba08747b9efd3a9 = $(`<div id="html_dec1bde5048698d82ba08747b9efd3a9" style="width: 100.0%; height: 100.0%;">     <b>STK Steakhouse</b><br>     <b>Date:</b> 2026-03-29<br><br>     I had a really nice time.. this was my second time coming here and it didn't disappoint.. I had a birthday dinner here in July and it was the same 10 out of 10 very nice cocktail the food is great and the waiters are very nice and patient and wasn't overbearing. happy hour was  great price from 3pm to 5:30pm. of course the appetizers was on the small side but they was filling and affordable.. the atmosphere was great.I would feel uncomfortable if I would have wore sneakers.. nice and casual place. Definitely looking forward to going back     </div>`)[0];
+                popup_3bbdc1cc3a2709706347f461456fa6d2.setContent(html_dec1bde5048698d82ba08747b9efd3a9);
+            
+        
+
+        marker_414630810853c9ea7bc9dfc8ca64f9a4.bindPopup(popup_3bbdc1cc3a2709706347f461456fa6d2)
+        ;
+
+        
+    
+    
+            marker_414630810853c9ea7bc9dfc8ca64f9a4.bindTooltip(
+                `<div>
+                     STK Steakhouse
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_2f15180df224a95c64b6534af8abb031 = L.marker(
+                [41.889026, -87.628642],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_159700e756e9271e991de4acc4962edd = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_22136c92f43bbb5e2005babb28c29c09 = $(`<div id="html_22136c92f43bbb5e2005babb28c29c09" style="width: 100.0%; height: 100.0%;">     <b>STK Steakhouse</b><br>     <b>Date:</b> 2026-04-29<br><br>     Don't believe the hype. I rarely make a bad review, but this place deserves it. My husband and I drove 2 hours for our anniversary dinner here to experiencegood food and a good atmosphere. Although we informed the staff it was our anniversary when we made the reservation, we were stuck in a back corner by the bar, which is quite the distance away from the fun atmosphere section we were hoping to sit in. Despite the disappointment, we were still excited try the food. Unfortunately, the tray with our food was dropped, which we absolutely understand to be a normal mistake and weren't upset at all. At least, not initially. We did become upset when it took over an hour for our new tray of food to come out. In that time, we weren't given an appetizer or drinks to hold us over and we had to sit tight as we watched the other tables around us be served first and leave before we even got our food. When The food finally came, it was room temperature at best. I ordered the filet medium cooked, which was one of the driest steaks I've ever eaten. We ordered several sides,  but had to take them to go because they weren't hot enough to eat. The only decent thing about the evening was the chocolate cake we took to go. After our horrible experience, not only were we not comped a single dish but none of the staff checked on us or showed any care. We're so disappointed in every aspect of  our dinner from service to taste to quality. We will not be back. What a bummer!     </div>`)[0];
+                popup_159700e756e9271e991de4acc4962edd.setContent(html_22136c92f43bbb5e2005babb28c29c09);
+            
+        
+
+        marker_2f15180df224a95c64b6534af8abb031.bindPopup(popup_159700e756e9271e991de4acc4962edd)
+        ;
+
+        
+    
+    
+            marker_2f15180df224a95c64b6534af8abb031.bindTooltip(
+                `<div>
+                     STK Steakhouse
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_ce6f83f381379a98f72789d1a94365bf = L.marker(
+                [41.889026, -87.628642],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_451ca2773a5e67870dbc926739fe526b = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_1fc8b3cf989347555d3f270eb73e8880 = $(`<div id="html_1fc8b3cf989347555d3f270eb73e8880" style="width: 100.0%; height: 100.0%;">     <b>STK Steakhouse</b><br>     <b>Date:</b> 2026-05-17<br><br>     Had a great time! Food was very good. Our server Christian was awesome, thank you sir! The restaurant itself seemed to have reserved too many people for the time slots. It was packed and we waited 40 minutes after our reservation time. That was the only bad point. Pack your patience. It pays off, expensively, in the end.     </div>`)[0];
+                popup_451ca2773a5e67870dbc926739fe526b.setContent(html_1fc8b3cf989347555d3f270eb73e8880);
+            
+        
+
+        marker_ce6f83f381379a98f72789d1a94365bf.bindPopup(popup_451ca2773a5e67870dbc926739fe526b)
+        ;
+
+        
+    
+    
+            marker_ce6f83f381379a98f72789d1a94365bf.bindTooltip(
+                `<div>
+                     STK Steakhouse
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_7455291de6c4cbf996a7b49a51ce5280 = L.marker(
+                [41.889026, -87.628642],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_c8029d1a4157115e27a87abf3408d7d3 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_c1ff92afd3d6d04ef200b19bf8491d0c = $(`<div id="html_c1ff92afd3d6d04ef200b19bf8491d0c" style="width: 100.0%; height: 100.0%;">     <b>STK Steakhouse</b><br>     <b>Date:</b> 2026-02-08<br><br>     My boyfriend and I went here for our anniversary and totally loved it! Our waiter, Cody, was the best! He was super funny and nice and helped us with the menu, loved him! The food was incredible, I got the lobster mac and my boyfriend got a NY strip. They were nice enough to decorate our chocolate cake with an anniversary chocolate! I would absolutely come back! Thanks Cody!     </div>`)[0];
+                popup_c8029d1a4157115e27a87abf3408d7d3.setContent(html_c1ff92afd3d6d04ef200b19bf8491d0c);
+            
+        
+
+        marker_7455291de6c4cbf996a7b49a51ce5280.bindPopup(popup_c8029d1a4157115e27a87abf3408d7d3)
+        ;
+
+        
+    
+    
+            marker_7455291de6c4cbf996a7b49a51ce5280.bindTooltip(
+                `<div>
+                     STK Steakhouse
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_4e917267ff909c07cdc065caef4e9cf9 = L.marker(
+                [41.8854526, -87.626024],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_496f97f1033f8af669833e3f6ccb5537 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_35432f875b7a0681e0d107142d359b49 = $(`<div id="html_35432f875b7a0681e0d107142d359b49" style="width: 100.0%; height: 100.0%;">     <b>Elephant & Castle</b><br>     <b>Date:</b> 2026-06-12<br><br>     Decent spot for World Cup game. Some tables didn’t have the best view. Get there early for the big ones. They also don’t honor happy hour on game day for World Cup. Sound could have been higher during game  Other than that the chicken fingers and bread pudding were great. Service was good  Fish N chips $17 Bread pudding $10     </div>`)[0];
+                popup_496f97f1033f8af669833e3f6ccb5537.setContent(html_35432f875b7a0681e0d107142d359b49);
+            
+        
+
+        marker_4e917267ff909c07cdc065caef4e9cf9.bindPopup(popup_496f97f1033f8af669833e3f6ccb5537)
+        ;
+
+        
+    
+    
+            marker_4e917267ff909c07cdc065caef4e9cf9.bindTooltip(
+                `<div>
+                     Elephant & Castle
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_7b5d862286d8592f3a539107c95a97c6 = L.marker(
+                [41.8854526, -87.626024],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_4f95a7aca20d05372b8640f4b07f2a49 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_78d768891a1c4cd976c286960374a318 = $(`<div id="html_78d768891a1c4cd976c286960374a318" style="width: 100.0%; height: 100.0%;">     <b>Elephant & Castle</b><br>     <b>Date:</b> 2026-02-08<br><br>     Reviewing all scotch eggs in the area so the food rating is only for that item. It’s full of various flavors, as a scotch egg with a sauce typically is. The casing had an Italian vibe which is unique but not authentic, slight ding there. The fried casing flexed and had no crunch, cheapens it, ding there. Mustard is delicious and egg consistency is ideal.  Will you like it? Absolutely. If I took authenticity out of the equation, it’s a 4 star.     </div>`)[0];
+                popup_4f95a7aca20d05372b8640f4b07f2a49.setContent(html_78d768891a1c4cd976c286960374a318);
+            
+        
+
+        marker_7b5d862286d8592f3a539107c95a97c6.bindPopup(popup_4f95a7aca20d05372b8640f4b07f2a49)
+        ;
+
+        
+    
+    
+            marker_7b5d862286d8592f3a539107c95a97c6.bindTooltip(
+                `<div>
+                     Elephant & Castle
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_bfaa449cfbbfa72eeed32258e7bba489 = L.marker(
+                [41.8854526, -87.626024],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_54614c2db2b82ead7a85a7878d10b2ee = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_8867f3299e0c305e5e3946d22f99679c = $(`<div id="html_8867f3299e0c305e5e3946d22f99679c" style="width: 100.0%; height: 100.0%;">     <b>Elephant & Castle</b><br>     <b>Date:</b> 2026-04-14<br><br>     We visited Elephant & Castle during our trip to Chicago and tried a few different dishes. Overall, it’s a lively pub-style restaurant with a casual, high-energy atmosphere.  We started with the hummus, which had a balsamic drizzle that added a subtle sweetness. It was served with naan, celery, carrots, and cucumbers. Everything was fresh and a nice way to start the meal.  For mains, we had the fish and chips and the Wee Pie Flight. The fish and chips were crispy and fresh, paired well with tartar sauce and lemon for extra flavor.  The Wee Pie Flight included shepherd’s pie, chicken pot pie, steak and mushroom, and cheesy leek and potato. My ranking from favorite to least favorite was shepherd’s pie, chicken pot pie, steak and mushroom, and cheesy leek and potato. All were enjoyable, with the cheesy leek and potato being the mildest in flavor.  Service was good. Staff checked in often and were attentive throughout the meal.  One thing to note is that the restaurant is very loud, so it may not be ideal for those sensitive to noise or sensory overload.  Overall, the food was good and the experience was enjoyable, but not particularly standout.  Would I go back? Maybe… but only if I’m mentally prepared for the volume.  Overall rating: 3.5 out of 5 stars ⭐⭐⭐✨     </div>`)[0];
+                popup_54614c2db2b82ead7a85a7878d10b2ee.setContent(html_8867f3299e0c305e5e3946d22f99679c);
+            
+        
+
+        marker_bfaa449cfbbfa72eeed32258e7bba489.bindPopup(popup_54614c2db2b82ead7a85a7878d10b2ee)
+        ;
+
+        
+    
+    
+            marker_bfaa449cfbbfa72eeed32258e7bba489.bindTooltip(
+                `<div>
+                     Elephant & Castle
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_656d493c1937083216a231fc633722b4 = L.marker(
+                [41.8854526, -87.626024],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_29e16a097a48cf1a06c7f0b0d71920fb = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_1c7c99afcd8e772c034729ecce0c99c1 = $(`<div id="html_1c7c99afcd8e772c034729ecce0c99c1" style="width: 100.0%; height: 100.0%;">     <b>Elephant & Castle</b><br>     <b>Date:</b> 2026-01-20<br><br>     Stopped here after the Bears/Rams game for a bite. I was seated fast by a friendly host. The place has a cool ambience and was perfect for watching the snow come down as I was seated at a window. I had the hummus and the fish and chips. Both were so so good!!! Tartar was perfect as was the fish and slaw. Will definitely eat here again when I come back!     </div>`)[0];
+                popup_29e16a097a48cf1a06c7f0b0d71920fb.setContent(html_1c7c99afcd8e772c034729ecce0c99c1);
+            
+        
+
+        marker_656d493c1937083216a231fc633722b4.bindPopup(popup_29e16a097a48cf1a06c7f0b0d71920fb)
+        ;
+
+        
+    
+    
+            marker_656d493c1937083216a231fc633722b4.bindTooltip(
+                `<div>
+                     Elephant & Castle
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_a966272c6dedcb9ef55958e0c18e20a5 = L.marker(
+                [41.8854526, -87.626024],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_2ca1a48afc05de06c8ac99fb35b11cec = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_9bc374bb37924729e7e23b0a25ad949b = $(`<div id="html_9bc374bb37924729e7e23b0a25ad949b" style="width: 100.0%; height: 100.0%;">     <b>Elephant & Castle</b><br>     <b>Date:</b> 2026-03-15<br><br>     I came here interested to try British food and I got the Sheppards Pie and the Bread Pudding. I had never had either before but both were really delicious and nicely plated. I was sat immediately and while it was busy the food came out at an almost starling speed. My waiter Jose was very kind and advised me to get the Bread Pudding. I would fully recommend this place.     </div>`)[0];
+                popup_2ca1a48afc05de06c8ac99fb35b11cec.setContent(html_9bc374bb37924729e7e23b0a25ad949b);
+            
+        
+
+        marker_a966272c6dedcb9ef55958e0c18e20a5.bindPopup(popup_2ca1a48afc05de06c8ac99fb35b11cec)
+        ;
+
+        
+    
+    
+            marker_a966272c6dedcb9ef55958e0c18e20a5.bindTooltip(
+                `<div>
+                     Elephant & Castle
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_2d40f9a9c3f33b400ab76e30f8d1c0e8 = L.marker(
+                [41.8914961, -87.630838],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_d7a257a550044b8209068a498cda997e = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_7ed664150634b26c354a8b24586cab1c = $(`<div id="html_7ed664150634b26c354a8b24586cab1c" style="width: 100.0%; height: 100.0%;">     <b>Beatrix</b><br>     <b>Date:</b> 2026-04-25<br><br>     While staying in town nearby I came here for breakfast… I chose this place because the reviews I saw were all great and once I got there, I understood why!  Service was very helpful, friendly, a nice!  The menu for breakfast is very good and they have a very popular and amazing coffee bar with lots of pastry options too.  I chose their Bacon, Egg, & Cheddar Sandwich and asked for hash browns with it and for those to be extra crispy.  Starting with their regular coffee – it was great!  Then the food came out relatively quickly and looked amazing!  The egg was PERFECTLY (ABSOLUTELY PERFECTLY!) cooked!  The sandwich came together and tasted amazing… I especially loved the bites of freshly sliced jalapeño and the arugula in the sandwich too!!  The has browns were made the way I asked and tasted sooo good!  Overall, I would definitely recommend giving them a try and I can see why the reviews were so good!  My visit was very nice.     </div>`)[0];
+                popup_d7a257a550044b8209068a498cda997e.setContent(html_7ed664150634b26c354a8b24586cab1c);
+            
+        
+
+        marker_2d40f9a9c3f33b400ab76e30f8d1c0e8.bindPopup(popup_d7a257a550044b8209068a498cda997e)
+        ;
+
+        
+    
+    
+            marker_2d40f9a9c3f33b400ab76e30f8d1c0e8.bindTooltip(
+                `<div>
+                     Beatrix
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_441f7300ab34347b8265fb9687c383d3 = L.marker(
+                [41.8914961, -87.630838],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_ea491bc5e636c647e7403bff041275ce = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_e3c5c230193ede1d77bf68de9218be78 = $(`<div id="html_e3c5c230193ede1d77bf68de9218be78" style="width: 100.0%; height: 100.0%;">     <b>Beatrix</b><br>     <b>Date:</b> 2026-04-29<br><br>     Visited for brunch on a Saturday and had a great experience. There was a short 15-minute wait for a table, so I ordered a latte while waiting, which was excellent. The burger was delicious and very filling, with generous portions—I arrived hungry and still could barely finish my meal. They also offer gluten-free options, which is a thoughtful addition. The atmosphere is relaxed and inviting, and the staff is exceptionally friendly and welcoming. The restaurant is clean, well-organized, and service appears to run very smoothly. Overall, it was a great experience while visiting Chicago. I especially appreciated the interior design—the natural elements and earthy, warm tones blend nicely with the urban concrete setting, creating a very inviting space.     </div>`)[0];
+                popup_ea491bc5e636c647e7403bff041275ce.setContent(html_e3c5c230193ede1d77bf68de9218be78);
+            
+        
+
+        marker_441f7300ab34347b8265fb9687c383d3.bindPopup(popup_ea491bc5e636c647e7403bff041275ce)
+        ;
+
+        
+    
+    
+            marker_441f7300ab34347b8265fb9687c383d3.bindTooltip(
+                `<div>
+                     Beatrix
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_eca14905c1530160b45fcd02b3aae5ee = L.marker(
+                [41.8914961, -87.630838],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_ae3380d35dbf837cfc3e67111d1f5e21 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_6ca33dd3a0b1eca87ae768a31a896da6 = $(`<div id="html_6ca33dd3a0b1eca87ae768a31a896da6" style="width: 100.0%; height: 100.0%;">     <b>Beatrix</b><br>     <b>Date:</b> 2026-01-26<br><br>     We came here for a little snowy brunch date, absolutely delicious. The steak and eggs and the honey cinnamon latte are a must try, flavorful and delicious. Service was amazing, quick, attentive. Lots of space and easily accessible. Cannot recommend them enough.     </div>`)[0];
+                popup_ae3380d35dbf837cfc3e67111d1f5e21.setContent(html_6ca33dd3a0b1eca87ae768a31a896da6);
+            
+        
+
+        marker_eca14905c1530160b45fcd02b3aae5ee.bindPopup(popup_ae3380d35dbf837cfc3e67111d1f5e21)
+        ;
+
+        
+    
+    
+            marker_eca14905c1530160b45fcd02b3aae5ee.bindTooltip(
+                `<div>
+                     Beatrix
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_3bc8342cd64286a35a06d7da9b8e85ff = L.marker(
+                [41.8914961, -87.630838],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_7361916541b8a232d40ab5b06004896e = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_2a7c1a5d1d09a31ba3395eebea543af7 = $(`<div id="html_2a7c1a5d1d09a31ba3395eebea543af7" style="width: 100.0%; height: 100.0%;">     <b>Beatrix</b><br>     <b>Date:</b> 2026-04-04<br><br>     Lisa was such a fantastic host! We had a great time. The mushroom quinoa burger was incredible and the portions were pretty good. Toddler loved her grilled cheese sandwich. Yummy chocolate cake! The cheesecake was good too, though I’d skip the passion fruit syrup, not a fan. Cozy atmosphere and overall a lovely dinner!     </div>`)[0];
+                popup_7361916541b8a232d40ab5b06004896e.setContent(html_2a7c1a5d1d09a31ba3395eebea543af7);
+            
+        
+
+        marker_3bc8342cd64286a35a06d7da9b8e85ff.bindPopup(popup_7361916541b8a232d40ab5b06004896e)
+        ;
+
+        
+    
+    
+            marker_3bc8342cd64286a35a06d7da9b8e85ff.bindTooltip(
+                `<div>
+                     Beatrix
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_bcd775a08866939673217545cdf83cc7 = L.marker(
+                [41.8914961, -87.630838],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_45b8e2099f5f3dfda6492831e66dcf72 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_e082853e761c6abb6b422a2abf3e0c16 = $(`<div id="html_e082853e761c6abb6b422a2abf3e0c16" style="width: 100.0%; height: 100.0%;">     <b>Beatrix</b><br>     <b>Date:</b> 2026-02-03<br><br>     Food was excellent, service was just alright. Made a reservation because we were attending a show after. Our party of 2 was there on time and we didn’t get sat until 20min after reservation time. Huge line waiting by the door, not sure if everyone had reservations or were walking in. Once we sat down service was fine. Brunch for restaurant week was good, it included a drink (alcoholic or juice), pastry and meal.     </div>`)[0];
+                popup_45b8e2099f5f3dfda6492831e66dcf72.setContent(html_e082853e761c6abb6b422a2abf3e0c16);
+            
+        
+
+        marker_bcd775a08866939673217545cdf83cc7.bindPopup(popup_45b8e2099f5f3dfda6492831e66dcf72)
+        ;
+
+        
+    
+    
+            marker_bcd775a08866939673217545cdf83cc7.bindTooltip(
+                `<div>
+                     Beatrix
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_090314f2f057bb57e2afb1dfd1716ac9 = L.marker(
+                [41.8851748, -87.6371784],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_eb1804d348938a67028bd415eed7fe4b = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_2948a09c14000497faf0c96f9a3f14c6 = $(`<div id="html_2948a09c14000497faf0c96f9a3f14c6" style="width: 100.0%; height: 100.0%;">     <b>Beatnik On The River</b><br>     <b>Date:</b> 2026-06-10<br><br>     INCREDIBLE experience! We had a large party so had to get there at opening. We got drinks at the bar to start, I would highly recommend their bloodys, their mix is amazing.  We sat with a river view, which makes the whole experience even better. Once the food came, I was so happy that everything matched on how good this place is. We had several plates from the menu and they were all 10/10. The tables favorite was the steak Kebob.  Service was really good, very friendly staff.     </div>`)[0];
+                popup_eb1804d348938a67028bd415eed7fe4b.setContent(html_2948a09c14000497faf0c96f9a3f14c6);
+            
+        
+
+        marker_090314f2f057bb57e2afb1dfd1716ac9.bindPopup(popup_eb1804d348938a67028bd415eed7fe4b)
+        ;
+
+        
+    
+    
+            marker_090314f2f057bb57e2afb1dfd1716ac9.bindTooltip(
+                `<div>
+                     Beatnik On The River
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_ec700b3047a4cce482a2641676b580aa = L.marker(
+                [41.8851748, -87.6371784],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_64ab115cae3e90f2df77d1d666f776ba = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_b252a0dce4d95d3db17d063a335004ae = $(`<div id="html_b252a0dce4d95d3db17d063a335004ae" style="width: 100.0%; height: 100.0%;">     <b>Beatnik On The River</b><br>     <b>Date:</b> 2026-05-27<br><br>     Hands-down, this might have been the restaurant I was most looking forward to on my trip to Chicago. So many of the videos I watched and the posts I saw mentioned it as want to go to. I snagged a reservation a week or so before I left and I am so glad I did. I love restaurants that not only put out amazing food, but also transport you to a completely different place. The vibes of this restaurant. The details. The decor. And especially the food make this one that I will continue recommending to people. I was a little bummed that the lower level with the hanging flowers wasn’t wheelchair accessible, but I was impressed that as soon as I rolled up, the staff immediately got a portable ramp to put up so I could access the upper dining area and their hospitality continued throughout the meal. While it wasn’t over the top like the lower level, it is still so beautiful with amazing views of the river. We went for a Sunday brunch and tried a number of different things. You can taste the grill and char on that beef kebab which I appreciated as a true Iowan raised on good beef. The short rib hash was easily my favorite. All of the different flavors and ingredients were so different and unlike so many other offerings. The salmon benedict was fairly traditional, yet delicious, whereas the breakfast gnocchi was super unique, but equally divine.  The only thing I will say is that I can’t wait for the next time I’m in town so I can go here for happy hour, dinner, and/or drinks.     </div>`)[0];
+                popup_64ab115cae3e90f2df77d1d666f776ba.setContent(html_b252a0dce4d95d3db17d063a335004ae);
+            
+        
+
+        marker_ec700b3047a4cce482a2641676b580aa.bindPopup(popup_64ab115cae3e90f2df77d1d666f776ba)
+        ;
+
+        
+    
+    
+            marker_ec700b3047a4cce482a2641676b580aa.bindTooltip(
+                `<div>
+                     Beatnik On The River
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_41358ceded9bc74497545748032a4cf5 = L.marker(
+                [41.8851748, -87.6371784],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_27009d92ac5df2a505eb2cd49831c6af = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_f051f402af7db3268eae5368435af68f = $(`<div id="html_f051f402af7db3268eae5368435af68f" style="width: 100.0%; height: 100.0%;">     <b>Beatnik On The River</b><br>     <b>Date:</b> 2026-01-04<br><br>     Hear me out. Most places that are popular for their beautiful scenery or atmosphere tend to miss on the quality of their food, it’s never a hit on both scenery and food quality. However, this restaurant not only had the most beautiful interior and view of the river, but the food tasted delicious. My mom, sister, and I each got our own plates and I tried some food from their plates and every bite was truly delicious. We got the salmon eggs benedict, biscuits and gravy, and rib eye hash: 10/10!!! In addition, we went Jan 3 so it  was definitely very cold outside, and the cold leaks into the restaurant because we are close to the windows. But the Beatnik would give bursts of heat that was perfect and would keep you warm, I wasn’t cold at all. Drinks at the bar were also delish, bartender was very funny!     </div>`)[0];
+                popup_27009d92ac5df2a505eb2cd49831c6af.setContent(html_f051f402af7db3268eae5368435af68f);
+            
+        
+
+        marker_41358ceded9bc74497545748032a4cf5.bindPopup(popup_27009d92ac5df2a505eb2cd49831c6af)
+        ;
+
+        
+    
+    
+            marker_41358ceded9bc74497545748032a4cf5.bindTooltip(
+                `<div>
+                     Beatnik On The River
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_19fbb5e0bedf1eda098f7a97ed948014 = L.marker(
+                [41.8851748, -87.6371784],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_5beba49616b079956397dbbfdd669163 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_1b954f978c2bc14afd8a287d4f8df451 = $(`<div id="html_1b954f978c2bc14afd8a287d4f8df451" style="width: 100.0%; height: 100.0%;">     <b>Beatnik On The River</b><br>     <b>Date:</b> 2026-06-01<br><br>     Expensive mediocre food. It seems the restaurant only caters to business meetings. We walked in and there was no hostess, very awkward waiting for any service the bartenders making sure not to look in our direction. We did get seated, asked to sit downstairs and told a large party would be coming in? Confused bc the website says they will accommodate at best? Maybe I should have called ahead of time to ask, not sure. Still a decent view, but for the first time visiting and sharing w a friend to celebrate wish we could have had better seating, especially arriving early I didn’t mind having to wait. We sat down and had no utensils or napkins, when we asked the first person told us they were out (?) and the second person we asked brought us only 2 cocktail napkins. Even after our food came we still had no napkins/utensils, despite every table around us having napkins so just had to snag some from another table. Before ordering we were told 3 of there main menu items were out, and 2 of which I had in mind to order so we had to get something else. Food came,  mushroom noodle was good, lamb was okay, the steak kabab was overly cooked, rice was too salty, the hummus was the only decently good thing. While we were eating the table next to us was being cleaned, a vacuum was brought out and he was there for a while which just took away from the experience. At the very end, we were asked to leave so they could accommodate another table, even though there was an empty table right next to us w the same amount of seating. I wouldn’t come here again or recommend it. Wish I had the experience others had.     </div>`)[0];
+                popup_5beba49616b079956397dbbfdd669163.setContent(html_1b954f978c2bc14afd8a287d4f8df451);
+            
+        
+
+        marker_19fbb5e0bedf1eda098f7a97ed948014.bindPopup(popup_5beba49616b079956397dbbfdd669163)
+        ;
+
+        
+    
+    
+            marker_19fbb5e0bedf1eda098f7a97ed948014.bindTooltip(
+                `<div>
+                     Beatnik On The River
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_dd2edcd78cb82c13d0414773c7394f7a = L.marker(
+                [41.8851748, -87.6371784],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_06256e2be13a380782ad9c5dd48cadaa = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_9db9686a57b4c7dea61396b24d87a09b = $(`<div id="html_9db9686a57b4c7dea61396b24d87a09b" style="width: 100.0%; height: 100.0%;">     <b>Beatnik On The River</b><br>     <b>Date:</b> 2026-01-20<br><br>     We had a reservation and arrived right on time, but the experience started off awkwardly. The hostess didn’t even look up from her computer, sitting at the bar,  and asked, “Can I help you?” in a way that made it feel like we were in the wrong place, not a restaurant that serves guests. When we said we had a reservation, the response was a skeptical “Oh yeah?” followed by “Okay, follow me then.”  The service didn’t really improve from there. Our server made a strange comment that people usually just order one salad and have business meetings here. No menu guidance, no recommendations. When I said we were ready to order and asked if he was ready to write it down, he said he’d remember everything. He didn’t. He had to come back and ask again.  The food was mixed. The lamb and halloumi were genuinely delicious, but the salad and hummus were pretty underwhelming and not very flavorful.  On a positive note, the ambiance is beautiful and the river view is great. Unfortunately, between the off-putting service and mediocre food, it didn’t live up to the hype or the price point.     </div>`)[0];
+                popup_06256e2be13a380782ad9c5dd48cadaa.setContent(html_9db9686a57b4c7dea61396b24d87a09b);
+            
+        
+
+        marker_dd2edcd78cb82c13d0414773c7394f7a.bindPopup(popup_06256e2be13a380782ad9c5dd48cadaa)
+        ;
+
+        
+    
+    
+            marker_dd2edcd78cb82c13d0414773c7394f7a.bindTooltip(
+                `<div>
+                     Beatnik On The River
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_3b41e4ef8c822ad1fba26fc6751e2cf7 = L.marker(
+                [41.8877738, -87.6253083],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_b8288390574beebfd17cddc4d3a11843 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_375162a5a47d3d242493db336acaf654 = $(`<div id="html_375162a5a47d3d242493db336acaf654" style="width: 100.0%; height: 100.0%;">     <b>LH Rooftop</b><br>     <b>Date:</b> 2026-03-02<br><br>     First time here and it was a wonderful experience. Service was excellent, Joanna was tool care of us and delivered a memorable visit. We had Brunch here, Chicken and Waffles was delicious. Perfectly seasoned and moist. The Creole Shrimp and Grits was creamy . The drinks, Spicy Hibiscus Margarita is a must have! They not shy about tequila. The atmosphere is so chill and relax.  The draw is the view! You dont get the view from the dining room, however you have go to the 22nd floors and enjoy the view of the city. The rooftop is open with dining and bars during the season. Highly recommended if you are visiting Chicago.     </div>`)[0];
+                popup_b8288390574beebfd17cddc4d3a11843.setContent(html_375162a5a47d3d242493db336acaf654);
+            
+        
+
+        marker_3b41e4ef8c822ad1fba26fc6751e2cf7.bindPopup(popup_b8288390574beebfd17cddc4d3a11843)
+        ;
+
+        
+    
+    
+            marker_3b41e4ef8c822ad1fba26fc6751e2cf7.bindTooltip(
+                `<div>
+                     LH Rooftop
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_fcf99f0a9fefd0de9f41b5768365672c = L.marker(
+                [41.8877738, -87.6253083],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_34c999697d4869e1b63ffd8b4935942e = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_e632e01d6a02504c905631795e1a9928 = $(`<div id="html_e632e01d6a02504c905631795e1a9928" style="width: 100.0%; height: 100.0%;">     <b>LH Rooftop</b><br>     <b>Date:</b> 2026-05-16<br><br>     View 10/10. Table seating is nice but small area. Food is ehh.. bao meat so fatty couldn’t eat it. Tuna tartare was warm, sauce was greasy. Cocktails are premade - no modifications. Staff is so nice, very accommodating. 1 drink and a Picture is good.     </div>`)[0];
+                popup_34c999697d4869e1b63ffd8b4935942e.setContent(html_e632e01d6a02504c905631795e1a9928);
+            
+        
+
+        marker_fcf99f0a9fefd0de9f41b5768365672c.bindPopup(popup_34c999697d4869e1b63ffd8b4935942e)
+        ;
+
+        
+    
+    
+            marker_fcf99f0a9fefd0de9f41b5768365672c.bindTooltip(
+                `<div>
+                     LH Rooftop
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_85e80e8fb049c2a0b2fbe5bd67a7ff22 = L.marker(
+                [41.8877738, -87.6253083],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_c2f6e85260526a579d92ccd55176a7db = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_d73f28079d49c8cbe47a92f385968521 = $(`<div id="html_d73f28079d49c8cbe47a92f385968521" style="width: 100.0%; height: 100.0%;">     <b>LH Rooftop</b><br>     <b>Date:</b> 2026-05-23<br><br>     Great experience at LondonHouse Chicago. The staff was very kind and welcoming, and they were able to seat us even without a reservation, which we really appreciated. The rooftop view is absolutely stunning, with beautiful views of the Chicago River and skyline. Great atmosphere overall! Elegant but relaxed. Would definitely come back! 💕     </div>`)[0];
+                popup_c2f6e85260526a579d92ccd55176a7db.setContent(html_d73f28079d49c8cbe47a92f385968521);
+            
+        
+
+        marker_85e80e8fb049c2a0b2fbe5bd67a7ff22.bindPopup(popup_c2f6e85260526a579d92ccd55176a7db)
+        ;
+
+        
+    
+    
+            marker_85e80e8fb049c2a0b2fbe5bd67a7ff22.bindTooltip(
+                `<div>
+                     LH Rooftop
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_7de84a1698e41551eb13702474aaa337 = L.marker(
+                [41.8877738, -87.6253083],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_0a0a2022ab94f2048a8552713a7e2b60 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_0a8fc0413723cacbfc06b1ceff1af168 = $(`<div id="html_0a8fc0413723cacbfc06b1ceff1af168" style="width: 100.0%; height: 100.0%;">     <b>LH Rooftop</b><br>     <b>Date:</b> 2026-05-11<br><br>     This place offers fabulous views overlooking the Chicago River and its draw bridges. Spectacular scenery with all the tall and architecturally beautiful buildings. Everything was great. The burgers, salads and the fries in the truffle sauce was the cherry on the top. One thing that bothered me was the fact when the staff approached me in a very demanding and rude manner not to use my manual camera, only phones. When I asked why I was told 'rules are the rules'. I am not the one to cause trouble but it did not make any sense when there was a lady three tables down from us just shooting away with her manual camera and the staff never approached her. Double standards with prejudice, I would say. I did not appreciate that at all. Our server was nice enough to explain about privacy issues. Anyway, the whole thing could have been handled in a different manner. It left a bad taste in my mouth. Word of warning to the readers: do not take pictures there with your manual camera.     </div>`)[0];
+                popup_0a0a2022ab94f2048a8552713a7e2b60.setContent(html_0a8fc0413723cacbfc06b1ceff1af168);
+            
+        
+
+        marker_7de84a1698e41551eb13702474aaa337.bindPopup(popup_0a0a2022ab94f2048a8552713a7e2b60)
+        ;
+
+        
+    
+    
+            marker_7de84a1698e41551eb13702474aaa337.bindTooltip(
+                `<div>
+                     LH Rooftop
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_c47e1c7f4f4ea3133ccb392c466c41af = L.marker(
+                [41.8877738, -87.6253083],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_6f8c4914e743d7af40907c48e9a5730c = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_2efd3e76bdf9ba8b3aa7cc9ce35ed30c = $(`<div id="html_2efd3e76bdf9ba8b3aa7cc9ce35ed30c" style="width: 100.0%; height: 100.0%;">     <b>LH Rooftop</b><br>     <b>Date:</b> 2026-05-23<br><br>     Excellent restaurant in downtown Chicago! The food was delicious, portions were generous, and everything tasted fresh. There is seating both inside and outside, which makes the atmosphere really nice. The staff was very friendly and professional, service was quick, and the whole place was extremely clean. Definitely recommend this spot if you are visiting the city!     </div>`)[0];
+                popup_6f8c4914e743d7af40907c48e9a5730c.setContent(html_2efd3e76bdf9ba8b3aa7cc9ce35ed30c);
+            
+        
+
+        marker_c47e1c7f4f4ea3133ccb392c466c41af.bindPopup(popup_6f8c4914e743d7af40907c48e9a5730c)
+        ;
+
+        
+    
+    
+            marker_c47e1c7f4f4ea3133ccb392c466c41af.bindTooltip(
+                `<div>
+                     LH Rooftop
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_10eb93bc16a1aa1e9643bd7d26043759 = L.marker(
+                [41.8890864, -87.6298924],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_2ee7941206d473d6366d69b90c9a0d58 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_2d3ba1caf424fe3df137c0db7e31e16a = $(`<div id="html_2d3ba1caf424fe3df137c0db7e31e16a" style="width: 100.0%; height: 100.0%;">     <b>Siena Tavern</b><br>     <b>Date:</b> 2026-01-06<br><br>     ⭐⭐⭐⭐☆  We stopped by **Sierra Tavern** during happy hour and honestly had a great time—exactly the kind of experience that makes you say, *“Yep, we’ll be back.”*  We started with the **Burnt Pepperoni**—tomato sauce, mozzarella, and red chiles. It leaned a bit on the greasy side, but in a very intentional, indulgent way. Bold, flavorful, and absolutely worth it, especially paired with a drink.  The real standout, though, was the **Sea Bass Milanese** with lemon caper aioli—spectacular. Perfectly crisp on the outside, tender and flaky inside, and that aioli brought everything together with just the right balance of brightness and richness. It’s the kind of dish that quietly steals the show.  We also tried the **Mini Tavern Burger** with truffle aioli, balsamic caramelized onions, arugula, and fontina—solid, satisfying, and well-balanced. Small but mighty, and packed with flavor.  Drinks were on point too. The **Espresso Martini** (vanilla vodka, Kahlúa, espresso) was smooth, not overly sweet, and dangerously easy to drink—especially at **$9**. The **Strawberry Spritz** (vodka, strawberry, lemon, brut) was light, refreshing, and equally delicious.  We sat at the bar, the service was friendly and attentive without being intrusive, and the overall vibe was relaxed and enjoyable. A great happy hour spot and definitely a place we’ll be returning to.     </div>`)[0];
+                popup_2ee7941206d473d6366d69b90c9a0d58.setContent(html_2d3ba1caf424fe3df137c0db7e31e16a);
+            
+        
+
+        marker_10eb93bc16a1aa1e9643bd7d26043759.bindPopup(popup_2ee7941206d473d6366d69b90c9a0d58)
+        ;
+
+        
+    
+    
+            marker_10eb93bc16a1aa1e9643bd7d26043759.bindTooltip(
+                `<div>
+                     Siena Tavern
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_b30b0f8b4795028ec2dee9a86d445526 = L.marker(
+                [41.8890864, -87.6298924],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_cacab1dd7c1ea6e7b2475cb75f5da63f = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_f9940342011c13fd4fa913c70780d951 = $(`<div id="html_f9940342011c13fd4fa913c70780d951" style="width: 100.0%; height: 100.0%;">     <b>Siena Tavern</b><br>     <b>Date:</b> 2026-04-18<br><br>     We had a great experience at Siena Tavern. We sat outside and enjoyed the gorgeous weather. We shared the diablo pizza 🍕 drizzled with hot honey, so yummy. The inside of the restaurant is beautiful. It has a great vibe. I would highly recommend!     </div>`)[0];
+                popup_cacab1dd7c1ea6e7b2475cb75f5da63f.setContent(html_f9940342011c13fd4fa913c70780d951);
+            
+        
+
+        marker_b30b0f8b4795028ec2dee9a86d445526.bindPopup(popup_cacab1dd7c1ea6e7b2475cb75f5da63f)
+        ;
+
+        
+    
+    
+            marker_b30b0f8b4795028ec2dee9a86d445526.bindTooltip(
+                `<div>
+                     Siena Tavern
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_745ee9fac5d725389b2c5c93b224c4fb = L.marker(
+                [41.8890864, -87.6298924],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_ca4281a4b1ed3b37f7d2f97850f9c332 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_ef049269b5d902a00f9398541c7b4834 = $(`<div id="html_ef049269b5d902a00f9398541c7b4834" style="width: 100.0%; height: 100.0%;">     <b>Siena Tavern</b><br>     <b>Date:</b> 2026-03-02<br><br>     The vodka rigatoni is my favorite! I love to come by specifically for that! Their portion sizes look small but it’s plenty for leftovers. I stared with the No. #8 at the cocktail bar. It’s a refreshing tequila drink, 10/10. They also have happy hour (3-6pm). The salad, soup and burrata with olive oil toast were tasty, and perfect for apps. For my entree, it was a short rib. Very rich and tender, on a bed of creamy risotto. The risotto itself could have been a complete dish, it was delightful! The tiramisu was divine for dessert. It was creamy and fluffy with the perfect amount of sweetness. The staff is so kind and in the evening they have live DJs playing great house and ambiance music. The inside is pretty and the booth seating is intimate but cozy. It’s a great place for birthdays or anniversaries. They also offer dining at the bar.     </div>`)[0];
+                popup_ca4281a4b1ed3b37f7d2f97850f9c332.setContent(html_ef049269b5d902a00f9398541c7b4834);
+            
+        
+
+        marker_745ee9fac5d725389b2c5c93b224c4fb.bindPopup(popup_ca4281a4b1ed3b37f7d2f97850f9c332)
+        ;
+
+        
+    
+    
+            marker_745ee9fac5d725389b2c5c93b224c4fb.bindTooltip(
+                `<div>
+                     Siena Tavern
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_08d48fbe4080109c025c08aa501be778 = L.marker(
+                [41.8890864, -87.6298924],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_5381d3446250fe91738750e0341860ea = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_85a0b6a2ba6e57558d43aed5254f4bb0 = $(`<div id="html_85a0b6a2ba6e57558d43aed5254f4bb0" style="width: 100.0%; height: 100.0%;">     <b>Siena Tavern</b><br>     <b>Date:</b> 2026-03-04<br><br>     Once you go inside you get a cool, chic and modern vibe. The staff were friendly and polite to me, my sever had great recommendations and I’m glad I listened to her. The food absolutely blew my mind, the pastas sounded too good, I had to try two of them. You can tell that the pasta were made in house due to the gnocchi tasting fresh and retained the flavor of the sauce wonderfully. The sauce outside for the butternut squash ravioli complimented the inside of the pasta. The spiced apples with the cake were sweet enough but didn’t overwhelm the cake itself. My first time visiting Chicago and this restaurant and I will certainly come back when I visit again.     </div>`)[0];
+                popup_5381d3446250fe91738750e0341860ea.setContent(html_85a0b6a2ba6e57558d43aed5254f4bb0);
+            
+        
+
+        marker_08d48fbe4080109c025c08aa501be778.bindPopup(popup_5381d3446250fe91738750e0341860ea)
+        ;
+
+        
+    
+    
+            marker_08d48fbe4080109c025c08aa501be778.bindTooltip(
+                `<div>
+                     Siena Tavern
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_1f053ff3b16983535c18769da8788bb0 = L.marker(
+                [41.8890864, -87.6298924],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_22f90491144311c65a9ebaddf8f49038 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_03873f3bde650becdb3c8693a370e247 = $(`<div id="html_03873f3bde650becdb3c8693a370e247" style="width: 100.0%; height: 100.0%;">     <b>Siena Tavern</b><br>     <b>Date:</b> 2026-01-11<br><br>     From the moment the hostess greeted us, the experience was very pleasant. Everyone was so kind. The menu is varied, and the waitress did a great job explaining the dishes to us. All our choices were spot on—we loved everything. The food was flavorful, portions were good, and the price was very fair. It was a great dinner! Everything was excellent.     </div>`)[0];
+                popup_22f90491144311c65a9ebaddf8f49038.setContent(html_03873f3bde650becdb3c8693a370e247);
+            
+        
+
+        marker_1f053ff3b16983535c18769da8788bb0.bindPopup(popup_22f90491144311c65a9ebaddf8f49038)
+        ;
+
+        
+    
+    
+            marker_1f053ff3b16983535c18769da8788bb0.bindTooltip(
+                `<div>
+                     Siena Tavern
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_fe6fe276bc2804e90602c87317b2a841 = L.marker(
+                [41.8869731, -87.6460081],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_39c0195155593319bba30070034f3e2f = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_75f95d4ec91d0e72e3970030e38fd753 = $(`<div id="html_75f95d4ec91d0e72e3970030e38fd753" style="width: 100.0%; height: 100.0%;">     <b>Carnivale Chicago</b><br>     <b>Date:</b> 2026-03-02<br><br>     Amazing experience! Visited for my birthday dinner. The ambiance is so colorful. Feels like being away vacation. From the hosts/ hostess' to Laura our server, to Chef Carlos, to wait staff, a time was had.  Laura ensured that our needs were properly met. She checked in with us frequently. Laura's customer servwas exceptional.  Chef Carlos visited us. He explained many of the dishes. He was very interpersonal and enhanced our experience.  Order multiple Camprihanas and     </div>`)[0];
+                popup_39c0195155593319bba30070034f3e2f.setContent(html_75f95d4ec91d0e72e3970030e38fd753);
+            
+        
+
+        marker_fe6fe276bc2804e90602c87317b2a841.bindPopup(popup_39c0195155593319bba30070034f3e2f)
+        ;
+
+        
+    
+    
+            marker_fe6fe276bc2804e90602c87317b2a841.bindTooltip(
+                `<div>
+                     Carnivale Chicago
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_ec92664d9aa366bbeb3817d306195802 = L.marker(
+                [41.8869731, -87.6460081],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_f38577bc036260aaeef7d0afac6b22f9 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_ad52f23c5f63a816e697f32aa3181f09 = $(`<div id="html_ad52f23c5f63a816e697f32aa3181f09" style="width: 100.0%; height: 100.0%;">     <b>Carnivale Chicago</b><br>     <b>Date:</b> 2026-02-25<br><br>     Wow! I loved this place so much! Every aspect was amazing! I had seen it from the expressway for so long, and really wanted to go. Finally, I got the opportunity to go this Valentine's Day with my husband! The decor is unparalleled, so cool, fresh, fun, unique, and truly beautiful! The atmosphere is spectacular! Our food, the churrascos, Argentinian Parrillada was so delicious, all parts! The drinks were great too! Even the music was on point!     </div>`)[0];
+                popup_f38577bc036260aaeef7d0afac6b22f9.setContent(html_ad52f23c5f63a816e697f32aa3181f09);
+            
+        
+
+        marker_ec92664d9aa366bbeb3817d306195802.bindPopup(popup_f38577bc036260aaeef7d0afac6b22f9)
+        ;
+
+        
+    
+    
+            marker_ec92664d9aa366bbeb3817d306195802.bindTooltip(
+                `<div>
+                     Carnivale Chicago
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_8e4eb31156abb8c95373522ac92c57d4 = L.marker(
+                [41.8869731, -87.6460081],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_f7faf1fa053f18506865c3f45e4bdea0 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_6722f09dbbbae2b5bb865eb63a321d20 = $(`<div id="html_6722f09dbbbae2b5bb865eb63a321d20" style="width: 100.0%; height: 100.0%;">     <b>Carnivale Chicago</b><br>     <b>Date:</b> 2026-01-08<br><br>     Carnivale is a fun, high-energy spot with a lively South American vibe—music and Brazilian dance performances make it feel more like a celebration than a quiet dinner. We did the Komal chef tasting menu ($149/person). A few dishes stood out, especially the charcoal-grilled prawns, the yuca con mojo (almost like grilled fries), and the vaca frita beef which was surprisingly tender. However it’s not amazing enough for me to think it’s worth the price. Service was attentive, and the chef was genuinely accommodating—he listened to feedback and adjusted to our preferences. However, it’s a bit too stressful for people who just want to enjoy food without too much talking.     </div>`)[0];
+                popup_f7faf1fa053f18506865c3f45e4bdea0.setContent(html_6722f09dbbbae2b5bb865eb63a321d20);
+            
+        
+
+        marker_8e4eb31156abb8c95373522ac92c57d4.bindPopup(popup_f7faf1fa053f18506865c3f45e4bdea0)
+        ;
+
+        
+    
+    
+            marker_8e4eb31156abb8c95373522ac92c57d4.bindTooltip(
+                `<div>
+                     Carnivale Chicago
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_70e92856905da921cd8ffeebcf252a3b = L.marker(
+                [41.8869731, -87.6460081],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_ed4e9f7a04949761de8c8f904a609a9c = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_e739fdcd014bba34a9035294f87ba27b = $(`<div id="html_e739fdcd014bba34a9035294f87ba27b" style="width: 100.0%; height: 100.0%;">     <b>Carnivale Chicago</b><br>     <b>Date:</b> 2026-04-29<br><br>     Restaurant was very accommodating. I attended a private event for a family member and the host was very nice. The waitstaff seemed a little unorganized at first but got it together mid-event. Overall, my family had a nice time!     </div>`)[0];
+                popup_ed4e9f7a04949761de8c8f904a609a9c.setContent(html_e739fdcd014bba34a9035294f87ba27b);
+            
+        
+
+        marker_70e92856905da921cd8ffeebcf252a3b.bindPopup(popup_ed4e9f7a04949761de8c8f904a609a9c)
+        ;
+
+        
+    
+    
+            marker_70e92856905da921cd8ffeebcf252a3b.bindTooltip(
+                `<div>
+                     Carnivale Chicago
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_c23cd3ec352b7840e8ffe30864a3517b = L.marker(
+                [41.8869731, -87.6460081],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_1d5194a3fb72ea341a45df215a32760d = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_c374ba00ea8a2297360e0f702ab99c10 = $(`<div id="html_c374ba00ea8a2297360e0f702ab99c10" style="width: 100.0%; height: 100.0%;">     <b>Carnivale Chicago</b><br>     <b>Date:</b> 2025-12-28<br><br>     Carnival is not just dinner.... it’s a full-on experience!!  Walking in feels like stepping into another world. The lights, the music, the energy — everything is vibrant, bold, and alive. This is the kind of place where the night instantly feels exciting before you even sit down.  The food is just as fun as the atmosphere. Colorful, creative, and packed with flavor, every dish feels like part of the show. Even on a lighter visit, everything we tried was memorable and beautifully done. And the drinks? Unreal. Playful, dramatic, and absolutely part of the experience (cotton candy cocktails included).  What really sets Carnival apart is the vibe — it’s loud in the best way, social, celebratory, and perfect for date night, group dinners, or any night you want to feel like you’re out out. It’s not a quiet meal — it’s a party, and that’s exactly the point.  If you’re looking for a restaurant that’s immersive, energetic, and genuinely fun, Carnival Chicago delivers. One of the most entertaining dining experiences I’ve had in the city!!     </div>`)[0];
+                popup_1d5194a3fb72ea341a45df215a32760d.setContent(html_c374ba00ea8a2297360e0f702ab99c10);
+            
+        
+
+        marker_c23cd3ec352b7840e8ffe30864a3517b.bindPopup(popup_1d5194a3fb72ea341a45df215a32760d)
+        ;
+
+        
+    
+    
+            marker_c23cd3ec352b7840e8ffe30864a3517b.bindTooltip(
+                `<div>
+                     Carnivale Chicago
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_7442a0338753f9c000b7d61985600844 = L.marker(
+                [41.8866349, -87.6488498],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_8afed8b339e31b5de9016cd2e0a4f3d0 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_613c3f2f5ad432420e30ce457b940190 = $(`<div id="html_613c3f2f5ad432420e30ce457b940190" style="width: 100.0%; height: 100.0%;">     <b>The Publican</b><br>     <b>Date:</b> 2026-03-02<br><br>     So, a group of my restaurant friends and I decided to visit this establishment. We couldnt find the door at first, but once we did, we were welcomed by Sofia, a manager with the widest smile imaginable! We were seated and our server, Savanna had an even wider smile and service that complimented the place. The bus service was prompt and equally matched to our server. The coordination beyween the two was superb. The food here is fresh, the ham and cheese sandwich, fresh ham with a wonderfully balanced Gruyere cheese was marvelous. The coffee was hot for 12oclock lunch. This place reviews discuss the food, but as the food we tasted was very good, the staff deserves a place of honor and acknowledgement. Sofia, Savanna, Todd, and the bartender, thank you for a WONDERFUL experience.  When you come to Chicago folks, please pay the Publican a visit... there's also a Publican meat market directly across the street for some fine cuts of meat.     </div>`)[0];
+                popup_8afed8b339e31b5de9016cd2e0a4f3d0.setContent(html_613c3f2f5ad432420e30ce457b940190);
+            
+        
+
+        marker_7442a0338753f9c000b7d61985600844.bindPopup(popup_8afed8b339e31b5de9016cd2e0a4f3d0)
+        ;
+
+        
+    
+    
+            marker_7442a0338753f9c000b7d61985600844.bindTooltip(
+                `<div>
+                     The Publican
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_62f84bb51272a17c9cc3fafe3683cc1b = L.marker(
+                [41.8866349, -87.6488498],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_a9cf47f3f2329889b03c332663176cca = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_33668214c0f82db14516c9eabab439db = $(`<div id="html_33668214c0f82db14516c9eabab439db" style="width: 100.0%; height: 100.0%;">     <b>The Publican</b><br>     <b>Date:</b> 2026-02-02<br><br>     We usually have dinner here, so brunch this weekend was a treat!  We had the bread and spreads to start.  The Pimento Cheese was spot on and the salmon spread didn’t disappoint. We had the omelette, stake sandwich, pork belly hash and so much more.  All were delicious and the homemade sausage was drizzled with maple syrup.  Yum! A nice cozy place to enjoy good food and good people.  Great service is the cherry on top!     </div>`)[0];
+                popup_a9cf47f3f2329889b03c332663176cca.setContent(html_33668214c0f82db14516c9eabab439db);
+            
+        
+
+        marker_62f84bb51272a17c9cc3fafe3683cc1b.bindPopup(popup_a9cf47f3f2329889b03c332663176cca)
+        ;
+
+        
+    
+    
+            marker_62f84bb51272a17c9cc3fafe3683cc1b.bindTooltip(
+                `<div>
+                     The Publican
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_f4f3e4a03b17b0a0686aa165ea291123 = L.marker(
+                [41.8866349, -87.6488498],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_79f603dd4c1f7a60950fbadcd42efbf4 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_c6d5e9a93f8683466695d1e80159a9b8 = $(`<div id="html_c6d5e9a93f8683466695d1e80159a9b8" style="width: 100.0%; height: 100.0%;">     <b>The Publican</b><br>     <b>Date:</b> 2026-03-23<br><br>     Came here on a whim, and this place for brunch was amazing. Started with the sourdough bread and rye with pimento cheese and jam and whipped butter which was so good and fresh. The lemon blueberry pop tart was so good, the almond Dulce de leche danish was INCREDIBLE and the chocolate pistachio bun was good as well. Didn’t get photos of those because they were gone so quick. I got the Jerry’s steak sandwich without the egg and it was very good as well, cheesy and the steak was soft and flavorful. So good, I need to come back for the dinner menu.     </div>`)[0];
+                popup_79f603dd4c1f7a60950fbadcd42efbf4.setContent(html_c6d5e9a93f8683466695d1e80159a9b8);
+            
+        
+
+        marker_f4f3e4a03b17b0a0686aa165ea291123.bindPopup(popup_79f603dd4c1f7a60950fbadcd42efbf4)
+        ;
+
+        
+    
+    
+            marker_f4f3e4a03b17b0a0686aa165ea291123.bindTooltip(
+                `<div>
+                     The Publican
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_ab5052406c64e984c5da79a9f9f28b3f = L.marker(
+                [41.8866349, -87.6488498],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_2c8b9bc47a9c0d0a17a71dd26c2caf63 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_c3fd08dab667bd981e327028a0748a2c = $(`<div id="html_c3fd08dab667bd981e327028a0748a2c" style="width: 100.0%; height: 100.0%;">     <b>The Publican</b><br>     <b>Date:</b> 2026-01-04<br><br>     The Publican is a self-proclaimed homage to European beer halls and every part of the experience commits to that idea. The space felt lively and communal, with long thick wooden tables and high ceiling. Casual and energetic, it's the ideal place for dinner and some drinks with your friends. The food followed suit: no frills, no smoke and mirrors, just generous portions of satisfying, well-executed dishes. Their farm-to-table menu is ever-changing with a few staples, all of which are approachable and comforting. We’ve worked our way through a lot of their offerings, and everything consistently ranges from solid to great. We can never skip the oysters or the pork rinds and the chicken entrée is always so tough to pass up. A night out at The Publican always feels like a throwback to simpler times: casual, unfussy, and all about good company.     </div>`)[0];
+                popup_2c8b9bc47a9c0d0a17a71dd26c2caf63.setContent(html_c3fd08dab667bd981e327028a0748a2c);
+            
+        
+
+        marker_ab5052406c64e984c5da79a9f9f28b3f.bindPopup(popup_2c8b9bc47a9c0d0a17a71dd26c2caf63)
+        ;
+
+        
+    
+    
+            marker_ab5052406c64e984c5da79a9f9f28b3f.bindTooltip(
+                `<div>
+                     The Publican
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_b5d72dbea73675e0ded5a732b1cb2055 = L.marker(
+                [41.8866349, -87.6488498],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_22712b852973093d66984ee787a0e986 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_d763115c66922e8d9b2b1e54a2a00be7 = $(`<div id="html_d763115c66922e8d9b2b1e54a2a00be7" style="width: 100.0%; height: 100.0%;">     <b>The Publican</b><br>     <b>Date:</b> 2026-05-27<br><br>     My husband and I came in to celebrate our anniversary and had an incredible experience all around. Being people who are more wine-centric I took a look at the the wine list before coming and, although the list had some delicious options that we knew, we were looking for something a bit more special than what they had to offer so brought our own bottle and opted to pay the corkage ($30). In looking at the wine list I discovered that they are known for their beer so we each started with different beers before moving to our wine and were both very pleased with what we received. Our server had a great energy,  table side manner, and was more than happy to walk us through the menu and offer her suggestions. After our initial look over the menu we were going to go with dishes other than our servers suggestions but ultimately trusted the pro and ended up being incredible happy that we did. We started with the Duck and Pork Rillettes and the Beef Fat Fries and both were delicious. Then we moved into the Mussels, which were super meaty, and we agreed were the best we have ever had. Both the Mussels and Rillettes came with a healthy portion of bread which we were really happy with. For our entree we split the Ham Chop in Hay, which our serve recommended, and it ended up being our favorite dish of the evening. Smokey, tender, and melted in your mouth. Would highly recommend to anyone! For dessert we split the 'Kyle's After Pork' dessert cocktail and it was super interesting and really delicious. Truly a great experience overall, highly recommend to anyone interested, and cannot wait to come back with a group to try the Suckling Pig!     </div>`)[0];
+                popup_22712b852973093d66984ee787a0e986.setContent(html_d763115c66922e8d9b2b1e54a2a00be7);
+            
+        
+
+        marker_b5d72dbea73675e0ded5a732b1cb2055.bindPopup(popup_22712b852973093d66984ee787a0e986)
+        ;
+
+        
+    
+    
+            marker_b5d72dbea73675e0ded5a732b1cb2055.bindTooltip(
+                `<div>
+                     The Publican
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_ca1f6f9952aefb0692776cc58afa568d = L.marker(
+                [41.9135551, -87.6480103],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_8c6115f1ff9b15241500aa43ce02eb31 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_35e18bf33ac21f1b00b43d64a23bd9f8 = $(`<div id="html_35e18bf33ac21f1b00b43d64a23bd9f8" style="width: 100.0%; height: 100.0%;">     <b>Boka</b><br>     <b>Date:</b> 2026-05-26<br><br>     Boka has been a Chicago staple since opening in 2003, earning a Michelin star and becoming one of the city’s most celebrated restaurants. Led by Chef Lee Wolen, whose cooking is refined yet approachable, the menu blends creativity with comforting flavors in a way that feels effortless. Boka — very hip, polished, and completely on point. The atmosphere is laid back with dimmed lighting and eclectic decor that gives the space a cool, modern energy without feeling overly formal. Surprisingly kid-friendly too, with coloring books and simple options for children, which made the experience even better. On a Saturday evening, the restaurant was bustling with fun energy and a stylish local crowd. Favorite dishes:• Hokkaido scallops• Tuna tartare• Char• Truffle chicken• Walnut chocolate cake  Overall, Boka strikes the perfect balance between elevated dining and a warm, welcoming atmosphere — the kind of place that feels equally suited for a special night out or a relaxed dinner with family and friends.     </div>`)[0];
+                popup_8c6115f1ff9b15241500aa43ce02eb31.setContent(html_35e18bf33ac21f1b00b43d64a23bd9f8);
+            
+        
+
+        marker_ca1f6f9952aefb0692776cc58afa568d.bindPopup(popup_8c6115f1ff9b15241500aa43ce02eb31)
+        ;
+
+        
+    
+    
+            marker_ca1f6f9952aefb0692776cc58afa568d.bindTooltip(
+                `<div>
+                     Boka
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_c0ea83a9a2787de8c2395f4c2e97c986 = L.marker(
+                [41.9135551, -87.6480103],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_09d1adb96bcadc210b5aba1dfa35e52d = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_63c536da7b46f299ddeda97cf03dd14b = $(`<div id="html_63c536da7b46f299ddeda97cf03dd14b" style="width: 100.0%; height: 100.0%;">     <b>Boka</b><br>     <b>Date:</b> 2026-02-10<br><br>     I’ve heard and read great reviews about Boka for years, so I was excited to finally secure a reservation on the last day of Restaurant Week. Unfortunately, from the moment we walked in, the experience was very disappointing. Only one member of the front staff was friendly; the rest had an unpleasant demeanor. Throughout the evening, I felt unwelcome and rushed. We were seated in a crowded section of the restaurant—where all the RW guests were placed—while other areas appeared noticeably more spacious and "had more time".  I also expected exceptional food with a “wow wow-wee wow” factor from a Michelin-starred restaurant. Unfortunately, those expectations weren't met. All the dishes were under-seasoned, and the hot courses were served at room temperature. The roasted scallops and the miso caramel brownie were the only dishes I enjoyed. The portions were extremely small and expensive, especially considering the food quality, atmosphere, and service I would expect from a Michelin Star ⭐.  Since the RW menu wasn't presented at its best, I have no interest in trying the regular menu. Overall, the experience and reviews were overhyped and not worth the price! I would recommend saving your money, dining somewhere with a more welcoming atmosphere, and greater care put into both service and food. I do NOT recommend! Period.     </div>`)[0];
+                popup_09d1adb96bcadc210b5aba1dfa35e52d.setContent(html_63c536da7b46f299ddeda97cf03dd14b);
+            
+        
+
+        marker_c0ea83a9a2787de8c2395f4c2e97c986.bindPopup(popup_09d1adb96bcadc210b5aba1dfa35e52d)
+        ;
+
+        
+    
+    
+            marker_c0ea83a9a2787de8c2395f4c2e97c986.bindTooltip(
+                `<div>
+                     Boka
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_018f65e69775cb451857b0c6676479d8 = L.marker(
+                [41.9135551, -87.6480103],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_34e52be9cfa4a453cfe101d5162f78e8 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_1ce3dccc9eaa7b43ff83368203560e2f = $(`<div id="html_1ce3dccc9eaa7b43ff83368203560e2f" style="width: 100.0%; height: 100.0%;">     <b>Boka</b><br>     <b>Date:</b> 2026-04-24<br><br>     We made a last-minute reservation for our anniversary dinner and were pleasantly surprised when the restaurant called to confirm and asked how many years we were celebrating — a small but thoughtful touch they used to personalize our experience. Rather than the tasting menu, we chose à la carte. The meal began with their sunflower seed bread roll, freshly baked with seeds that brought out incredible flavor, paired with a homemade butter cream that was a perfect match. Starters of tuna tart and chicken liver mousse were both beautifully executed — the mousse notably free of the gamey bitterness that comes from poor handling, with caramelized citrus balancing it perfectly. The scallops were decent but the pickled cucumber felt little overpowering, masking the scallop’s natural sweetness. The roasted veal sweetbreads, however, were the highlight of the night — incredibly tender, paired with chestnut mushrooms and a deeply flavored sauce. The duck and pork loin were both well-prepared, though perhaps not as memorable as one might expect at Michelin star level. Dessert was a standout — a brownie-style black walnut chocolate cake, rich yet balanced with cream and ice cream, finished with a butterscotch sauce that added a perfect kick. The complimentary chocolate truffles were equally impressive. Overall a wonderful evening. Elegant setting, genuine Michelin-level service, and enough dishes that truly shone to make it well worth a visit.     </div>`)[0];
+                popup_34e52be9cfa4a453cfe101d5162f78e8.setContent(html_1ce3dccc9eaa7b43ff83368203560e2f);
+            
+        
+
+        marker_018f65e69775cb451857b0c6676479d8.bindPopup(popup_34e52be9cfa4a453cfe101d5162f78e8)
+        ;
+
+        
+    
+    
+            marker_018f65e69775cb451857b0c6676479d8.bindTooltip(
+                `<div>
+                     Boka
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_3c8cc44c69d391d5e814c4ca9cc24ab1 = L.marker(
+                [41.9135551, -87.6480103],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_8e693b5cfcd2ec4c553d4ca3ec933c88 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_baeba49c533488cc238c4a51554f245f = $(`<div id="html_baeba49c533488cc238c4a51554f245f" style="width: 100.0%; height: 100.0%;">     <b>Boka</b><br>     <b>Date:</b> 2026-05-20<br><br>     First time visiting Boka and it was such a beautiful experience.  I brought my friends from out of state who had just gotten married, and the staff surprised us by printing “Congratulations, Newlyweds!” on the menu. Such a small gesture, but it made the night feel very special and personal.  We loved the Bluefin Tuna Tart, Lightly Cured Kampachi, Dry Aged Beef Tartare, Brown Butter Roasted Hokkaido Scallops, and Glazed Beef Short Rib but the Roasted Dry Aged Duck Breast was definitely my favorite dish of the night. Perfectly cooked with so much flavor.  Wonderful hospitality, elegant atmosphere, and a truly memorable dinner in Chicago ✨     </div>`)[0];
+                popup_8e693b5cfcd2ec4c553d4ca3ec933c88.setContent(html_baeba49c533488cc238c4a51554f245f);
+            
+        
+
+        marker_3c8cc44c69d391d5e814c4ca9cc24ab1.bindPopup(popup_8e693b5cfcd2ec4c553d4ca3ec933c88)
+        ;
+
+        
+    
+    
+            marker_3c8cc44c69d391d5e814c4ca9cc24ab1.bindTooltip(
+                `<div>
+                     Boka
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_055ecfe1b3c01d0146713a0629cd41c1 = L.marker(
+                [41.9135551, -87.6480103],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_7b48f5755048b6dd2a6a8879a0888ce6 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_6f281a8a393787340edf1df3f60df5d5 = $(`<div id="html_6f281a8a393787340edf1df3f60df5d5" style="width: 100.0%; height: 100.0%;">     <b>Boka</b><br>     <b>Date:</b> 2026-04-13<br><br>     Booked last minute through opentable after setting a notification for openings. Sat at the bar with my wife and the bartender/waitress was very attentive. The entire wait staff were great and overall service was incredible.  We ordered the Chicken Liver Mousse, Golden Osetra Caviar, Lightly Cured Kampachi, Brown Butter Roasted Hokkaido Scallops, and Roasted Dry Aged Duck Breast. My wife and I shared everything so Boka split the portions for us except for the mousse and caviar since those are smaller in size. We also had a couple drinks that were unique. The wine that we got from the main menu were fantastic and to our liking (very subjective but I think they chose good wines to highlight here).  Everything was a hit and tasted great. The duck breast was the absolute star for me.  I would absolutely come here again for another date night with my wife or special occasion.     </div>`)[0];
+                popup_7b48f5755048b6dd2a6a8879a0888ce6.setContent(html_6f281a8a393787340edf1df3f60df5d5);
+            
+        
+
+        marker_055ecfe1b3c01d0146713a0629cd41c1.bindPopup(popup_7b48f5755048b6dd2a6a8879a0888ce6)
+        ;
+
+        
+    
+    
+            marker_055ecfe1b3c01d0146713a0629cd41c1.bindTooltip(
+                `<div>
+                     Boka
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_79700b2f8e1cdd97155c205f5e556d6b = L.marker(
+                [41.8899515, -87.6302966],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_7f473ac681442dcf79f51987aafe9ca6 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_906a37ed3d25233ba7bb5a31330537c8 = $(`<div id="html_906a37ed3d25233ba7bb5a31330537c8" style="width: 100.0%; height: 100.0%;">     <b>Il Porcellino</b><br>     <b>Date:</b> 2026-06-05<br><br>     My first visit to Il Porcellino and everything was outstanding. The garlic bread with clarified butter is a must-order, and the pesto sauce is so good that you should get a side and put it on everything. Every dish was flavorful, well-executed, and clearly made with care.  The highlight of the evening was our server, Beatrice B. She was phenomenal—a true class act. Knowledgeable, warm, and genuinely friendly, she made us feel special from start to finish. Her enthusiasm for the menu was contagious and had us wanting to order everything. Exceptional food paired with exceptional service. Can’t wait to come back.     </div>`)[0];
+                popup_7f473ac681442dcf79f51987aafe9ca6.setContent(html_906a37ed3d25233ba7bb5a31330537c8);
+            
+        
+
+        marker_79700b2f8e1cdd97155c205f5e556d6b.bindPopup(popup_7f473ac681442dcf79f51987aafe9ca6)
+        ;
+
+        
+    
+    
+            marker_79700b2f8e1cdd97155c205f5e556d6b.bindTooltip(
+                `<div>
+                     Il Porcellino
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_acdc4121ce2d723c3cbce50b0bd839bf = L.marker(
+                [41.8899515, -87.6302966],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_540406d8c33267d25ee88a9a29fe2a4e = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_c35d8eff22f9315e3ad9012c300d2f76 = $(`<div id="html_c35d8eff22f9315e3ad9012c300d2f76" style="width: 100.0%; height: 100.0%;">     <b>Il Porcellino</b><br>     <b>Date:</b> 2026-05-25<br><br>     il Porcellino was not planned; however, I was so happy the stars aligned to bring us there. Like an amateur I did not have reservations anywhere on a Saturday night and waitlist would have had us waiting hours. However, we were in the neighborhood and their door was open so we went to the host stand. There was quite the wait for the dining room and the patio, but there just so happened to be for open spots at the bar so we jumped on them. The bartender was friendly and helpful, even when they were packed. We decided what we wanted and went for it. Within probably 30 minutes we had this spread in front of us. AMAZING. The pasta for this burrata lasagna is handmade and a house specialty. We had to get that. The salmon piccata was light and bright with those capers and sauce. I have never had grilled calamari before, but I honestly liked it more than fried. It wasn’t rubbery at all. The gnocchi were like delicate little pillows in a flavorful sauce, and I thought about eating my weight in the tuscan cheese focaccia. We loved the old Italian feel of the place and I lucky we came across it. If you are in River north, definitely put it on your list.     </div>`)[0];
+                popup_540406d8c33267d25ee88a9a29fe2a4e.setContent(html_c35d8eff22f9315e3ad9012c300d2f76);
+            
+        
+
+        marker_acdc4121ce2d723c3cbce50b0bd839bf.bindPopup(popup_540406d8c33267d25ee88a9a29fe2a4e)
+        ;
+
+        
+    
+    
+            marker_acdc4121ce2d723c3cbce50b0bd839bf.bindTooltip(
+                `<div>
+                     Il Porcellino
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_5a5078c17ca2d5359dd10b562a615c49 = L.marker(
+                [41.8899515, -87.6302966],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_5717202541ccac152721dab8677e4b5c = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_b2ea473ca9d8ebba69bf5d1addd535b5 = $(`<div id="html_b2ea473ca9d8ebba69bf5d1addd535b5" style="width: 100.0%; height: 100.0%;">     <b>Il Porcellino</b><br>     <b>Date:</b> 2026-04-21<br><br>     We really liked this place! It was very busy. The Caesar and calamari were outstanding. My wife really liked her pappardelle noodles. I also thought the lasagna was good, but not quite worth the hype.  We really appreciates the free dessert for our anniversary as well as the server noticing I don’t drink alcohol and bringing over a non alcoholic beverage to celebrate.  The inside is super cute and not too loud. Very photo worthy.  Overall we are glad we stopped by.     </div>`)[0];
+                popup_5717202541ccac152721dab8677e4b5c.setContent(html_b2ea473ca9d8ebba69bf5d1addd535b5);
+            
+        
+
+        marker_5a5078c17ca2d5359dd10b562a615c49.bindPopup(popup_5717202541ccac152721dab8677e4b5c)
+        ;
+
+        
+    
+    
+            marker_5a5078c17ca2d5359dd10b562a615c49.bindTooltip(
+                `<div>
+                     Il Porcellino
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_9bc48cf32baf227234215c387e895202 = L.marker(
+                [41.8899515, -87.6302966],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_3c8f8ae77925ff006f428910318abc73 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_19967e0805d73cdb5d30a46cda053601 = $(`<div id="html_19967e0805d73cdb5d30a46cda053601" style="width: 100.0%; height: 100.0%;">     <b>Il Porcellino</b><br>     <b>Date:</b> 2026-05-02<br><br>     I absolutely loved my experience at Il Porcellino. The atmosphere was incredibly pleasant, perfect for a special night out.  The service was exceptional. We had the pleasure of being taken care of by Isabel, and she was wonderful, very attentive, kind, and made the whole experience feel even more special.  We started with the Sicilian Margarita, which was delicious. For appetizers, we shared the grilled calamari and the Caesar salad (both were great), but the real highlight was the pappardelle alla porcellino. The pasta tasted incredibly fresh, and the texture was perfect. The pork shoulder and prime beef ragù was absolutely phenomenal!!!  To top it all off, Isabel surprised us with ice cream to celebrate our recent wedding, which was such a thoughtful and sweet touch.  We loved everything about our experience and can’t wait to come back!     </div>`)[0];
+                popup_3c8f8ae77925ff006f428910318abc73.setContent(html_19967e0805d73cdb5d30a46cda053601);
+            
+        
+
+        marker_9bc48cf32baf227234215c387e895202.bindPopup(popup_3c8f8ae77925ff006f428910318abc73)
+        ;
+
+        
+    
+    
+            marker_9bc48cf32baf227234215c387e895202.bindTooltip(
+                `<div>
+                     Il Porcellino
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_266496d4bc5c37f8f4ddabdb3d93e578 = L.marker(
+                [41.8899515, -87.6302966],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_02396c5420cbbb3a3d6163d89b56ec67 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_5a79d469229f7be3d35d602d2b171bbc = $(`<div id="html_5a79d469229f7be3d35d602d2b171bbc" style="width: 100.0%; height: 100.0%;">     <b>Il Porcellino</b><br>     <b>Date:</b> 2026-02-18<br><br>     So good! We went in to celebrate a belated Valentine’s Day. Our server was attentive and responsive to questions. The food was phenomenal. The star of the show were the lasagna and meatballs. Alongside the chocolate cake for dessert. Vesuvio style potatoes was the only item we wouldn’t order again. Overall delicious and good service!     </div>`)[0];
+                popup_02396c5420cbbb3a3d6163d89b56ec67.setContent(html_5a79d469229f7be3d35d602d2b171bbc);
+            
+        
+
+        marker_266496d4bc5c37f8f4ddabdb3d93e578.bindPopup(popup_02396c5420cbbb3a3d6163d89b56ec67)
+        ;
+
+        
+    
+    
+            marker_266496d4bc5c37f8f4ddabdb3d93e578.bindTooltip(
+                `<div>
+                     Il Porcellino
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_ff36c3992e7b9a2d80f2c13a63cbaed0 = L.marker(
+                [41.8826897, -87.6246716],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_93e18b463a5327a272713e585f0236d4 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_75115bcdcc9f570140311331e07a2fbc = $(`<div id="html_75115bcdcc9f570140311331e07a2fbc" style="width: 100.0%; height: 100.0%;">     <b>Remington's</b><br>     <b>Date:</b> 2026-04-21<br><br>     We arrived between lunch and dinner so it was practically empty. Excellent service, super attentive, friendly, and efficient. Nice cocktails. Great wine options. Steaks were perfectly cooked to order and delicious. Prices were very decent for the portion sizes and quality of the dishes. A must in Chicago.     </div>`)[0];
+                popup_93e18b463a5327a272713e585f0236d4.setContent(html_75115bcdcc9f570140311331e07a2fbc);
+            
+        
+
+        marker_ff36c3992e7b9a2d80f2c13a63cbaed0.bindPopup(popup_93e18b463a5327a272713e585f0236d4)
+        ;
+
+        
+    
+    
+            marker_ff36c3992e7b9a2d80f2c13a63cbaed0.bindTooltip(
+                `<div>
+                     Remington's
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_730095c14155eda7c4534e0fc01b17a9 = L.marker(
+                [41.8826897, -87.6246716],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_f5fad98cc97fca65263c9b5579f7f76c = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_aaafbd9775c6770fb3d34e8feda9b6d1 = $(`<div id="html_aaafbd9775c6770fb3d34e8feda9b6d1" style="width: 100.0%; height: 100.0%;">     <b>Remington's</b><br>     <b>Date:</b> 2026-03-08<br><br>     We got there before our reservation and had drinks at the bar. Both bartenders were great and the drinks were delicious. We were seated and served by Abraham, and he was fantastic! Our food was perfectly cooked and very scrumptious. We highly recommend everyone to have a meal here!     </div>`)[0];
+                popup_f5fad98cc97fca65263c9b5579f7f76c.setContent(html_aaafbd9775c6770fb3d34e8feda9b6d1);
+            
+        
+
+        marker_730095c14155eda7c4534e0fc01b17a9.bindPopup(popup_f5fad98cc97fca65263c9b5579f7f76c)
+        ;
+
+        
+    
+    
+            marker_730095c14155eda7c4534e0fc01b17a9.bindTooltip(
+                `<div>
+                     Remington's
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_c84e949a2e692cbc6468bdda26c50818 = L.marker(
+                [41.8826897, -87.6246716],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_0004c5feeace1ec796910be667ccb1d1 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_daf34615fdd6b17be21708667f7de519 = $(`<div id="html_daf34615fdd6b17be21708667f7de519" style="width: 100.0%; height: 100.0%;">     <b>Remington's</b><br>     <b>Date:</b> 2026-05-26<br><br>     Cheese burger in a nutshell underwhelming. I thought small portions, what’s the deal not giving a decent amount of fries 🤷‍♀️ the cheeseburger with fries was $18.95 I would of rather paid a few extra dollars and got a decent sized burger and portion of fries to make it good value for money. On the plus side the service was great and Janine poured me loads of extra Diet Coke. The restaurant itself is really nice.     </div>`)[0];
+                popup_0004c5feeace1ec796910be667ccb1d1.setContent(html_daf34615fdd6b17be21708667f7de519);
+            
+        
+
+        marker_c84e949a2e692cbc6468bdda26c50818.bindPopup(popup_0004c5feeace1ec796910be667ccb1d1)
+        ;
+
+        
+    
+    
+            marker_c84e949a2e692cbc6468bdda26c50818.bindTooltip(
+                `<div>
+                     Remington's
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_3c6b4342c9cbd3456aea3e0af0a01244 = L.marker(
+                [41.8826897, -87.6246716],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_5c9a21cea3b40d38bd8f746d5e4bf8cf = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_7374130e6f4300a816c11314623c799c = $(`<div id="html_7374130e6f4300a816c11314623c799c" style="width: 100.0%; height: 100.0%;">     <b>Remington's</b><br>     <b>Date:</b> 2026-01-28<br><br>     My Family and me went to have Dinner this past weekend. We were welcomed at the front by a man who was very welcoming and showed us to our table. This was our first time there. Then our server Maria was super friendly and helpful. The food was delicious and we will definitely be coming back. Thank you for a wonderful experience.     </div>`)[0];
+                popup_5c9a21cea3b40d38bd8f746d5e4bf8cf.setContent(html_7374130e6f4300a816c11314623c799c);
+            
+        
+
+        marker_3c6b4342c9cbd3456aea3e0af0a01244.bindPopup(popup_5c9a21cea3b40d38bd8f746d5e4bf8cf)
+        ;
+
+        
+    
+    
+            marker_3c6b4342c9cbd3456aea3e0af0a01244.bindTooltip(
+                `<div>
+                     Remington's
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_c4533c7482b3afdae0f9e42048e934d3 = L.marker(
+                [41.8826897, -87.6246716],
+                {
+}
+            ).addTo(map_2c09f101a57c82337a99c657b884bd74);
+        
+    
+        var popup_1e7a93c3e88087400b8444f191705dd6 = L.popup({
+  "maxWidth": 400,
+});
+
+        
+            
+                var html_99c4cdd08e674609094e713fa707e7bd = $(`<div id="html_99c4cdd08e674609094e713fa707e7bd" style="width: 100.0%; height: 100.0%;">     <b>Remington's</b><br>     <b>Date:</b> 2026-03-06<br><br>     Had dinner at Remington’s before heading to the theater and it turned out to be the perfect start to the evening.  The crab cakes were excellent; full of flavor and mostly crab (which you definitely appreciate when you order crab cakes). The fries were hot and crispy and paired perfectly with the meal. Everything tasted fresh and well prepared.  What really made the experience stand out though was my server, Jeanae. She had such a warm, bubbly personality and gave great recommendations. Service like that really elevates a meal and makes you want to come back.  The atmosphere is lively but still comfortable, and the location makes it a great spot before a show in the theater district.  Chicago has a lot of great restaurants, but experiences like this remind you why certain places become favorites. Looking forward to my next visit.     </div>`)[0];
+                popup_1e7a93c3e88087400b8444f191705dd6.setContent(html_99c4cdd08e674609094e713fa707e7bd);
+            
+        
+
+        marker_c4533c7482b3afdae0f9e42048e934d3.bindPopup(popup_1e7a93c3e88087400b8444f191705dd6)
+        ;
+
+        
+    
+    
+            marker_c4533c7482b3afdae0f9e42048e934d3.bindTooltip(
+                `<div>
+                     Remington's
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+</script>
+</html>

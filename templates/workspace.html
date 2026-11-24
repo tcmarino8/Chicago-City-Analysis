@@ -1,0 +1,1218 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="workspace-shell">
+  <div class="workspace-tabbar" aria-label="Workspace views">
+    <button type="button" class="filter-toggle" id="tab-menu-toggle" aria-expanded="false" aria-controls="tab-menu-panel">Views</button>
+    <button type="button" class="filter-toggle" id="details-toggle" aria-expanded="false" aria-controls="overlay-panel">Show details</button>
+    <button type="button" class="filter-toggle right" id="filter-toggle" aria-expanded="false" aria-controls="workspace-form">Filters</button>
+  </div>
+
+  <div class="tab-menu-panel" id="tab-menu-panel" aria-hidden="true">
+    <div class="menu-row">
+      <div class="menu-label">Main Views</div>
+      <div class="mode-switch">
+        <button type="button" id="prev-mode" class="arrow-btn" aria-label="Previous mode" hidden>◀</button>
+        <button type="button" class="mode-btn" data-mode="explorer">Air Quality</button>
+        <button type="button" class="mode-btn" data-mode="weather">Weather</button>
+        <button type="button" class="mode-btn" data-mode="streetmaps">Streetmaps</button>
+        <button type="button" class="mode-btn" data-mode="energy">Energy</button>
+        <button type="button" class="mode-btn" data-mode="census">Census</button>
+        <button type="button" id="next-mode" class="arrow-btn" aria-label="Next mode" hidden>▶</button>
+      </div>
+    </div>
+    <div class="menu-row" data-modes="explorer">
+      <div class="menu-label">Air Quality Subviews</div>
+      <div class="mode-switch" id="aqi-view-switch" data-modes="explorer">
+        <button type="button" class="mode-btn aqi-view-btn" data-aqi-view="sensors">Sensors</button>
+        <button type="button" class="mode-btn aqi-view-btn" data-aqi-view="network">Network</button>
+        <button type="button" class="mode-btn aqi-view-btn" data-aqi-view="interpolation">Interpolation</button>
+      </div>
+    </div>
+  </div>
+
+  <form method="get" class="workspace-controls is-collapsed" id="workspace-form">
+    <input type="hidden" name="mode" id="mode-input" value="explorer" />
+    <input type="hidden" name="aqi_view" id="aqi-view-input" value="sensors" />
+    <div class="control-group" data-modes="explorer">
+      <label>Air Quality Metric</label>
+      <select name="aq_metric" id="air-metric-select"></select>
+    </div>
+
+    <div class="control-group" data-modes="explorer">
+      <label>Time Bin <span class="info-icon" data-help="bin-help">i</span></label>
+      <select name="bin">
+        {% for option in bin_options %}
+          <option value="{{ option }}" {% if option == bin_code %}selected{% endif %}>{{ option }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="control-group" data-modes="explorer">
+      <label>Timestamp <span class="info-icon" data-help="time-help">i</span></label>
+      <select name="time">
+        {% for opt in time_options %}
+          <option value="{{ opt.value }}" {% if opt.value == selected_time %}selected{% endif %}>{{ opt.label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="control-group" data-modes="explorer">
+      <label>Coverage <span class="info-icon" data-help="coverage-help">i</span></label>
+      <select name="coverage">
+        {% for option in coverage_options %}
+          <option value="{{ option }}" {% if option == coverage_threshold %}selected{% endif %}>{{ (option * 100) | round(0) | int }}%+</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="control-group" data-modes="explorer" data-aqi-views="interpolation">
+      <label>Interpolation <span class="info-icon" data-help="interp-help">i</span></label>
+      <select name="method">
+        {% for label, value in method_options %}
+          <option value="{{ value }}" {% if value == method %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="control-group compact" data-modes="explorer" data-aqi-views="interpolation">
+      <label>Grid</label>
+      <input type="number" name="grid" value="{{ grid_resolution }}" min="30" max="120" step="10" />
+    </div>
+
+    <div class="control-group compact" data-modes="explorer" data-aqi-views="network">
+      <label>Link dist (km) <span class="info-icon" data-help="distance-help">i</span></label>
+      <select name="distance_km">
+        {% for opt in distance_options_km %}
+          <option value="{{ opt }}" {% if opt == selected_distance_km %}selected{% endif %}>{{ "%.2f"|format(opt) }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="control-group compact" data-modes="explorer" data-aqi-views="network">
+      <label>Points <span class="info-icon" data-help="points-help">i</span></label>
+      <label style="display:flex; align-items:center; gap:6px; margin-top: 6px;">
+        <input type="checkbox" name="show_all" value="1" {% if show_all_points %}checked{% endif %} />
+        <span style="font-size:0.8rem; color:#dce3f2;">Show all</span>
+      </label>
+    </div>
+
+    <div class="control-group" data-modes="energy">
+      <label>Energy Dataset</label>
+      <select id="energy-dataset-select" data-overlay-control="true"></select>
+    </div>
+
+    <div class="control-group" data-modes="energy">
+      <label>Energy Metric</label>
+      <select id="energy-metric-select" data-overlay-control="true"></select>
+    </div>
+
+    <div class="control-group compact" data-modes="energy">
+      <label>Energy Layer</label>
+      <button type="button" id="energy-load-btn" style="margin-top: 6px;">Load</button>
+    </div>
+
+    <div class="control-group" data-modes="census">
+      <label>Census Metric</label>
+      <select id="census-metric-select" data-overlay-control="true"></select>
+    </div>
+
+    <div class="control-group compact" data-modes="census">
+      <label>Census View</label>
+      <select id="census-view-select" data-overlay-control="true"></select>
+    </div>
+
+    <div class="control-group compact" data-modes="census">
+      <label>New Year</label>
+      <select id="census-year-new-select" data-overlay-control="true"></select>
+    </div>
+
+    <div class="control-group compact" data-modes="census" id="census-year-old-group">
+      <label>Old Year</label>
+      <select id="census-year-old-select" data-overlay-control="true"></select>
+    </div>
+
+    <div class="control-group compact" data-modes="census">
+      <label>Census Layer</label>
+      <button type="button" id="census-load-btn" style="margin-top: 6px;">Load</button>
+    </div>
+  </form>
+
+  <div class="map-stage">
+    <div id="workspace-map" class="workspace-map"></div>
+
+    <div class="overlay-panel is-hidden" id="overlay-panel">
+      <div class="overlay-heading">
+        <h3 id="overlay-title">Air Quality Overlay</h3>
+        <span id="data-status" class="data-status warning">Checking source</span>
+      </div>
+      <p class="overlay-time" id="overlay-time"></p>
+      <div id="report-kpis" class="report-kpis"></div>
+      <div id="report-trend" class="report-trend"></div>
+      <ul id="overlay-stats"></ul>
+    </div>
+
+    <div class="help-popover" id="help-popover" hidden></div>
+
+    {% if message %}
+      <div class="message floating-message">{{ message }}</div>
+    {% endif %}
+  </div>
+
+  <section class="workspace-weather-section" id="weather-section" style="padding: 1rem 1.5rem 1.5rem; background: rgba(10,14,22,0.92); color: #eef3ff; border-top: 1px solid rgba(255,255,255,0.08);">
+    <h3 style="margin: 0 0 0.75rem;">Weather Stations</h3>
+    <p id="weather-table-message" style="margin: 0 0 0.75rem; color: #c0c9dc;">Switch to Weather mode to load live NOAA station observations.</p>
+    <div style="overflow-x: auto;">
+      <table id="weather-table" style="width: 100%; border-collapse: collapse; display: none;">
+        <thead>
+          <tr>
+            <th>Station</th>
+            <th>Lat</th>
+            <th>Lon</th>
+            <th>Timestamp</th>
+            <th>Temp (°F)</th>
+            <th>Wind</th>
+            <th>Clouds</th>
+            <th>Pressure (hPa)</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody id="weather-table-body"></tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script>
+  (function() {
+    const payload = {{ workspace_payload|tojson }};
+    if (!payload || !payload.map_center) {
+      return;
+    }
+
+    const modeOrder = ['explorer', 'weather', 'streetmaps', 'energy', 'census'];
+    const aqiViewOrder = ['sensors', 'network', 'interpolation'];
+    const modeInput = document.getElementById('mode-input');
+    const aqiViewInput = document.getElementById('aqi-view-input');
+    let activeMode = modeOrder.includes(payload.active_mode) ? payload.active_mode : 'explorer';
+    let activeAqiView = aqiViewOrder.includes(payload.active_aqi_view) ? payload.active_aqi_view : 'sensors';
+    modeInput.value = activeMode;
+    aqiViewInput.value = activeAqiView;
+
+    const airConfig = payload.air_config || {
+      selected_metric: 'aqi_value',
+      selected_metric_label: 'Air Quality Metric',
+      metric_options: [{ value: 'aqi_value', label: 'PM2.5 Mass (Configured)' }],
+    };
+    let airMetricLabel = airConfig.selected_metric_label || 'Air Quality Metric';
+
+    const uptime = payload.uptime_points || [];
+    const networkNodes = (payload.network_overlay && payload.network_overlay.nodes) || [];
+    const networkEdges = (payload.network_overlay && payload.network_overlay.edges) || [];
+    const interpolation = payload.interpolation_points || [];
+    const streetOverlay = payload.street_overlay || { available: false, lat: [], lon: [], loaded: false };
+    let streetSummary = payload.street_summary || ['Street network loads on demand. Click Streetmaps to fetch it.'];
+    let streetLoaded = Boolean(streetOverlay.loaded && streetOverlay.lat && streetOverlay.lat.length);
+    let streetLoading = false;
+    const weatherOverlay = payload.weather_overlay || { available: false, points: [], loaded: false };
+    let weatherSummary = payload.weather_summary || ['Live NOAA weather loads on demand. Click Weather to fetch it.'];
+    let weatherPoints = Array.isArray(weatherOverlay.points) ? weatherOverlay.points : [];
+    let weatherLoaded = Boolean(weatherOverlay.loaded && weatherPoints.length);
+    let weatherLoading = false;
+    const energyOverlay = payload.energy_overlay || { available: false, points: [], loaded: false };
+    let energySummary = payload.energy_summary || ['Energy benchmarking points load on demand. Click Energy to fetch it.'];
+    let energyPoints = Array.isArray(energyOverlay.points) ? energyOverlay.points : [];
+    let energyLoaded = Boolean(energyOverlay.loaded && energyPoints.length);
+    let energyLoading = false;
+    const energyConfig = payload.energy_config || { dataset_options: [], metric_options: [], selected_dataset_id: '', selected_metric: '' };
+    let selectedEnergyDataset = energyConfig.selected_dataset_id || '';
+    let selectedEnergyMetric = energyConfig.selected_metric || '';
+
+    const censusOverlay = payload.census_overlay || { available: false, geojson: { type: 'FeatureCollection', features: [] }, locations: [], z: [], hover: [], loaded: false };
+    let censusSummary = payload.census_summary || ['Census tract choropleth loads on demand. Click Census to fetch it.'];
+    let censusLoaded = Boolean(censusOverlay.loaded && Array.isArray(censusOverlay.locations) && censusOverlay.locations.length);
+    let censusLoading = false;
+    const censusConfig = payload.census_config || {
+      metric_options: [],
+      selected_metric: 'median_income',
+      view_options: [],
+      selected_view: 'single',
+      year_options: [],
+      selected_year_new: 2023,
+      selected_year_old: 2022,
+    };
+    let selectedCensusMetric = censusConfig.selected_metric || 'median_income';
+    let selectedCensusView = censusConfig.selected_view || 'single';
+    let selectedCensusYearNew = String(censusConfig.selected_year_new || '2023');
+    let selectedCensusYearOld = String(censusConfig.selected_year_old || '2022');
+    const metricRange = payload.metric_range || { min: 0, max: 100 };
+    const metricMin = Number.isFinite(metricRange.min) ? metricRange.min : 0;
+    const metricMax = Number.isFinite(metricRange.max) ? metricRange.max : 100;
+    const metricCmax = metricMax > metricMin ? metricMax : (metricMin + 1);
+
+    const explorerTrace = {
+      type: 'scattermapbox',
+      mode: 'markers',
+      lat: uptime.map(p => p.latitude),
+      lon: uptime.map(p => p.longitude),
+      text: uptime.map(p => `${p.sensor_name}<br>Status: ${p.is_observing ? 'Observing' : 'No observations'}<br>Obs count: ${p.observation_count ?? 0}<br>${airMetricLabel}: ${p.aqi_value ?? 'n/a'}`),
+      hoverinfo: 'text',
+      marker: {
+        size: uptime.map(p => p.is_observing ? 11 : 8),
+        color: uptime.map(p => p.aqi_value ?? metricMin),
+        colorscale: 'RdYlGn',
+        reversescale: false,
+        cmin: metricMin,
+        cmax: metricCmax,
+        showscale: true,
+        colorbar: { title: airMetricLabel, bgcolor: 'rgba(18,18,18,0.65)', tickfont: { color: '#e7e7e7' }, titlefont: { color: '#e7e7e7' } },
+        line: { width: 1, color: '#202020' },
+        opacity: uptime.map(p => p.opacity ?? (p.is_observing ? 0.95 : 0.22))
+      },
+      visible: true,
+      name: 'Explorer Sensors'
+    };
+
+    const edgeLat = [];
+    const edgeLon = [];
+    networkEdges.forEach(e => {
+      edgeLat.push(e.from.lat, e.to.lat, null);
+      edgeLon.push(e.from.lon, e.to.lon, null);
+    });
+
+    const networkEdgeTrace = {
+      type: 'scattermapbox',
+      mode: 'lines',
+      lat: edgeLat,
+      lon: edgeLon,
+      line: { width: 1.2, color: 'rgba(82,157,255,0.55)' },
+      hoverinfo: 'none',
+      visible: false,
+      name: 'Network Links'
+    };
+
+    const networkNodeTrace = {
+      type: 'scattermapbox',
+      mode: 'markers',
+      lat: networkNodes.map(p => p.latitude),
+      lon: networkNodes.map(p => p.longitude),
+      text: networkNodes.map(p => `${p.sensor_name}<br>Status: ${p.is_observing ? 'Observing' : 'No observations'}<br>${airMetricLabel}: ${p.aqi_value ?? 'n/a'}`),
+      hoverinfo: 'text',
+      marker: {
+        size: 9,
+        color: networkNodes.map(p => p.aqi_value ?? 0),
+        colorscale: 'Turbo',
+        cmin: metricMin,
+        cmax: metricCmax,
+        showscale: true,
+        colorbar: { title: airMetricLabel, bgcolor: 'rgba(18,18,18,0.65)', tickfont: { color: '#e7e7e7' }, titlefont: { color: '#e7e7e7' } },
+        line: { width: 1, color: '#111' },
+        opacity: networkNodes.map(p => p.opacity ?? (p.is_observing ? 0.9 : 0.28))
+      },
+      visible: false,
+      name: 'Network Nodes'
+    };
+
+    const interpolationTrace = {
+      type: 'scattermapbox',
+      mode: 'markers',
+      lat: interpolation.map(p => p.latitude),
+      lon: interpolation.map(p => p.longitude),
+      text: interpolation.map(p => `Interpolated ${airMetricLabel}: ${p.value.toFixed(2)}`),
+      hoverinfo: 'text',
+      marker: {
+        size: 8,
+        color: interpolation.map(p => p.value),
+        colorscale: 'RdYlGn',
+        reversescale: false,
+        showscale: true,
+        opacity: 0.45,
+        colorbar: { title: `Interpolated ${airMetricLabel}`, bgcolor: 'rgba(18,18,18,0.65)', tickfont: { color: '#e7e7e7' }, titlefont: { color: '#e7e7e7' } }
+      },
+      visible: false,
+      name: 'Linear Interpolation Grid'
+    };
+
+    const streetTrace = {
+      type: 'scattermapbox',
+      mode: 'lines',
+      lat: streetOverlay.lat || [],
+      lon: streetOverlay.lon || [],
+      line: { width: 1.1, color: 'rgba(245, 245, 245, 0.65)' },
+      hoverinfo: 'none',
+      visible: false,
+      name: 'OSMnx Streets'
+    };
+
+    const energyTrace = {
+      type: 'scattermapbox',
+      mode: 'markers',
+      lat: energyPoints.map(p => p.latitude),
+      lon: energyPoints.map(p => p.longitude),
+      text: energyPoints.map(p => `Property type: ${p.property_type || 'n/a'}<br>Community area: ${p.community_area || 'n/a'}<br>Value: ${p.value != null ? Number(p.value).toFixed(2) : 'n/a'}`),
+      hoverinfo: 'text',
+      marker: {
+        size: 8,
+        color: energyPoints.map(p => p.value ?? 0),
+        colorscale: 'Turbo',
+        showscale: true,
+        colorbar: { title: 'Energy Metric', bgcolor: 'rgba(18,18,18,0.65)', tickfont: { color: '#e7e7e7' }, titlefont: { color: '#e7e7e7' } },
+        line: { width: 1, color: '#111' },
+        opacity: 0.68,
+      },
+      visible: false,
+      name: 'Energy Benchmarking'
+    };
+
+    const censusTrace = {
+      type: 'choroplethmapbox',
+      geojson: censusOverlay.geojson || { type: 'FeatureCollection', features: [] },
+      locations: censusOverlay.locations || [],
+      z: censusOverlay.z || [],
+      featureidkey: 'properties.GEOID',
+      colorscale: 'YlOrRd',
+      marker: { line: { width: 0.2, color: 'rgba(20,20,20,0.35)' } },
+      text: censusOverlay.hover || [],
+      hovertemplate: '%{text}<extra></extra>',
+      showscale: true,
+      colorbar: { title: 'Census Metric', bgcolor: 'rgba(18,18,18,0.65)', tickfont: { color: '#e7e7e7' }, titlefont: { color: '#e7e7e7' } },
+      visible: false,
+      name: 'Census Tracts',
+      zmin: 0
+    };
+
+    const weatherTrace = {
+      type: 'scattermapbox',
+      mode: 'markers',
+      lat: weatherPoints.map(p => p.latitude),
+      lon: weatherPoints.map(p => p.longitude),
+      text: weatherPoints.map(p => {
+        const wind = p.wind_speed_mph == null ? 'n/a' : `${p.wind_speed_mph.toFixed(1)} mph`;
+        const direction = p.wind_direction_cardinal || 'n/a';
+        const temp = p.temperature_f == null ? 'n/a' : `${p.temperature_f.toFixed(1)} °F`;
+        const pressure = p.pressure_hpa == null ? 'n/a' : `${p.pressure_hpa.toFixed(1)} hPa`;
+        const clouds = p.has_clouds ? 'Yes' : 'No';
+        return `${p.name}<br>Temp: ${temp}<br>Wind: ${wind} ${direction}<br>Clouds: ${clouds}<br>Pressure: ${pressure}<br>${p.text_description || ''}`;
+      }),
+      hoverinfo: 'text',
+      marker: {
+        size: 13,
+        color: weatherPoints.map(p => p.temperature_f ?? 0),
+        colorscale: 'Bluered',
+        showscale: true,
+        colorbar: { title: 'Temp °F', bgcolor: 'rgba(18,18,18,0.65)', tickfont: { color: '#e7e7e7' }, titlefont: { color: '#e7e7e7' } },
+        line: { width: 1, color: '#111' },
+        opacity: 0.9,
+      },
+      visible: false,
+      name: 'NOAA Weather'
+    };
+
+    const mapboxConfig = payload.mapbox_config || {};
+    const mapboxLayout = {
+      style: mapboxConfig.style || 'carto-darkmatter',
+      center: payload.map_center,
+      zoom: 9,
+    };
+    if (Array.isArray(mapboxConfig.layers) && mapboxConfig.layers.length) {
+      mapboxLayout.layers = mapboxConfig.layers;
+    }
+
+    const layout = {
+      mapbox: mapboxLayout,
+      paper_bgcolor: 'rgba(0,0,0,0)',
+      plot_bgcolor: 'rgba(0,0,0,0)',
+      margin: {l: 0, r: 0, t: 0, b: 0},
+      showlegend: false,
+      uirevision: 'persistent-map'
+    };
+
+    Plotly.newPlot('workspace-map', [explorerTrace, networkEdgeTrace, networkNodeTrace, interpolationTrace, weatherTrace, streetTrace, energyTrace, censusTrace], layout, {
+      displayModeBar: true,
+      responsive: true
+    });
+
+    const statsEl = document.getElementById('overlay-stats');
+    const titleEl = document.getElementById('overlay-title');
+    const timeEl = document.getElementById('overlay-time');
+    const overlayPanel = document.getElementById('overlay-panel');
+    const reportKpisEl = document.getElementById('report-kpis');
+    const reportTrendEl = document.getElementById('report-trend');
+    const dataStatusEl = document.getElementById('data-status');
+
+    const statsByMode = {
+      explorer: payload.uptime_stats || [],
+      network: payload.network_summary || [],
+      interpolation: payload.interpolation_stats || ['Need at least three observing stations to interpolate.'],
+      weather: weatherSummary,
+      streetmaps: streetSummary,
+      energy: energySummary,
+      census: censusSummary,
+    };
+
+    const titles = {
+      explorer: 'Air Quality Overlay',
+      weather: 'Weather Overlay',
+      streetmaps: 'Streetmaps Overlay',
+      energy: 'Energy Overlay',
+      census: 'Census Overlay'
+    };
+
+    const aqiSubviewTitles = {
+      sensors: 'Air Quality Sensors',
+      network: 'Air Quality Network',
+      interpolation: 'Air Quality Interpolation',
+    };
+
+    const modeScopedControls = Array.from(document.querySelectorAll('.workspace-controls .control-group[data-modes], .workspace-tabbar [data-modes], .tab-menu-panel [data-modes]'));
+    const aqiScopedControls = Array.from(document.querySelectorAll('.workspace-controls .control-group[data-aqi-views]'));
+    const aqiViewButtons = Array.from(document.querySelectorAll('.aqi-view-btn'));
+    const airMetricSelect = document.getElementById('air-metric-select');
+    const energyDatasetSelect = document.getElementById('energy-dataset-select');
+    const energyMetricSelect = document.getElementById('energy-metric-select');
+    const censusMetricSelect = document.getElementById('census-metric-select');
+    const censusViewSelect = document.getElementById('census-view-select');
+    const censusYearNewSelect = document.getElementById('census-year-new-select');
+    const censusYearOldSelect = document.getElementById('census-year-old-select');
+    const censusYearOldGroup = document.getElementById('census-year-old-group');
+    const energyLoadButton = document.getElementById('energy-load-btn');
+    const censusLoadButton = document.getElementById('census-load-btn');
+    const filterToggle = document.getElementById('filter-toggle');
+    const tabMenuToggle = document.getElementById('tab-menu-toggle');
+    const tabMenuPanel = document.getElementById('tab-menu-panel');
+    const detailsToggle = document.getElementById('details-toggle');
+    const weatherSection = document.getElementById('weather-section');
+    let showDetails = false;
+
+    function updateModeScopedControls(mode) {
+      modeScopedControls.forEach((group) => {
+        const modes = (group.dataset.modes || '').split(',').map(m => m.trim()).filter(Boolean);
+        group.style.display = modes.includes(mode) ? '' : 'none';
+      });
+    }
+
+    function closeTabMenu() {
+      tabMenuPanel.classList.remove('is-open');
+      tabMenuPanel.setAttribute('aria-hidden', 'true');
+      tabMenuToggle.setAttribute('aria-expanded', 'false');
+    }
+
+    function fillSelect(selectEl, options, selectedValue) {
+      selectEl.innerHTML = '';
+      (options || []).forEach((opt) => {
+        const option = document.createElement('option');
+        option.value = opt.value;
+        option.textContent = opt.label;
+        if (String(opt.value) === String(selectedValue)) {
+          option.selected = true;
+        }
+        selectEl.appendChild(option);
+      });
+      if (!selectEl.value && selectEl.options.length) {
+        selectEl.value = selectEl.options[0].value;
+      }
+    }
+
+    fillSelect(energyDatasetSelect, energyConfig.dataset_options || [], selectedEnergyDataset);
+    fillSelect(energyMetricSelect, energyConfig.metric_options || [], selectedEnergyMetric);
+    fillSelect(airMetricSelect, airConfig.metric_options || [], airConfig.selected_metric || 'aqi_value');
+    fillSelect(censusMetricSelect, censusConfig.metric_options || [], selectedCensusMetric);
+    fillSelect(censusViewSelect, censusConfig.view_options || [], selectedCensusView);
+    fillSelect(censusYearNewSelect, censusConfig.year_options || [], selectedCensusYearNew);
+    fillSelect(censusYearOldSelect, censusConfig.year_options || [], selectedCensusYearOld);
+
+    selectedEnergyDataset = energyDatasetSelect.value || selectedEnergyDataset;
+    selectedEnergyMetric = energyMetricSelect.value || selectedEnergyMetric;
+    selectedCensusMetric = censusMetricSelect.value || selectedCensusMetric;
+    selectedCensusView = censusViewSelect.value || selectedCensusView;
+    selectedCensusYearNew = censusYearNewSelect.value || selectedCensusYearNew;
+    selectedCensusYearOld = censusYearOldSelect.value || selectedCensusYearOld;
+
+    function updateAqiScopedControls(aqiView) {
+      aqiScopedControls.forEach((group) => {
+        const views = (group.dataset.aqiViews || '').split(',').map(v => v.trim()).filter(Boolean);
+        group.style.display = views.includes(aqiView) ? '' : 'none';
+      });
+    }
+
+    function updateAqiViewButtons(aqiView) {
+      aqiViewButtons.forEach((btn) => {
+        btn.classList.toggle('active', btn.dataset.aqiView === aqiView);
+      });
+      aqiViewInput.value = aqiView;
+    }
+
+    function updateCensusYearControlVisibility() {
+      const showOldYear = selectedCensusView === 'change';
+      censusYearOldGroup.style.display = showOldYear ? '' : 'none';
+    }
+    updateCensusYearControlVisibility();
+
+    const weatherTable = document.getElementById('weather-table');
+    const weatherTableBody = document.getElementById('weather-table-body');
+    const weatherTableMessage = document.getElementById('weather-table-message');
+
+    function renderWeatherTable(points, message) {
+      weatherTableBody.innerHTML = '';
+      if (!points.length) {
+        weatherTable.style.display = 'none';
+        weatherTableMessage.textContent = message || 'No weather stations loaded.';
+        return;
+      }
+      weatherTable.style.display = 'table';
+      weatherTableMessage.textContent = message || `Loaded ${points.length} live NOAA stations.`;
+      points.forEach((point) => {
+        const row = document.createElement('tr');
+        const cells = [
+          point.name || point.station_id || 'Unknown',
+          point.latitude != null ? point.latitude.toFixed(4) : 'n/a',
+          point.longitude != null ? point.longitude.toFixed(4) : 'n/a',
+          point.timestamp || 'n/a',
+          point.temperature_f != null ? point.temperature_f.toFixed(1) : 'n/a',
+          point.wind_speed_mph != null ? `${point.wind_speed_mph.toFixed(1)} mph ${point.wind_direction_cardinal || ''}`.trim() : 'n/a',
+          point.has_clouds ? (point.cloud_amounts && point.cloud_amounts.length ? point.cloud_amounts.join(', ') : 'Yes') : 'No',
+          point.pressure_hpa != null ? point.pressure_hpa.toFixed(1) : 'n/a',
+          point.text_description || 'n/a'
+        ];
+        cells.forEach((value) => {
+          const cell = document.createElement('td');
+          cell.textContent = value;
+          row.appendChild(cell);
+        });
+        weatherTableBody.appendChild(row);
+      });
+    }
+    renderWeatherTable(weatherPoints, weatherLoaded ? undefined : 'Switch to Weather mode to load live NOAA station observations.');
+
+    function renderReport(report, visible) {
+      reportKpisEl.innerHTML = '';
+      reportKpisEl.style.display = visible ? '' : 'none';
+      reportTrendEl.style.display = visible && (report.trend || []).length ? '' : 'none';
+
+      const status = report.data_status || {};
+      dataStatusEl.className = `data-status ${status.tone || 'warning'}`;
+      dataStatusEl.textContent = status.label || 'Source unknown';
+      if (status.latest_age_hours != null) {
+        const ageDays = Math.floor(status.latest_age_hours / 24);
+        dataStatusEl.title = ageDays > 0
+          ? `Latest observation is ${ageDays} day${ageDays === 1 ? '' : 's'} old`
+          : `Latest observation is ${Math.max(1, Math.floor(status.latest_age_hours))} hours old`;
+      }
+
+      if (!visible) {
+        return;
+      }
+      (report.cards || []).forEach(card => {
+        const item = document.createElement('div');
+        item.className = `report-kpi ${card.tone || ''}`;
+        const label = document.createElement('div');
+        label.className = 'report-kpi__label';
+        label.textContent = card.label;
+        const value = document.createElement('div');
+        value.className = 'report-kpi__value';
+        value.textContent = card.value;
+        if (card.detail) {
+          const detail = document.createElement('span');
+          detail.className = 'report-kpi__detail';
+          detail.textContent = card.detail;
+          value.appendChild(detail);
+        }
+        item.append(label, value);
+        reportKpisEl.appendChild(item);
+      });
+
+      if ((report.trend || []).length) {
+        Plotly.react('report-trend', [{
+          x: report.trend.map(point => point.label),
+          y: report.trend.map(point => point.mean),
+          type: 'scatter',
+          mode: 'lines+markers',
+          line: { color: '#5ba7ff', width: 2 },
+          marker: { size: 4 },
+          hovertemplate: `%{x}<br>${report.metric_label || airMetricLabel}: %{y:.2f}<extra></extra>`,
+        }], {
+          margin: { l: 32, r: 8, t: 8, b: 28 },
+          height: 112,
+          paper_bgcolor: 'rgba(0,0,0,0)',
+          plot_bgcolor: 'rgba(0,0,0,0)',
+          font: { color: '#aab5c8', size: 9 },
+          xaxis: { showgrid: false, tickangle: -25, nticks: 4 },
+          yaxis: { gridcolor: 'rgba(255,255,255,.08)', zeroline: false, nticks: 3 },
+          showlegend: false,
+          dragmode: false,
+        }, { displayModeBar: false, responsive: true });
+      }
+    }
+
+    function applyMode(mode, requestedAqiView = null) {
+      activeMode = mode;
+      if (mode === 'explorer' && requestedAqiView && aqiViewOrder.includes(requestedAqiView)) {
+        activeAqiView = requestedAqiView;
+      }
+      modeInput.value = mode;
+      aqiViewInput.value = activeAqiView;
+
+      let visibility = [false, false, false, false, false, false, false, false];
+      if (mode === 'explorer') {
+        if (activeAqiView === 'network') {
+          visibility = [false, true, true, false, false, false, false, false];
+        } else if (activeAqiView === 'interpolation') {
+          visibility = [false, false, false, true, false, false, false, false];
+        } else {
+          visibility = [true, false, false, false, false, false, false, false];
+        }
+      } else if (mode === 'weather') {
+        visibility = [true, false, false, false, true, false, false, false];
+      } else if (mode === 'streetmaps') {
+        visibility = [true, false, false, false, false, true, false, false];
+      } else if (mode === 'energy') {
+        visibility = [false, false, false, false, false, false, true, false];
+      } else if (mode === 'census') {
+        visibility = [false, false, false, false, false, false, false, true];
+      }
+      Plotly.restyle('workspace-map', { visible: visibility });
+
+      document.querySelectorAll('.mode-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.mode === mode);
+      });
+
+      if (mode === 'explorer') {
+        titleEl.textContent = aqiSubviewTitles[activeAqiView] || titles.explorer;
+      } else {
+        titleEl.textContent = titles[mode] || 'Overlay';
+      }
+      overlayPanel.classList.toggle('is-hidden', !showDetails);
+      weatherSection.style.display = showDetails ? '' : 'none';
+      timeEl.textContent = payload.time ? `Selected: ${payload.time}` : 'No compatible time slice';
+      statsEl.innerHTML = '';
+      const showReport = mode === 'explorer' && activeAqiView === 'sensors';
+      renderReport(payload.report || {}, showReport && showDetails);
+      const activeStats = mode === 'explorer'
+        ? (activeAqiView === 'network' ? statsByMode.network : (activeAqiView === 'interpolation' ? statsByMode.interpolation : ((payload.report && payload.report.insights) || [])))
+        : statsByMode[mode];
+      (activeStats || []).forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = item;
+        statsEl.appendChild(li);
+      });
+
+      if (mode === 'streetmaps' && !streetLoaded && !streetLoading) {
+        loadStreetOverlay();
+      }
+      if (mode === 'weather' && !weatherLoaded && !weatherLoading) {
+        loadWeatherOverlay();
+      }
+      if (mode === 'energy' && !energyLoaded && !energyLoading) {
+        loadEnergyOverlay();
+      }
+      if (mode === 'census' && !censusLoaded && !censusLoading) {
+        loadCensusOverlay();
+      }
+
+      updateModeScopedControls(mode);
+      updateAqiViewButtons(activeAqiView);
+      updateAqiScopedControls(activeAqiView);
+      updateCensusYearControlVisibility();
+    }
+
+    function renderStreetStats(items) {
+      statsByMode.streetmaps = items;
+      if (activeMode !== 'streetmaps') {
+        return;
+      }
+      statsEl.innerHTML = '';
+      items.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = item;
+        statsEl.appendChild(li);
+      });
+    }
+
+    async function loadStreetOverlay() {
+      streetLoading = true;
+      renderStreetStats(['Loading Chicago street network…']);
+
+      try {
+        const response = await fetch('/workspace/street-overlay', { method: 'GET' });
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+        const lat = Array.isArray(data.lat) ? data.lat : [];
+        const lon = Array.isArray(data.lon) ? data.lon : [];
+
+        await Plotly.restyle('workspace-map', { lat: [lat], lon: [lon] }, [5]);
+
+        streetLoaded = Boolean(lat.length && lon.length && data.available);
+        streetSummary = Array.isArray(data.summary) && data.summary.length
+          ? data.summary
+          : [streetLoaded ? 'Street network loaded.' : 'Street map unavailable for current environment.'];
+
+        if (!streetLoaded && lat.length === 0 && lon.length === 0 && data.available) {
+          streetSummary = ['Street map returned no segments for the current place.'];
+        }
+
+        renderStreetStats(streetSummary);
+      } catch (err) {
+        renderStreetStats([`Street map failed to load: ${err.message}`]);
+      } finally {
+        streetLoading = false;
+      }
+    }
+
+    function renderWeatherStats(items) {
+      statsByMode.weather = items;
+      if (activeMode !== 'weather') {
+        return;
+      }
+      statsEl.innerHTML = '';
+      items.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = item;
+        statsEl.appendChild(li);
+      });
+    }
+
+    async function loadWeatherOverlay() {
+      weatherLoading = true;
+      renderWeatherStats(['Loading live NOAA weather…']);
+      renderWeatherTable([], 'Loading live NOAA station observations…');
+
+      try {
+        const response = await fetch('/workspace/weather-overlay', { method: 'GET' });
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+        weatherPoints = Array.isArray(data.points) ? data.points : [];
+        weatherLoaded = Boolean(data.available && weatherPoints.length);
+        weatherSummary = Array.isArray(data.summary) && data.summary.length
+          ? data.summary
+          : [weatherLoaded ? 'Weather overlay loaded.' : 'Weather overlay unavailable.'];
+
+        const traceText = weatherPoints.map(p => {
+          const wind = p.wind_speed_mph == null ? 'n/a' : `${p.wind_speed_mph.toFixed(1)} mph`;
+          const direction = p.wind_direction_cardinal || 'n/a';
+          const temp = p.temperature_f == null ? 'n/a' : `${p.temperature_f.toFixed(1)} °F`;
+          const pressure = p.pressure_hpa == null ? 'n/a' : `${p.pressure_hpa.toFixed(1)} hPa`;
+          const clouds = p.has_clouds ? 'Yes' : 'No';
+          return `${p.name}<br>Temp: ${temp}<br>Wind: ${wind} ${direction}<br>Clouds: ${clouds}<br>Pressure: ${pressure}<br>${p.text_description || ''}`;
+        });
+
+        await Plotly.restyle('workspace-map', {
+          lat: [weatherPoints.map(p => p.latitude)],
+          lon: [weatherPoints.map(p => p.longitude)],
+          text: [traceText],
+          'marker.color': [weatherPoints.map(p => p.temperature_f ?? 0)]
+        }, [4]);
+
+        renderWeatherStats(weatherSummary);
+        renderWeatherTable(weatherPoints);
+      } catch (err) {
+        const message = `Weather overlay failed to load: ${err.message}`;
+        renderWeatherStats([message]);
+        renderWeatherTable([], message);
+      } finally {
+        weatherLoading = false;
+      }
+    }
+
+    function renderEnergyStats(items) {
+      statsByMode.energy = items;
+      if (activeMode !== 'energy') {
+        return;
+      }
+      statsEl.innerHTML = '';
+      items.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = item;
+        statsEl.appendChild(li);
+      });
+    }
+
+    async function loadEnergyOverlay(forceReload = false) {
+      if (energyLoading) {
+        return;
+      }
+      if (energyLoaded && !forceReload) {
+        return;
+      }
+
+      energyLoading = true;
+      renderEnergyStats(['Loading energy benchmarking records…']);
+
+      try {
+        selectedEnergyDataset = energyDatasetSelect.value || selectedEnergyDataset;
+        selectedEnergyMetric = energyMetricSelect.value || selectedEnergyMetric;
+
+        const params = new URLSearchParams({
+          dataset_id: selectedEnergyDataset,
+          metric: selectedEnergyMetric,
+        });
+        const response = await fetch(`/workspace/energy-overlay?${params.toString()}`, { method: 'GET' });
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+        energyPoints = Array.isArray(data.points) ? data.points : [];
+        energyLoaded = Boolean(data.available && energyPoints.length);
+        energySummary = Array.isArray(data.summary) && data.summary.length
+          ? data.summary
+          : [energyLoaded ? 'Energy overlay loaded.' : 'Energy overlay unavailable.'];
+
+        if (Array.isArray(data.metric_options) && data.metric_options.length) {
+          fillSelect(energyMetricSelect, data.metric_options, data.metric || selectedEnergyMetric);
+        }
+
+        selectedEnergyDataset = data.dataset_id || energyDatasetSelect.value || selectedEnergyDataset;
+        selectedEnergyMetric = data.metric || energyMetricSelect.value || selectedEnergyMetric;
+        if (selectedEnergyDataset) {
+          energyDatasetSelect.value = selectedEnergyDataset;
+        }
+        if (selectedEnergyMetric) {
+          energyMetricSelect.value = selectedEnergyMetric;
+        }
+
+        const pointText = energyPoints.map(p => {
+          const value = p.value == null ? 'n/a' : Number(p.value).toFixed(2);
+          return `Property type: ${p.property_type || 'n/a'}<br>Community area: ${p.community_area || 'n/a'}<br>Value: ${value}`;
+        });
+
+        await Plotly.restyle('workspace-map', {
+          lat: [energyPoints.map(p => p.latitude)],
+          lon: [energyPoints.map(p => p.longitude)],
+          text: [pointText],
+          'marker.color': [energyPoints.map(p => p.value ?? 0)],
+          'marker.colorbar.title.text': [data.metric_label || 'Energy Metric'],
+        }, [6]);
+
+        renderEnergyStats(energySummary);
+      } catch (err) {
+        renderEnergyStats([`Energy overlay failed to load: ${err.message}`]);
+      } finally {
+        energyLoading = false;
+      }
+    }
+
+    function renderCensusStats(items) {
+      statsByMode.census = items;
+      if (activeMode !== 'census') {
+        return;
+      }
+      statsEl.innerHTML = '';
+      items.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = item;
+        statsEl.appendChild(li);
+      });
+    }
+
+    async function loadCensusOverlay(forceReload = false) {
+      if (censusLoading) {
+        return;
+      }
+      if (censusLoaded && !forceReload) {
+        return;
+      }
+
+      censusLoading = true;
+      renderCensusStats(['Loading census tract geometry and ACS values…']);
+
+      try {
+        selectedCensusMetric = censusMetricSelect.value || selectedCensusMetric;
+        selectedCensusView = censusViewSelect.value || selectedCensusView;
+        selectedCensusYearNew = censusYearNewSelect.value || selectedCensusYearNew;
+        selectedCensusYearOld = censusYearOldSelect.value || selectedCensusYearOld;
+
+        const params = new URLSearchParams({
+          metric: selectedCensusMetric,
+          view: selectedCensusView,
+          year_new: selectedCensusYearNew,
+          year_old: selectedCensusYearOld,
+        });
+        const response = await fetch(`/workspace/census-overlay?${params.toString()}`, { method: 'GET' });
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+        censusLoaded = Boolean(data.available && Array.isArray(data.locations) && data.locations.length);
+        censusSummary = Array.isArray(data.summary) && data.summary.length
+          ? data.summary
+          : [censusLoaded ? 'Census overlay loaded.' : 'Census overlay unavailable.'];
+
+        selectedCensusMetric = data.metric || selectedCensusMetric;
+        selectedCensusView = data.view || selectedCensusView;
+        selectedCensusYearNew = String(data.year_new || selectedCensusYearNew);
+        selectedCensusYearOld = String(data.year_old || selectedCensusYearOld);
+        if (selectedCensusMetric) {
+          censusMetricSelect.value = selectedCensusMetric;
+        }
+        if (selectedCensusView) {
+          censusViewSelect.value = selectedCensusView;
+        }
+        if (selectedCensusYearNew) {
+          censusYearNewSelect.value = selectedCensusYearNew;
+        }
+        if (selectedCensusYearOld) {
+          censusYearOldSelect.value = selectedCensusYearOld;
+        }
+        updateCensusYearControlVisibility();
+
+        await Plotly.restyle('workspace-map', {
+          geojson: [data.geojson || { type: 'FeatureCollection', features: [] }],
+          locations: [data.locations || []],
+          z: [data.z || []],
+          text: [data.hover || []],
+          colorscale: [data.colorscale || 'YlOrRd'],
+          'colorbar.title.text': [data.metric_label || 'Census Metric'],
+          zmid: [data.zmid == null ? null : data.zmid],
+        }, [7]);
+
+        renderCensusStats(censusSummary);
+      } catch (err) {
+        renderCensusStats([`Census overlay failed to load: ${err.message}`]);
+      } finally {
+        censusLoading = false;
+      }
+    }
+
+    document.querySelectorAll('.mode-btn').forEach(btn => {
+      if (btn.dataset.mode) {
+        btn.addEventListener('click', () => {
+          applyMode(btn.dataset.mode);
+          closeTabMenu();
+        });
+      }
+    });
+
+    aqiViewButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        applyMode('explorer', btn.dataset.aqiView);
+        refreshWorkspace();
+        closeTabMenu();
+      });
+    });
+
+    energyDatasetSelect.addEventListener('change', () => {
+      energyLoaded = false;
+    });
+    energyMetricSelect.addEventListener('change', () => {
+      energyLoaded = false;
+    });
+    censusMetricSelect.addEventListener('change', () => {
+      censusLoaded = false;
+    });
+    censusViewSelect.addEventListener('change', () => {
+      selectedCensusView = censusViewSelect.value || 'single';
+      censusLoaded = false;
+      updateCensusYearControlVisibility();
+    });
+    censusYearNewSelect.addEventListener('change', () => {
+      selectedCensusYearNew = censusYearNewSelect.value || selectedCensusYearNew;
+      censusLoaded = false;
+    });
+    censusYearOldSelect.addEventListener('change', () => {
+      selectedCensusYearOld = censusYearOldSelect.value || selectedCensusYearOld;
+      censusLoaded = false;
+    });
+
+    energyLoadButton.addEventListener('click', () => loadEnergyOverlay(true));
+    censusLoadButton.addEventListener('click', () => loadCensusOverlay(true));
+    tabMenuToggle.addEventListener('click', (event) => {
+      event.stopPropagation();
+      const open = tabMenuPanel.classList.toggle('is-open');
+      tabMenuPanel.setAttribute('aria-hidden', String(!open));
+      tabMenuToggle.setAttribute('aria-expanded', String(open));
+    });
+    detailsToggle.addEventListener('click', () => {
+      showDetails = !showDetails;
+      detailsToggle.setAttribute('aria-expanded', String(showDetails));
+      detailsToggle.textContent = showDetails ? 'Hide details' : 'Show details';
+      applyMode(activeMode, activeAqiView);
+    });
+    filterToggle.addEventListener('click', () => {
+      const form = document.getElementById('workspace-form');
+      const collapsed = form.classList.toggle('is-collapsed');
+      filterToggle.setAttribute('aria-expanded', String(!collapsed));
+      filterToggle.textContent = collapsed ? 'Filters' : 'Hide filters';
+      closeTabMenu();
+    });
+
+    document.getElementById('prev-mode').addEventListener('click', () => {
+      const i = modeOrder.indexOf(activeMode);
+      applyMode(modeOrder[(i - 1 + modeOrder.length) % modeOrder.length]);
+    });
+
+    document.getElementById('next-mode').addEventListener('click', () => {
+      const i = modeOrder.indexOf(activeMode);
+      applyMode(modeOrder[(i + 1) % modeOrder.length]);
+    });
+
+    applyMode(activeMode, activeAqiView);
+
+    const form = document.getElementById('workspace-form');
+    const workspaceShell = document.querySelector('.workspace-shell');
+    let updateController = null;
+
+    function syncSelect(select, options, selectedValue) {
+      if (!select) return;
+      select.innerHTML = '';
+      (options || []).forEach(option => {
+        const item = document.createElement('option');
+        item.value = option.value;
+        item.textContent = option.label ?? option.value;
+        select.appendChild(item);
+      });
+      if (options && options.length) {
+        select.value = String(selectedValue);
+      }
+    }
+
+    async function refreshWorkspace() {
+      if (updateController) updateController.abort();
+      updateController = new AbortController();
+      const params = new URLSearchParams(new FormData(form));
+      params.set('mode', activeMode);
+      params.set('aqi_view', activeAqiView);
+      params.set('format', 'json');
+      workspaceShell.classList.add('workspace-updating');
+      dataStatusEl.textContent = 'Updating';
+
+      try {
+        const response = await fetch(`/workspace?${params.toString()}`, { signal: updateController.signal });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+        const next = data.workspace_payload || {};
+        if (data.message || !next.map_center) {
+          statsEl.replaceChildren();
+          const item = document.createElement('li');
+          item.textContent = data.message || 'No data is available for these filters.';
+          statsEl.appendChild(item);
+          return;
+        }
+
+        Object.assign(payload, next);
+        const nextAir = next.air_config || {};
+        airMetricLabel = nextAir.selected_metric_label || airMetricLabel;
+        fillSelect(airMetricSelect, nextAir.metric_options || [], nextAir.selected_metric);
+        syncSelect(form.querySelector('select[name="time"]'), data.time_options, data.selected_time);
+        syncSelect(form.querySelector('select[name="distance_km"]'), (data.distance_options_km || []).map(value => ({
+          value,
+          label: Number(value).toFixed(2),
+        })), data.selected_distance_km);
+
+        const points = next.uptime_points || [];
+        const nodes = next.network_overlay?.nodes || [];
+        const edges = next.network_overlay?.edges || [];
+        const surface = next.interpolation_points || [];
+        const range = next.metric_range || { min: 0, max: 1 };
+        const cmin = Number.isFinite(range.min) ? range.min : 0;
+        const cmax = Number.isFinite(range.max) && range.max > cmin ? range.max : cmin + 1;
+        statsByMode.explorer = next.uptime_stats || [];
+        statsByMode.network = next.network_summary || [];
+        statsByMode.interpolation = next.interpolation_stats || [];
+
+        await Plotly.restyle('workspace-map', {
+          lat: [points.map(point => point.latitude)],
+          lon: [points.map(point => point.longitude)],
+          text: [points.map(point => `${point.sensor_name}<br>Status: ${point.is_observing ? 'Observing' : 'No observations'}<br>Obs count: ${point.observation_count ?? 0}<br>${airMetricLabel}: ${point.aqi_value ?? 'n/a'}`)],
+          'marker.color': [points.map(point => point.aqi_value ?? cmin)],
+          'marker.size': [points.map(point => point.is_observing ? 11 : 8)],
+          'marker.opacity': [points.map(point => point.opacity ?? 0.9)],
+          'marker.cmin': [cmin],
+          'marker.cmax': [cmax],
+          'marker.colorbar.title.text': [airMetricLabel],
+        }, [0]);
+        await Plotly.restyle('workspace-map', {
+          lat: [edges.flatMap(edge => [edge.from.lat, edge.to.lat, null])],
+          lon: [edges.flatMap(edge => [edge.from.lon, edge.to.lon, null])],
+        }, [1]);
+        await Plotly.restyle('workspace-map', {
+          lat: [nodes.map(point => point.latitude)],
+          lon: [nodes.map(point => point.longitude)],
+          text: [nodes.map(point => `${point.sensor_name}<br>Status: ${point.is_observing ? 'Observing' : 'No observations'}<br>${airMetricLabel}: ${point.aqi_value ?? 'n/a'}`)],
+          'marker.color': [nodes.map(point => point.aqi_value ?? cmin)],
+          'marker.opacity': [nodes.map(point => point.opacity ?? 0.9)],
+          'marker.cmin': [cmin],
+          'marker.cmax': [cmax],
+          'marker.colorbar.title.text': [airMetricLabel],
+        }, [2]);
+        await Plotly.restyle('workspace-map', {
+          lat: [surface.map(point => point.latitude)],
+          lon: [surface.map(point => point.longitude)],
+          text: [surface.map(point => `Interpolated ${airMetricLabel}: ${point.value.toFixed(2)}`)],
+          'marker.color': [surface.map(point => point.value)],
+          'marker.colorbar.title.text': [`Interpolated ${airMetricLabel}`],
+        }, [3]);
+
+        params.delete('format');
+        history.replaceState(null, '', `/workspace?${params.toString()}`);
+        applyMode(activeMode, activeAqiView);
+      } catch (error) {
+        if (error.name !== 'AbortError') {
+          statsEl.replaceChildren();
+          const item = document.createElement('li');
+          item.textContent = `Filters could not be updated: ${error.message}`;
+          statsEl.appendChild(item);
+        }
+      } finally {
+        workspaceShell.classList.remove('workspace-updating');
+      }
+    }
+
+    form.addEventListener('submit', event => {
+      event.preventDefault();
+      refreshWorkspace();
+    });
+    form.querySelectorAll('select,input[type="number"]').forEach(el => {
+      if (el.id !== 'mode-input' && !el.dataset.overlayControl) {
+        el.addEventListener('change', refreshWorkspace);
+      }
+    });
+    const showAllInput = form.querySelector('input[name="show_all"]');
+    if (showAllInput) {
+      showAllInput.addEventListener('change', refreshWorkspace);
+    }
+
+    const helpText = {
+      'bin-help': 'Aggregation interval for sensor observations before overlays are computed.',
+      'time-help': 'Select a valid time slice that passes the current coverage threshold.',
+      'coverage-help': 'Minimum share of sensors that must be observing for a time slice to appear.',
+      'interp-help': 'Linear keeps a fixed sample resolution across zoom; IDW/Kriging are available for comparison.',
+      'points-help': 'Default hides sensors with zero observations at this time. Turn on Show all to include them with transparency.',
+      'distance-help': 'Network links are shown only when station-to-station distance is less than or equal to this threshold.'
+    };
+
+    const popover = document.getElementById('help-popover');
+    document.querySelectorAll('.info-icon').forEach(icon => {
+      icon.addEventListener('click', (e) => {
+        const key = icon.dataset.help;
+        popover.textContent = helpText[key] || 'No details available.';
+        const rect = icon.getBoundingClientRect();
+        const parentRect = document.querySelector('.map-stage').getBoundingClientRect();
+        popover.style.left = `${rect.left - parentRect.left - 10}px`;
+        popover.style.top = `${rect.bottom - parentRect.top + 8}px`;
+        popover.hidden = false;
+        e.stopPropagation();
+      });
+    });
+
+    document.addEventListener('click', () => { popover.hidden = true; });
+    document.addEventListener('click', (event) => {
+      if (!tabMenuPanel.contains(event.target) && event.target !== tabMenuToggle) {
+        closeTabMenu();
+      }
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        popover.hidden = true;
+        closeTabMenu();
+      }
+    });
+  })();
+</script>
+{% endblock %}
