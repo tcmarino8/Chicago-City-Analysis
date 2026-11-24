@@ -5,7 +5,7 @@ from copy import deepcopy
 from datetime import datetime, timezone
 from functools import lru_cache
 import os
-
+# import scipy
 import networkx as nx
 import numpy as np
 import pandas as pd
